@@ -36,6 +36,7 @@ export const Header = () => {
       onMenuOpenChange={setIsMenuOpen}
       maxWidth="full"
       className="bg-transparent"
+      position={session ? "sticky" : "static"}
     >
       <NavbarContent>
         {session && (

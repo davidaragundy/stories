@@ -24,7 +24,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <UIProviders>
             <Toaster />
-            <div className="m-auto flex h-screen w-full flex-col overflow-hidden lg:w-[65%]">
+            <div className="m-auto flex h-dvh w-full flex-col overflow-y-auto overflow-x-hidden lg:w-[65%]">
               <Header />
               {children}
             </div>
