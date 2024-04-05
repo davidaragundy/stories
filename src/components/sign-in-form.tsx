@@ -29,6 +29,10 @@ export const SignInForm = () => {
   const onSubmit: SubmitHandler<SignInInputs> = async (data) => {
     setIsPending(true);
 
+    Object.keys(data).forEach((key) => {
+      data[key as keyof SignInInputs] = data[key as keyof SignInInputs].trim();
+    });
+
     try {
       const { ok, messages } = await signInAction(data);
 
