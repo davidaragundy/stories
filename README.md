@@ -33,3 +33,7 @@ npm install
 ```
 npm run dev
 ```
+
+## Author
+
+David Aragundy
