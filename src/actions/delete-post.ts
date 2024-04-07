@@ -1,6 +1,6 @@
 "use server";
 
-import { auth, postCollection } from "@/lib";
+import { validateRequest, postCollection } from "@/lib";
 import { ActionResponse } from "@/types";
 import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
@@ -15,7 +15,7 @@ cloudinary.config({
 export const deletePostAction = async (
   postId: string,
 ): Promise<ActionResponse> => {
-  const session = await auth();
+  const { user, session } = await validateRequest();
 
   if (!session) {
     return {
@@ -39,7 +39,7 @@ export const deletePostAction = async (
       return { ok: false, messages: ["Invalid post id 😠"] };
     }
 
-    if (postDoc.data.userId !== session.user.id) {
+    if (postDoc.data.userId !== user.id) {
       return {
         ok: false,
         messages: ["You can only delete your own posts 😠"],

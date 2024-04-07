@@ -1,10 +1,13 @@
 "use server";
 
-import { auth, signOut } from "@/lib";
+import { lucia } from "@/lib";
 import { ActionResponse } from "@/types";
+import { validateRequest } from "@/lib";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export const signOutAction = async (): Promise<ActionResponse | void> => {
-  const session = await auth();
+export const signOutAction = async (): Promise<ActionResponse> => {
+  const { session } = await validateRequest();
 
   if (!session) {
     return {
@@ -17,5 +20,15 @@ export const signOutAction = async (): Promise<ActionResponse | void> => {
     };
   }
 
-  await signOut();
+  await lucia.invalidateSession(session.id);
+
+  const sessionCookie = lucia.createBlankSessionCookie();
+
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes,
+  );
+
+  return redirect("/signIn");
 };

@@ -1,10 +1,11 @@
 "use server";
 
-import { userByEmail, userByUsername, userCollection } from "@/lib";
+import { db, users } from "@/drizzle";
 import { ActionResponse, SignUpInputs } from "@/types";
 import { signUpSchema } from "@/validation";
-import { hashSync } from "bcryptjs";
-import { v4 as uuid } from "uuid";
+import { LibsqlError } from "@libsql/client";
+import { generateId } from "lucia";
+import { Argon2id } from "oslo/password";
 
 export const signUpAction = async (
   data: SignUpInputs,
@@ -22,28 +23,28 @@ export const signUpAction = async (
     };
   }
 
-  const hashedPassword = hashSync(data.password, 10);
+  const hashedPassword = await new Argon2id().hash(
+    validatedFields.data.password,
+  );
+  const userId = generateId(15);
 
   validatedFields.data.password = hashedPassword;
 
   try {
-    const [userByEmailDocument, userByUsernameDocument] = await Promise.all([
-      userByEmail.match({
-        email: data.email,
-      }),
-      userByUsername.match({
-        username: data.username,
-      }),
-    ]);
-
-    if (userByEmailDocument.length > 0 || userByUsernameDocument.length > 0) {
+    await db.insert(users).values({
+      id: userId,
+      ...validatedFields.data,
+      createdAt: Date.now(),
+    });
+  } catch (error) {
+    if (error instanceof LibsqlError && error.message.includes("UNIQUE")) {
       const messages = [];
 
-      if (userByEmailDocument.length > 0) {
+      if (error.message.includes("email")) {
         messages.push("email:Email already associated with another account 😢");
       }
 
-      if (userByUsernameDocument.length > 0) {
+      if (error.message.includes("username")) {
         messages.push("username:Username already exists 😠");
       }
 
@@ -53,13 +54,6 @@ export const signUpAction = async (
       };
     }
 
-    const userId = uuid();
-
-    await userCollection.set(userId, {
-      ...validatedFields.data,
-      createdAt: Date.now(),
-    });
-  } catch (error) {
     return {
       ok: false,
       messages: ["root:Something went wrong. Please try again later 😭"],

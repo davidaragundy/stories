@@ -6,7 +6,6 @@ import { ActionResponse } from "@/types";
 import { Avatar } from "@nextui-org/avatar";
 import { Button } from "@nextui-org/button";
 import { Textarea } from "@nextui-org/input";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
@@ -20,8 +19,6 @@ export const CreatePost = () => {
   const mediaRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-
-  const { data: session } = useSession();
 
   const [actionResponse, formAction] = useFormState(
     createPostAction,
@@ -61,15 +58,9 @@ export const CreatePost = () => {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-5">
-          <Avatar
-            isBordered
-            name={`${session?.user.firstName} ${session?.user.lastName}`}
-            src={session?.user.avatarUrl}
-          />
+          <Avatar isBordered name={`John Doe`} />
           <div>
-            <h3 className="font-semibold">
-              {`${session?.user.firstName} ${session?.user.lastName}`}
-            </h3>
+            <h3 className="font-semibold">{`John Doe`}</h3>
           </div>
         </div>
         <CreatePostButton

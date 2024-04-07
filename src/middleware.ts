@@ -1,20 +1,26 @@
+import { verifyRequestOrigin } from "lucia";
 import { NextResponse } from "next/server";
-import { auth } from "@/lib";
+import type { NextRequest } from "next/server";
 
-export default auth((request) => {
-  if (
-    request.nextUrl.pathname.startsWith("/signIn") ||
-    request.nextUrl.pathname.startsWith("/signUp")
-  ) {
-    return request.auth
-      ? NextResponse.redirect(new URL("/", request.url))
-      : NextResponse.next();
+export async function middleware(request: NextRequest): Promise<NextResponse> {
+  if (request.method === "GET") {
+    return NextResponse.next();
   }
 
-  return request.auth
-    ? NextResponse.next()
-    : NextResponse.redirect(new URL("/signIn", request.url));
-});
+  const originHeader = request.headers.get("Origin");
+  const hostHeader = request.headers.get("X-Forwarded-Host");
+
+  if (
+    !originHeader ||
+    !hostHeader ||
+    !verifyRequestOrigin(originHeader, [hostHeader])
+  )
+    return new NextResponse(null, {
+      status: 403,
+    });
+
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [

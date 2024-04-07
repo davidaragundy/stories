@@ -1,6 +1,6 @@
 "use server";
 
-import { auth, postCollection } from "@/lib";
+import { validateRequest, postCollection } from "@/lib";
 import { ActionResponse, Media } from "@/types";
 import { revalidatePath } from "next/cache";
 import { v4 as uuid } from "uuid";
@@ -17,9 +17,9 @@ export const createPostAction = async (
   _previousState: ActionResponse,
   formData: FormData,
 ): Promise<ActionResponse> => {
-  const session = await auth();
+  const { user } = await validateRequest();
 
-  if (!session) {
+  if (!user) {
     return {
       ok: false,
       messages: [
@@ -35,7 +35,7 @@ export const createPostAction = async (
   }
 
   const validatedFields = createPostSchema.safeParse({
-    userId: session?.user.id,
+    userId: user.id,
     ...Object.fromEntries(formData),
   });
 

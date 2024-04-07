@@ -3,7 +3,7 @@ import { SignUpForm } from "@/components";
 
 export default function SignUp() {
   return (
-    <main className="flex flex-1 px-7 pb-10">
+    <main className="flex flex-1 px-7 pb-10 sm:pb-0">
       <div className="flex flex-1 select-none flex-col flex-wrap place-content-center gap-10">
         <div className="relative aspect-square w-4/5">
           <Image
