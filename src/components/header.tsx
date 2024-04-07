@@ -13,13 +13,12 @@ import {
 } from "@nextui-org/navbar";
 import { Avatar } from "@nextui-org/avatar";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { Button } from "@nextui-org/button";
 import { usePathname } from "next/navigation";
+import { User } from "lucia";
 
-export const Header = () => {
+export const Header = ({ user }: { user: User | null }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: session } = useSession();
   const pathname = usePathname();
 
   const menuItems = [
@@ -36,10 +35,10 @@ export const Header = () => {
       onMenuOpenChange={setIsMenuOpen}
       maxWidth="full"
       className="bg-transparent"
-      position={session ? "sticky" : "static"}
+      position={user ? "sticky" : "static"}
     >
       <NavbarContent>
-        {session && (
+        {user && (
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             className="sm:hidden"
@@ -52,7 +51,7 @@ export const Header = () => {
       </NavbarContent>
 
       <NavbarContent justify="end" className="items-center">
-        {session && (
+        {user && (
           <>
             <NavbarItem
               as={Link}
@@ -63,9 +62,9 @@ export const Header = () => {
                 isBordered
                 as="button"
                 className="transition-transform"
-                name={`${session?.user.firstName} ${session?.user.lastName}`}
+                name={`${user.firstName} ${user.lastName}`}
                 size="sm"
-                src={session?.user.avatarUrl}
+                src={user.avatarUrl}
               />
             </NavbarItem>
 
@@ -75,7 +74,7 @@ export const Header = () => {
           </>
         )}
 
-        {!session && (
+        {!user && (
           <NavbarItem>
             <Button
               as={Link}

@@ -1,67 +1,75 @@
-// import "server-only";
-
-import { compareSync } from "bcryptjs";
-import type { NextAuthConfig } from "next-auth";
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { userByUsername } from "@/lib";
-import { getUser } from "@/utils";
+import { Lucia, Session, User as AuthUser } from "lucia";
 import { User } from "@/types";
-import type { AdapterUser } from "next-auth/adapters";
+import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
+import { db } from "@/drizzle";
+import { sessions, users } from "@/drizzle";
+import { cache } from "react";
+import { cookies } from "next/headers";
 
-export const config = {
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        const { username, password } = credentials as {
-          username: string;
-          password: string;
-        };
+export const adapter = new DrizzleSQLiteAdapter(db, sessions, users);
 
-        try {
-          const userDocument = await userByUsername.match({
-            username,
-          });
-
-          if (userDocument.length === 0) {
-            return null;
-          }
-
-          const user = getUser(userDocument[0]);
-
-          if (!compareSync(password, user.password as string)) {
-            return null;
-          }
-
-          return { ...user, password: undefined };
-        } catch (error) {
-          return null;
-        }
-      },
-    }),
-  ],
-  pages: {
-    signIn: "/signIn",
+export const lucia = new Lucia(adapter, {
+  sessionCookie: {
+    expires: false,
+    attributes: {
+      secure: process.env.NODE_ENV === "production",
+    },
   },
-  callbacks: {
-    jwt({ token, user }) {
-      if (user) {
-        token.user = user;
+  getUserAttributes: (attributes) => ({
+    firstName: attributes.firstName,
+    lastName: attributes.lastName,
+    username: attributes.username,
+    email: attributes.email,
+    avatarUrl: attributes.avatarUrl,
+    createdAt: attributes.createdAt,
+  }),
+});
+
+export const validateRequest = cache(
+  async (): Promise<
+    { user: AuthUser; session: Session } | { user: null; session: null }
+  > => {
+    const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
+
+    if (!sessionId) {
+      return {
+        user: null,
+        session: null,
+      };
+    }
+
+    const result = await lucia.validateSession(sessionId);
+
+    // next.js throws when you attempt to set cookie when rendering page
+    try {
+      if (result.session && result.session.fresh) {
+        const sessionCookie = lucia.createSessionCookie(result.session.id);
+
+        cookies().set(
+          sessionCookie.name,
+          sessionCookie.value,
+          sessionCookie.attributes,
+        );
       }
 
-      return token;
-    },
-    session({ session, token }) {
-      session.user = token.user as AdapterUser & Omit<User, "password">;
+      if (!result.session) {
+        const sessionCookie = lucia.createBlankSessionCookie();
 
-      return session;
-    },
+        cookies().set(
+          sessionCookie.name,
+          sessionCookie.value,
+          sessionCookie.attributes,
+        );
+      }
+    } catch {}
+
+    return result;
   },
-} satisfies NextAuthConfig;
+);
 
-export const { handlers, auth, signIn, signOut } = NextAuth(config);
+declare module "lucia" {
+  interface Register {
+    Lucia: typeof lucia;
+    DatabaseUserAttributes: User;
+  }
+}

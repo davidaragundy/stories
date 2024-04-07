@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { Toaster } from "react-hot-toast";
-import { auth } from "@/lib/auth";
-import { SessionProvider } from "next-auth/react";
 import { Header, UIProviders } from "@/components";
+import { validateRequest } from "@/lib";
 
 export const metadata: Metadata = {
   title: "Stories",
@@ -16,20 +15,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
+  const { user } = await validateRequest();
 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body>
-        <SessionProvider session={session}>
-          <UIProviders>
-            <Toaster />
-            <div className="m-auto flex h-dvh w-full flex-col overflow-y-auto overflow-x-hidden lg:w-[65%]">
-              <Header />
-              {children}
-            </div>
-          </UIProviders>
-        </SessionProvider>
+        <UIProviders>
+          <Toaster />
+          <div className="m-auto flex h-dvh w-full flex-col overflow-y-auto overflow-x-hidden lg:w-[65%]">
+            <Header user={user} />
+            {children}
+          </div>
+        </UIProviders>
       </body>
     </html>
   );

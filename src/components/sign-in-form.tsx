@@ -7,12 +7,12 @@ import { Button } from "@nextui-org/button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInAction } from "@/actions";
-import { useRouter } from "next/navigation";
 import { signInSchema } from "@/validation";
 import { SignInInputs } from "@/types";
 import { useState } from "react";
 import { Toast } from "@/components";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export const SignInForm = () => {
   const {
@@ -23,43 +23,35 @@ export const SignInForm = () => {
   } = useForm<SignInInputs>({
     resolver: zodResolver(signInSchema),
   });
-  const router = useRouter();
   const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<SignInInputs> = async (data) => {
     setIsPending(true);
 
-    Object.keys(data).forEach((key) => {
-      data[key as keyof SignInInputs] = data[key as keyof SignInInputs].trim();
-    });
+    const { ok, messages } = await signInAction(data);
 
-    try {
-      const { ok, messages } = await signInAction(data);
+    if (!ok) {
+      toast.custom(
+        (props) => (
+          <Toast {...props} message="Could not sign in!" variant="danger" />
+        ),
+        { duration: 7000 },
+      );
 
-      if (!ok) {
-        toast.custom(
-          (props) => (
-            <Toast {...props} message="Could not sign in!" variant="danger" />
-          ),
-          {
-            duration: 7000,
-          },
-        );
+      messages.forEach((message) => {
+        const [field, error] = message.split(":") as [
+          keyof SignInInputs,
+          string,
+        ];
 
-        messages.forEach((message) => {
-          const [field, error] = message.split(":") as [
-            keyof SignInInputs,
-            string,
-          ];
+        setError(field, { message: error });
+      });
 
-          setError(field, { message: error });
-        });
+      return setIsPending(false);
+    }
 
-        return setIsPending(false);
-      }
-
-      router.push("/");
-    } catch (error) {}
+    router.push("/");
   };
 
   return (

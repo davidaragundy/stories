@@ -6,10 +6,12 @@
     "cooldown",
     "davidaragundy",
     "hookform",
+    "libsql",
     "luxon",
     "Millis",
     "nextui",
     "tailwindcss",
+    "turso",
     "upstash"
   ]
 }

@@ -2,8 +2,6 @@ import { Post, User } from "@/types";
 import { Query } from "@upstash/query";
 import { Redis } from "@upstash/redis";
 
-// export const redis = Redis.fromEnv();
-
 const q = new Query({
   redis: Redis.fromEnv({ automaticDeserialization: false }),
 });
