@@ -31,6 +31,8 @@ export const signInAction = async (
         eq(users.username, validatedFields.data.username),
     });
   } catch (error) {
+    console.error(error);
+
     return {
       ok: false,
       messages: ["root:Something went wrong. Please try again later 😭"],

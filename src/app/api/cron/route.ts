@@ -16,25 +16,21 @@ export async function GET(request: NextRequest) {
   try {
     //TODO: use a transaction
     //TODO: delete media from cloudinary for posts and comments
-    const [postsResult, postsMediaResult, postsReactionsResult] =
-      await Promise.all([
-        db
-          .delete(posts)
-          .where(lte(posts.createdAt, Date.now() - EXPIRATION_TIME)),
-        db
-          .delete(comments)
-          .where(lte(comments.createdAt, Date.now() - EXPIRATION_TIME)),
-        db
-          .delete(messages)
-          .where(lte(messages.createdAt, Date.now() - EXPIRATION_TIME)),
-      ]);
 
-    console.log({
-      postsResult,
-      postsMediaResult,
-      postsReactionsResult,
-    });
+    await Promise.all([
+      db
+        .delete(posts)
+        .where(lte(posts.createdAt, Date.now() - EXPIRATION_TIME)),
+      db
+        .delete(comments)
+        .where(lte(comments.createdAt, Date.now() - EXPIRATION_TIME)),
+      db
+        .delete(messages)
+        .where(lte(messages.createdAt, Date.now() - EXPIRATION_TIME)),
+    ]);
   } catch (error) {
+    console.error(error);
+
     return Response.json({
       ok: false,
       message: "Could not delete expired data",

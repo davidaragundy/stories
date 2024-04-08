@@ -4,7 +4,6 @@ import { validateRequest } from "@/lib";
 import { ActionResponse } from "@/types";
 import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
-import { getMediaPublicId } from "@/utils";
 import { db, posts } from "@/drizzle";
 import { eq } from "drizzle-orm";
 
@@ -42,7 +41,7 @@ export const deletePostAction = async (
 
     if (postMedia.length > 0) {
       await cloudinary.api.delete_resources(
-        postMedia.map((m) => `posts/${getMediaPublicId(m.url)}`),
+        postMedia.map((m) => `posts/${m.id}`),
       );
     }
 

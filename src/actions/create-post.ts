@@ -94,6 +94,7 @@ export const createPostAction = async (
       })) as UploadApiResponse;
 
       await db.insert(postsMedia).values({
+        id: uploadResult.public_id,
         postId,
         type: uploadResult.resource_type,
         url: uploadResult.secure_url,

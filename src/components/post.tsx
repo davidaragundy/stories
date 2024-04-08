@@ -3,37 +3,48 @@ import { Avatar } from "@nextui-org/avatar";
 import { CapIcon, CommentIcon, FireIcon, PoopIcon } from "@/icons";
 import { DeletePostButton, PostReaction } from "@/components";
 import type { Post as IPost, PostMedia, User } from "@/types";
-import type { ComponentProps } from "react";
+import { type ComponentProps } from "react";
 import { DateTime } from "luxon";
 import { Button } from "@nextui-org/button";
 
 interface Props extends IPost {
   user: Omit<User, "password" | "createdAt">;
   media: PostMedia[];
+  reactions: { userId: string; type: string }[];
 }
 
 export const Post = async ({ post }: { post: Props }) => {
+  const reactionsSet = new Set(
+    post.reactions.map((r) => `${r.userId}-${r.type}`),
+  );
+
   const reactions: ComponentProps<typeof PostReaction>[] = [
     {
+      userId: post.user.id,
       postId: post.id,
       count: post.fireCount,
       reaction: "fire",
       icon: <FireIcon size={18} />,
       color: "warning",
+      reactionsSet: reactionsSet,
     },
     {
+      userId: post.user.id,
       postId: post.id,
       count: post.poopCount,
       reaction: "poop",
       icon: <PoopIcon size={18} />,
       color: "secondary",
+      reactionsSet: reactionsSet,
     },
     {
+      userId: post.user.id,
       postId: post.id,
       count: post.capCount,
       reaction: "cap",
       icon: <CapIcon size={18} />,
       color: "primary",
+      reactionsSet: reactionsSet,
     },
   ];
 

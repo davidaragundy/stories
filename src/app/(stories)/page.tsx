@@ -23,9 +23,14 @@ export default async function Home() {
         },
       },
       media: true,
+      reactions: {
+        columns: {
+          userId: true,
+          type: true,
+        },
+      },
     },
   });
-
   if (!user) return redirect("/signIn");
 
   return (

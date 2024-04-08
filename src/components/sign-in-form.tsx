@@ -10,8 +10,6 @@ import { signInAction } from "@/actions";
 import { signInSchema } from "@/validation";
 import { SignInInputs } from "@/types";
 import { useState } from "react";
-import { Toast } from "@/components";
-import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 export const SignInForm = () => {
@@ -32,13 +30,6 @@ export const SignInForm = () => {
     const { ok, messages } = await signInAction(data);
 
     if (!ok) {
-      toast.custom(
-        (props) => (
-          <Toast {...props} message="Could not sign in!" variant="danger" />
-        ),
-        { duration: 7000 },
-      );
-
       messages.forEach((message) => {
         const [field, error] = message.split(":") as [
           keyof SignInInputs,

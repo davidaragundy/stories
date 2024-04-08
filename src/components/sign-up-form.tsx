@@ -56,19 +56,6 @@ export const SignUpForm = () => {
     const { ok, messages } = await signUpAction(data);
 
     if (!ok) {
-      toast.custom(
-        (props) => (
-          <Toast
-            {...props}
-            message="Could not create account!"
-            variant="danger"
-          />
-        ),
-        {
-          duration: 7000,
-        },
-      );
-
       messages.forEach((message) => {
         const [field, error] = message.split(":") as [
           keyof SignUpInputs,

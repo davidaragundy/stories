@@ -8,14 +8,14 @@ import {
   postsReactions,
 } from "@/drizzle";
 import { validateRequest } from "@/lib";
-import { ActionResponse } from "@/types";
+import { ActionResponse, Reaction } from "@/types";
 import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export const updateReactionAction = async (
   target: "post" | "comment",
   targetId: string,
-  reaction: "fire" | "poop" | "cap",
+  reaction: Reaction,
 ): Promise<ActionResponse> => {
   const { user, session } = await validateRequest();
 
@@ -38,91 +38,52 @@ export const updateReactionAction = async (
       target === "post" ? "post_id" : "comment_id",
     );
 
-    const userReaction = await db.run(
-      sql`SELECT * FROM ${reactionsTargetTable} WHERE ${reactionsTargetTable.userId} = ${user.id} AND ${reactionsTargetTableIdFieldName} = ${targetId}`,
-    );
+    const userReaction = await db
+      .select()
+      .from(reactionsTargetTable)
+      .where(
+        and(
+          eq(reactionsTargetTable.userId, user.id),
+          eq(reactionsTargetTableIdFieldName, targetId),
+          eq(reactionsTargetTable.type, reaction),
+        ),
+      );
 
     const targetTable = target === "post" ? posts : comments;
     const targetTableReactionFieldName = sql.raw(reaction + "_count");
+    const increaseOrDecreaseCount = sql.raw(
+      userReaction.length === 0 ? "1" : "-1",
+    );
+
     const targetIdPropName = target === "post" ? "postId" : "commentId";
 
-    if (userReaction.rows.length === 0) {
-      await Promise.all([
-        db.run(
-          sql`UPDATE ${targetTable} SET ${targetTableReactionFieldName} = ${targetTableReactionFieldName} + 1 WHERE ${targetTable.id} = ${targetId}`,
-        ),
-        db.insert(reactionsTargetTable).values({
-          [targetIdPropName]: targetId,
-          userId: user.id,
-          type: reaction,
-        }),
-      ]);
-
-      revalidatePath("/");
-
-      return {
-        ok: true,
-        messages: [`Successfully updated ${reaction} reaction count 🤙`],
-      };
-    }
-
-    if (userReaction.rows.length === 1) {
-      if (userReaction.rows[0].type === reaction) {
-        await Promise.all([
-          db.run(
-            sql`UPDATE ${targetTable} SET ${targetTableReactionFieldName} = ${targetTableReactionFieldName} - 1 WHERE ${targetTable.id} = ${targetId}`,
-          ),
-          db
+    await Promise.all([
+      db.run(
+        sql`UPDATE ${targetTable} SET ${targetTableReactionFieldName} = ${targetTableReactionFieldName} + ${increaseOrDecreaseCount} WHERE ${targetTable.id} = ${targetId}`,
+      ),
+      userReaction.length === 0
+        ? db.insert(reactionsTargetTable).values({
+            [targetIdPropName]: targetId,
+            userId: user.id,
+            type: reaction,
+          })
+        : db
             .delete(reactionsTargetTable)
             .where(
               and(
                 eq(reactionsTargetTableIdFieldName, targetId),
                 eq(reactionsTargetTable.userId, user.id),
+                eq(reactionsTargetTable.type, reaction),
               ),
             ),
-        ]);
+    ]);
 
-        revalidatePath("/");
+    revalidatePath("/");
 
-        return {
-          ok: true,
-          messages: [`Successfully updated ${reaction} reaction count 🤙`],
-        };
-      }
-
-      const reactionFieldToDecrease = sql.raw(
-        userReaction.rows[0].type + "_count",
-      );
-
-      await Promise.all([
-        db.run(
-          sql`UPDATE ${targetTable} SET ${reactionFieldToDecrease} = ${reactionFieldToDecrease} - 1 WHERE ${targetTable.id} = ${targetId}`,
-        ),
-        db.run(
-          sql`UPDATE ${targetTable} SET ${targetTableReactionFieldName} = ${targetTableReactionFieldName} + 1 WHERE ${targetTable.id} = ${targetId}`,
-        ),
-        db
-          .update(reactionsTargetTable)
-          .set({ type: reaction })
-          .where(
-            and(
-              eq(reactionsTargetTableIdFieldName, targetId),
-              eq(reactionsTargetTable.userId, user.id),
-            ),
-          ),
-      ]);
-
-      revalidatePath("/");
-
-      return {
-        ok: true,
-        messages: [`Successfully updated ${reaction} reaction count 🤙`],
-      };
-    }
-
-    throw new Error(
-      "Something went wrong while updating reaction count, the user have multiple reactions in the same post or comment",
-    );
+    return {
+      ok: true,
+      messages: [`Successfully updated ${reaction} reaction count 🤙`],
+    };
   } catch (error) {
     console.error(error);
 

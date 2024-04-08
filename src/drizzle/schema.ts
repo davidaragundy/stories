@@ -38,6 +38,7 @@ export const posts = sqliteTable("posts", {
 });
 
 export const postsMedia = sqliteTable("posts_media", {
+  id: text("id").notNull().primaryKey(),
   postId: text("post_id")
     .notNull()
     .references(() => posts.id, { onDelete: "cascade" }),
@@ -60,7 +61,7 @@ export const postsReactions = sqliteTable(
   },
   (table) => ({
     pk: primaryKey({
-      columns: [table.postId, table.userId],
+      columns: [table.postId, table.userId, table.type],
     }),
   }),
 );
@@ -83,6 +84,7 @@ export const comments = sqliteTable("comments", {
 });
 
 export const commentsMedia = sqliteTable("comments_media", {
+  id: text("id").notNull().primaryKey(),
   commentId: text("comment_id")
     .notNull()
     .references(() => comments.id, { onDelete: "cascade" }),
@@ -105,7 +107,7 @@ export const commentsReactions = sqliteTable(
   },
   (table) => ({
     pk: primaryKey({
-      columns: [table.commentId, table.userId],
+      columns: [table.commentId, table.userId, table.type],
     }),
   }),
 );

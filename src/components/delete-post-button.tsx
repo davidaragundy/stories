@@ -22,38 +22,24 @@ export const DeletePostButton = ({ postId }: { postId: string }) => {
   const handleDelete = async () => {
     setLoading(true);
 
-    try {
-      const { ok, messages } = await deletePostAction(postId);
+    const { ok, messages } = await deletePostAction(postId);
 
-      toast.custom(
-        (props) => (
-          <Toast
-            {...props}
-            message={messages.toString()}
-            variant={ok ? "success" : "danger"}
-          />
-        ),
-        { duration: 7000 },
-      );
-    } catch (error) {
-      toast.custom(
-        (props) => (
-          <Toast
-            {...props}
-            message="An error occurred while deleting the post 😢"
-            variant="danger"
-          />
-        ),
-        { duration: 7000 },
-      );
-    }
+    toast.custom(
+      (props) => (
+        <Toast
+          {...props}
+          message={messages.toString()}
+          variant={ok ? "default" : "danger"}
+        />
+      ),
+      { duration: 3000 },
+    );
 
     setLoading(false);
   };
 
   return (
     <>
-      {" "}
       <div className="flex flex-wrap items-start justify-end">
         <Button
           isLoading={loading}

@@ -28,3 +28,10 @@ export type NewCommentMedia = typeof commentsMedia.$inferInsert;
 
 export type CommentReactions = typeof commentsReactions.$inferSelect;
 export type NewCommentReactions = typeof commentsReactions.$inferInsert;
+
+export type Reaction = "fire" | "poop" | "cap";
+export type Reactions = {
+  fire: number;
+  poop: number;
+  cap: number;
+};

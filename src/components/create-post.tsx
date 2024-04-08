@@ -33,11 +33,11 @@ export const CreatePost = ({ user }: { user: User }) => {
           <Toast
             {...props}
             message={actionResponse.messages.toString()}
-            variant={actionResponse.ok ? "success" : "danger"}
+            variant={actionResponse.ok ? "default" : "danger"}
           />
         ),
         {
-          duration: 7000,
+          duration: 3000,
         },
       );
 

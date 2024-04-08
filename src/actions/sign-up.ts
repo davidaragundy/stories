@@ -54,6 +54,8 @@ export const signUpAction = async (
       };
     }
 
+    console.error(error);
+
     return {
       ok: false,
       messages: ["root:Something went wrong. Please try again later 😭"],
