@@ -1,49 +1,30 @@
-export type User = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  username: string;
-  email: string;
-  password: string;
-  createdAt: number;
-  avatarUrl: string;
-};
+import {
+  comments,
+  commentsMedia,
+  commentsReactions,
+  posts,
+  postsMedia,
+  postsReactions,
+  users,
+} from "@/drizzle";
 
-export type Post = {
-  id: string;
-  userId: string;
-  content: string;
-  media: Media[];
-  createdAt: number;
-  reactions: Reactions;
-};
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
 
-export type Reactions = {
-  fire: number;
-  poop: number;
-  cap: number;
-};
+export type Post = typeof posts.$inferSelect;
+export type NewPost = typeof posts.$inferInsert;
 
-export type Media = {
-  url: string;
-  type: "image" | "video";
-};
+export type PostMedia = typeof postsMedia.$inferSelect;
+export type NewPostMedia = typeof postsMedia.$inferInsert;
 
-export type Comment = {
-  id: string;
-  userId: string;
-  postId: string;
-  parentId: string;
-  content: string;
-  media: Media[];
-  createdAt: number;
-  reactions: Reactions;
-};
+export type PostReactions = typeof postsReactions.$inferSelect;
+export type NewPostReactions = typeof postsReactions.$inferInsert;
 
-export type Like = {
-  id: string;
-  userId: string;
-  postId?: string;
-  commentId?: string;
-  createdAt: number;
-};
+export type Comment = typeof comments.$inferSelect;
+export type NewComment = typeof comments.$inferInsert;
+
+export type CommentMedia = typeof commentsMedia.$inferSelect;
+export type NewCommentMedia = typeof commentsMedia.$inferInsert;
+
+export type CommentReactions = typeof commentsReactions.$inferSelect;
+export type NewCommentReactions = typeof commentsReactions.$inferInsert;

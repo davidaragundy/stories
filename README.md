@@ -13,12 +13,25 @@ Stories is an open source social media platform similar to Twitter that preserve
 - Turso
 - Drizzle
 - Lucia
-- Redis
+- Pusher
 - Cloudinary
+
+## Todo
+
+- [ ] Add optimistic UI
+- [ ] Switch to UploadThing
+- [ ] Add user comments
+- [ ] Add user likes
+- [ ] Add user follow
+- [ ] Add user chat
+- [ ] Add user search
+- [ ] Add user profile
+- [ ] Add user settings
+- [ ] Add user notifications
 
 ## Setup
 
-First, you need to have a Redis server, a Cloudinary account and a Turso database.
+First, you need to have a Pusher account, a Cloudinary account and a Turso database.
 
 1. Clone the repository
 2. Install the dependencies

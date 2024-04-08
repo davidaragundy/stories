@@ -1,29 +1,37 @@
 "use client";
 
-import { updateReactionCountAction } from "@/actions";
-import { Post, Reactions } from "@/types";
+import { updateReactionAction } from "@/actions";
 import { Button, ButtonProps } from "@nextui-org/button";
+import toast from "react-hot-toast";
+import { Toast } from ".";
 
 export const PostReaction = ({
   reaction,
   count,
   icon,
   color,
-  post,
+  postId,
 }: {
-  reaction: keyof Reactions;
+  reaction: "fire" | "poop" | "cap";
   count: number;
   icon: React.ReactNode;
   color: ButtonProps["color"];
-  post: Post;
+  postId: string;
 }) => {
   const handleReaction = async () => {
-    try {
-      const { ok, messages } = await updateReactionCountAction(post, reaction);
+    const { ok, messages } = await updateReactionAction(
+      "post",
+      postId,
+      reaction,
+    );
 
-      console.log({ ok, messages });
-    } catch (error) {
-      console.log(error);
+    if (!ok) {
+      toast.custom(
+        (props) => (
+          <Toast {...props} message={messages.toString()} variant="danger" />
+        ),
+        { duration: 7000 },
+      );
     }
   };
 

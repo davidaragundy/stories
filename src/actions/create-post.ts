@@ -1,11 +1,12 @@
 "use server";
 
-import { validateRequest, postCollection } from "@/lib";
-import { ActionResponse, Media } from "@/types";
+import { validateRequest } from "@/lib";
+import { ActionResponse } from "@/types";
 import { revalidatePath } from "next/cache";
-import { v4 as uuid } from "uuid";
 import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
 import { createPostSchema } from "@/validation";
+import { db, posts, postsMedia } from "@/drizzle";
+import { generateId } from "lucia";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -55,12 +56,30 @@ export const createPostAction = async (
     };
   }
 
-  let media: Media[] = [];
+  const postId = generateId(15);
+
+  try {
+    await db.insert(posts).values({
+      id: postId,
+      userId: validatedFields.data.userId,
+      content: validatedFields.data.content,
+      createdAt: Date.now(),
+    });
+  } catch (error) {
+    console.error(error);
+
+    return { ok: false, messages: ["Failed to create post 😭"] };
+  }
 
   if (validatedFields.data.media) {
     const arrayBuffer = await validatedFields.data.media.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
 
+    //TODO: upload multiple media
+    //TODO: If the media upload fails, we should delete the post from the db
+    //TODO: If db insert fails, we should delete the media from cloudinary
+
+    //Transaction??
     try {
       const uploadResult = (await new Promise((resolve, reject) => {
         cloudinary.uploader
@@ -74,8 +93,9 @@ export const createPostAction = async (
           .end(buffer);
       })) as UploadApiResponse;
 
-      media.push({
-        type: uploadResult.resource_type as "image" | "video",
+      await db.insert(postsMedia).values({
+        postId,
+        type: uploadResult.resource_type,
         url: uploadResult.secure_url,
       });
     } catch (error) {
@@ -85,32 +105,7 @@ export const createPostAction = async (
     }
   }
 
-  try {
-    const postId = uuid();
+  revalidatePath("/");
 
-    await postCollection.set(postId, {
-      content: validatedFields.data.content || "",
-      userId: validatedFields.data.userId,
-      media: media,
-      createdAt: Date.now(),
-      reactions: {
-        cap: 0,
-        fire: 0,
-        poop: 0,
-      },
-    });
-
-    await postCollection.redis.expire(
-      postCollection.documentKey(postId),
-      60 * 60 * 24,
-    );
-
-    revalidatePath("/");
-
-    return { ok: true, messages: ["Post created successfully 💩"] };
-  } catch (error) {
-    console.error(error);
-
-    return { ok: false, messages: ["Failed to create post 😭"] };
-  }
+  return { ok: true, messages: ["Post created successfully 💩"] };
 };

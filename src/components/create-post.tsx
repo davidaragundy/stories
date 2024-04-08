@@ -11,8 +11,9 @@ import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import toast from "react-hot-toast";
 import { CreatePostButton, Toast } from "@/components";
+import { User } from "lucia";
 
-export const CreatePost = () => {
+export const CreatePost = ({ user }: { user: User }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [mediaUrl, setMediaUrl] = useState<string>("");
 
@@ -58,9 +59,13 @@ export const CreatePost = () => {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-5">
-          <Avatar isBordered name={`John Doe`} />
+          <Avatar
+            isBordered
+            name={`${user.firstName} ${user.lastName}`}
+            src={user.avatarUrl}
+          />
           <div>
-            <h3 className="font-semibold">{`John Doe`}</h3>
+            <h3 className="font-semibold">{`${user.firstName} ${user.lastName}`}</h3>
           </div>
         </div>
         <CreatePostButton

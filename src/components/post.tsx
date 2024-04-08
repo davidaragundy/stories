@@ -2,36 +2,35 @@ import Image from "next/image";
 import { Avatar } from "@nextui-org/avatar";
 import { CapIcon, CommentIcon, FireIcon, PoopIcon } from "@/icons";
 import { DeletePostButton, PostReaction } from "@/components";
-import type { Post as IPost, User } from "@/types";
+import type { Post as IPost, PostMedia, User } from "@/types";
 import type { ComponentProps } from "react";
 import { DateTime } from "luxon";
 import { Button } from "@nextui-org/button";
 
-export const Post = async ({
-  post,
-  user,
-}: {
-  post: IPost;
-  user: Omit<User, "password">;
-}) => {
+interface Props extends IPost {
+  user: Omit<User, "password" | "createdAt">;
+  media: PostMedia[];
+}
+
+export const Post = async ({ post }: { post: Props }) => {
   const reactions: ComponentProps<typeof PostReaction>[] = [
     {
-      post: post,
-      count: post.reactions.fire,
+      postId: post.id,
+      count: post.fireCount,
       reaction: "fire",
       icon: <FireIcon size={18} />,
       color: "warning",
     },
     {
-      post: post,
-      count: post.reactions.poop,
+      postId: post.id,
+      count: post.poopCount,
       reaction: "poop",
       icon: <PoopIcon size={18} />,
       color: "secondary",
     },
     {
-      post: post,
-      count: post.reactions.cap,
+      postId: post.id,
+      count: post.capCount,
       reaction: "cap",
       icon: <CapIcon size={18} />,
       color: "primary",
@@ -45,12 +44,12 @@ export const Post = async ({
           <div className="flex items-center gap-5">
             <Avatar
               isBordered
-              name={`${user.firstName} ${user.lastName}`}
-              src={user.avatarUrl}
+              name={`${post.user.firstName} ${post.user.lastName}`}
+              src={post.user.avatarUrl}
             />
             <div>
               <h3 className="font-semibold">
-                {user.firstName} {user.lastName}
+                {post.user.firstName} {post.user.lastName}
               </h3>
               <p className="text-xs text-gray-400">
                 {DateTime.fromMillis(post.createdAt).toRelative({
@@ -69,13 +68,26 @@ export const Post = async ({
         )}
 
         {post.media.length > 0 && (
-          <div className="relative aspect-square w-full">
-            <Image
-              className="w-full rounded-large object-cover"
-              fill
-              alt="Post image"
-              src={post.media[0].url}
-            />
+          <div className="relative aspect-square w-full py-2">
+            {post.media.map((m) =>
+              m.type === "image" ? (
+                <Image
+                  key={m.url}
+                  className="w-full rounded-large object-cover"
+                  fill
+                  alt="Post image"
+                  src={post.media[0].url}
+                />
+              ) : (
+                <video
+                  key={m.url}
+                  className="w-full rounded-large object-cover py-2"
+                  controls
+                >
+                  <source src={m.url} />
+                </video>
+              ),
+            )}
           </div>
         )}
       </div>
