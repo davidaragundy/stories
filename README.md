@@ -20,6 +20,8 @@ Stories is an open source social media platform similar to Twitter that preserve
 
 - [x] Add optimistic UI
 - [x] Switch to Firebase Storage
+- [ ] Add forgot password feature
+- [ ] Add custom styles for video player with vidstack
 - [ ] Add user comments
 - [ ] Add user likes
 - [ ] Add user follow

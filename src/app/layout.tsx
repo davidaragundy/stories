@@ -22,7 +22,7 @@ export default async function RootLayout({
       <body>
         <UIProviders>
           <Toaster />
-          <div className="m-auto flex h-dvh w-full flex-col overflow-y-auto overflow-x-hidden lg:w-[65%]">
+          <div className="m-auto flex h-dvh w-full flex-col overflow-y-auto overflow-x-hidden lg:w-[clamp(60rem,70%,70rem)]">
             <Header user={user} />
             {children}
           </div>

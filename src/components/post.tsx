@@ -82,15 +82,15 @@ export const Post = async ({ post }: { post: Props }) => {
         {post.media.length > 0 && (
           <div
             className={cn(
-              "relative w-full py-2",
-              post.media[0].type === "image" && "aspect-square",
+              "relative w-full",
+              post.media[0].type === "image" && "my-2 aspect-square",
             )}
           >
             {post.media.map((media) =>
               media.type === "image" ? (
                 <Image
                   key={media.id}
-                  className="w-full rounded-large object-cover"
+                  className="w-full rounded-3xl object-cover"
                   fill
                   alt={`${post.user.firstName}'s post image`}
                   src={post.media[0].url}
@@ -99,7 +99,7 @@ export const Post = async ({ post }: { post: Props }) => {
               ) : (
                 <video
                   key={media.id}
-                  className="w-full rounded-large object-cover py-2"
+                  className="w-full rounded-3xl object-cover py-2"
                   controls
                 >
                   <source src={media.url} />
