@@ -1,17 +1,16 @@
 {
   "cSpell.words": [
     "Aragundy",
-    "cloudinary",
     "clsx",
     "cooldown",
     "davidaragundy",
+    "firebasestorage",
     "hookform",
     "libsql",
     "luxon",
     "Millis",
     "nextui",
     "tailwindcss",
-    "turso",
-    "upstash"
+    "turso"
   ]
 }

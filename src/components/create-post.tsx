@@ -12,10 +12,12 @@ import { useFormState } from "react-dom";
 import toast from "react-hot-toast";
 import { CreatePostButton, Toast } from "@/components";
 import { User } from "lucia";
+import { cn } from "@/utils";
 
 export const CreatePost = ({ user }: { user: User }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [mediaUrl, setMediaUrl] = useState<string>("");
+  const [mediaType, setMediaType] = useState<"image" | "video">();
 
   const mediaRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);
@@ -96,13 +98,32 @@ export const CreatePost = ({ user }: { user: User }) => {
             ref={mediaRef}
             onChange={({ currentTarget }) => {
               if (currentTarget.files?.[0]) {
+                if (currentTarget.files[0].size > 6 * 2 ** 20) {
+                  toast.custom(
+                    (props) => (
+                      <Toast
+                        {...props}
+                        message="The file is too large. Max size is 6MiB. 😠"
+                        variant="danger"
+                      />
+                    ),
+                    { duration: 3000 },
+                  );
+
+                  return;
+                }
+
                 const url = URL.createObjectURL(currentTarget.files[0]);
 
                 setMediaUrl(url);
+                setMediaType(
+                  currentTarget.files[0].type.includes("image")
+                    ? "image"
+                    : "video",
+                );
               }
             }}
-            accept="image/*"
-            multiple={false}
+            accept="image/*, video/*"
           />
 
           {!mediaUrl && (
@@ -121,7 +142,12 @@ export const CreatePost = ({ user }: { user: User }) => {
           )}
 
           {mediaUrl && (
-            <div className="relative mt-2 aspect-square w-full">
+            <div
+              className={cn(
+                "relative mt-2 w-full",
+                mediaType === "image" && "aspect-square",
+              )}
+            >
               <Button
                 className="absolute right-2 top-2 z-50"
                 isIconOnly
@@ -141,12 +167,20 @@ export const CreatePost = ({ user }: { user: User }) => {
               >
                 <XIcon size={18} className="text-default-500" />
               </Button>
-              <Image
-                src={mediaUrl}
-                alt="Post's image"
-                fill
-                className="rounded-2xl object-cover"
-              />
+              {mediaType === "image" ? (
+                <Image
+                  src={mediaUrl}
+                  alt="Post's image"
+                  fill
+                  className="rounded-2xl object-cover"
+                />
+              ) : (
+                <video
+                  src={mediaUrl}
+                  className="w-full rounded-2xl object-cover"
+                  controls
+                />
+              )}
             </div>
           )}
         </div>

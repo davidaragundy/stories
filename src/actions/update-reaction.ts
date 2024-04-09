@@ -12,6 +12,8 @@ import { ActionResponse, Reaction } from "@/types";
 import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+//TODO: add a rate limiter to this function
+
 export const updateReactionAction = async (
   target: "post" | "comment",
   targetId: string,
@@ -56,6 +58,8 @@ export const updateReactionAction = async (
     );
 
     const targetIdPropName = target === "post" ? "postId" : "commentId";
+
+    // db.transaction()
 
     await Promise.all([
       db.run(

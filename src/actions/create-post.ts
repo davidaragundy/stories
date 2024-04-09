@@ -1,18 +1,13 @@
 "use server";
 
-import { validateRequest } from "@/lib";
+import { postsRef, validateRequest } from "@/lib";
 import { ActionResponse } from "@/types";
 import { revalidatePath } from "next/cache";
-import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
 import { createPostSchema } from "@/validation";
 import { db, posts, postsMedia } from "@/drizzle";
 import { generateId } from "lucia";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+import { eq } from "drizzle-orm";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export const createPostAction = async (
   _previousState: ActionResponse,
@@ -72,35 +67,25 @@ export const createPostAction = async (
   }
 
   if (validatedFields.data.media) {
-    const arrayBuffer = await validatedFields.data.media.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-
-    //TODO: upload multiple media
-    //TODO: If the media upload fails, we should delete the post from the db
-    //TODO: If db insert fails, we should delete the media from cloudinary
-
-    //Transaction??
     try {
-      const uploadResult = (await new Promise((resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream({ folder: "posts" }, (error, uploadResult) => {
-            if (error) {
-              return reject(error);
-            }
+      const mediaId = `${generateId(15)}.${validatedFields.data.media.type.split("/")[1]}`;
 
-            return resolve(uploadResult!);
-          })
-          .end(buffer);
-      })) as UploadApiResponse;
+      const mediaRef = ref(postsRef, mediaId);
+
+      await uploadBytes(mediaRef, validatedFields.data.media);
+
+      const mediaUrl = await getDownloadURL(mediaRef);
 
       await db.insert(postsMedia).values({
-        id: uploadResult.public_id,
+        id: mediaId,
         postId,
-        type: uploadResult.resource_type,
-        url: uploadResult.secure_url,
+        type: validatedFields.data.media.type.split("/")[0],
+        url: mediaUrl,
       });
     } catch (error) {
       console.error(error);
+
+      await db.delete(posts).where(eq(posts.id, postId));
 
       return { ok: false, messages: ["Failed to upload media 😭"] };
     }

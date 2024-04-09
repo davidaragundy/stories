@@ -3,6 +3,8 @@ import { lte } from "drizzle-orm";
 import { posts, comments, messages } from "@/drizzle";
 import type { NextRequest } from "next/server";
 import { EXPIRATION_TIME } from "@/constants";
+import { deleteObject, ref } from "firebase/storage";
+import { postsRef } from "@/lib";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -14,8 +16,62 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    //TODO: use a transaction
-    //TODO: delete media from cloudinary for posts and comments
+    const [postsMediaToDelete, commentsMediaToDelete] = await Promise.all([
+      db.query.posts.findMany({
+        columns: {
+          id: false,
+          userId: false,
+          content: false,
+          fireCount: false,
+          poopCount: false,
+          capCount: false,
+          createdAt: false,
+        },
+        where: (fields, { lte }) =>
+          lte(fields.createdAt, Date.now() - EXPIRATION_TIME),
+        with: {
+          media: {
+            columns: {
+              id: true,
+            },
+          },
+        },
+      }),
+      db.query.comments.findMany({
+        columns: {
+          id: false,
+          userId: false,
+          postId: false,
+          parentId: false,
+          content: false,
+          fireCount: false,
+          poopCount: false,
+          capCount: false,
+          createdAt: false,
+        },
+        where: (fields, { lte }) =>
+          lte(fields.createdAt, Date.now() - EXPIRATION_TIME),
+        with: {
+          media: {
+            columns: {
+              id: true,
+            },
+          },
+        },
+      }),
+      ,
+    ]);
+
+    const mediaToDeleteRefs = postsMediaToDelete
+      .flatMap((m) => m.media)
+      .map((media) => ref(postsRef, media.id))
+      .concat(
+        commentsMediaToDelete
+          .flatMap((m) => m.media)
+          .map((media) => ref(postsRef, media.id)),
+      );
+
+    await Promise.all(mediaToDeleteRefs.map((mr) => deleteObject(mr)));
 
     await Promise.all([
       db

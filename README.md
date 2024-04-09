@@ -13,13 +13,13 @@ Stories is an open source social media platform similar to Twitter that preserve
 - Turso
 - Drizzle
 - Lucia
-- Pusher
-- Cloudinary
+- Ably
+- Firebase Storage
 
 ## Todo
 
-- [ ] Add optimistic UI
-- [ ] Switch to UploadThing
+- [x] Add optimistic UI
+- [x] Switch to Firebase Storage
 - [ ] Add user comments
 - [ ] Add user likes
 - [ ] Add user follow
@@ -31,7 +31,11 @@ Stories is an open source social media platform similar to Twitter that preserve
 
 ## Setup
 
-First, you need to have a Pusher account, a Cloudinary account and a Turso database.
+### Pre-requisites
+
+- Firebase project
+- Ably account
+- Turso database
 
 1. Clone the repository
 2. Install the dependencies
