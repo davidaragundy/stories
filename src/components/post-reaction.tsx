@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { Toast } from "@/components";
 import { cn } from "@/utils";
 import { Reaction } from "@/types";
-import { useOptimistic } from "react";
+import { startTransition, useOptimistic } from "react";
 
 export const PostReaction = ({
   reaction,
@@ -39,7 +39,9 @@ export const PostReaction = ({
   );
 
   const handleReaction = async () => {
-    setOptimisticCount();
+    startTransition(() => {
+      setOptimisticCount();
+    });
 
     const { ok, messages } = await updateReactionAction(
       "post",

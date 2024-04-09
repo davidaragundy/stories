@@ -6,6 +6,7 @@ import type { Post as IPost, PostMedia, User } from "@/types";
 import { type ComponentProps } from "react";
 import { DateTime } from "luxon";
 import { Button } from "@nextui-org/button";
+import { cn } from "@/utils";
 
 interface Props extends IPost {
   user: Omit<User, "password" | "createdAt">;
@@ -79,23 +80,29 @@ export const Post = async ({ post }: { post: Props }) => {
         )}
 
         {post.media.length > 0 && (
-          <div className="relative aspect-square w-full py-2">
-            {post.media.map((m) =>
-              m.type === "image" ? (
+          <div
+            className={cn(
+              "relative w-full py-2",
+              post.media[0].type === "image" && "aspect-square",
+            )}
+          >
+            {post.media.map((media) =>
+              media.type === "image" ? (
                 <Image
-                  key={m.url}
+                  key={media.id}
                   className="w-full rounded-large object-cover"
                   fill
-                  alt="Post image"
+                  alt={`${post.user.firstName}'s post image`}
                   src={post.media[0].url}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               ) : (
                 <video
-                  key={m.url}
+                  key={media.id}
                   className="w-full rounded-large object-cover py-2"
                   controls
                 >
-                  <source src={m.url} />
+                  <source src={media.url} />
                 </video>
               ),
             )}

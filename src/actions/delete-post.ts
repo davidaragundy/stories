@@ -1,17 +1,11 @@
 "use server";
 
-import { validateRequest } from "@/lib";
+import { postsRef, validateRequest } from "@/lib";
 import { ActionResponse } from "@/types";
 import { revalidatePath } from "next/cache";
-import { v2 as cloudinary } from "cloudinary";
 import { db, posts } from "@/drizzle";
 import { eq } from "drizzle-orm";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+import { deleteObject, ref } from "firebase/storage";
 
 export const deletePostAction = async (
   postId: string,
@@ -33,17 +27,17 @@ export const deletePostAction = async (
     return { ok: false, messages: ["Post ID is required to delete a post 😠"] };
   }
 
-  //TODO: If the cloudinary delete fails, the post should not be deleted from the database
   try {
     const postMedia = await db.query.postsMedia.findMany({
+      columns: {
+        id: true,
+      },
       where: (pm, { eq }) => eq(pm.postId, postId),
     });
 
-    if (postMedia.length > 0) {
-      await cloudinary.api.delete_resources(
-        postMedia.map((m) => `posts/${m.id}`),
-      );
-    }
+    const mediaRefs = postMedia.map((pm) => ref(postsRef, pm.id));
+
+    await Promise.all(mediaRefs.map((mr) => deleteObject(mr)));
 
     await db.delete(posts).where(eq(posts.id, postId));
 
