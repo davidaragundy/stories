@@ -28,6 +28,8 @@ export const CreatePost = ({ user }: { user: User }) => {
     {} as ActionResponse,
   );
 
+  //TODO: upload media to firebase storage in client side, show progress bar and send the media url to the server
+
   useEffect(() => {
     if (Object.keys(actionResponse).length > 0) {
       toast.custom(
@@ -98,12 +100,12 @@ export const CreatePost = ({ user }: { user: User }) => {
             ref={mediaRef}
             onChange={({ currentTarget }) => {
               if (currentTarget.files?.[0]) {
-                if (currentTarget.files[0].size > 6 * 2 ** 20) {
+                if (currentTarget.files[0].size > 4.5 * 10 ** 6) {
                   toast.custom(
                     (props) => (
                       <Toast
                         {...props}
-                        message="The file is too large. Max size is 6MiB. 😠"
+                        message="The file is too large. Max size is 4.5MB. 😠"
                         variant="danger"
                       />
                     ),
