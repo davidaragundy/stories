@@ -1,38 +1,38 @@
 "use client";
 
-import { LockIcon, UserIcon } from "@/icons";
+import { EmailIcon } from "@/icons";
 import { Input } from "@nextui-org/input";
 import { Link } from "@nextui-org/link";
 import { Button } from "@nextui-org/button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signInAction } from "@/actions";
-import { signInSchema } from "@/validation";
-import { SignInInputs } from "@/types";
+import { forgotPasswordAction } from "@/actions";
+import { forgotPasswordSchema } from "@/validation";
+import { ForgotPasswordInputs } from "@/types";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { Toast } from "@/components";
 
-export const SignInForm = () => {
+export const ForgotPasswordForm = () => {
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<SignInInputs>({
-    resolver: zodResolver(signInSchema),
+  } = useForm<ForgotPasswordInputs>({
+    resolver: zodResolver(forgotPasswordSchema),
   });
   const [isPending, setIsPending] = useState(false);
-  const router = useRouter();
 
-  const onSubmit: SubmitHandler<SignInInputs> = async (data) => {
+  const onSubmit: SubmitHandler<ForgotPasswordInputs> = async (data) => {
     setIsPending(true);
 
-    const { ok, messages } = await signInAction(data);
+    const { ok, messages } = await forgotPasswordAction(data);
 
     if (!ok) {
       messages.forEach((message) => {
         const [field, error] = message.split(":") as [
-          keyof SignInInputs,
+          keyof ForgotPasswordInputs,
           string,
         ];
 
@@ -42,7 +42,16 @@ export const SignInForm = () => {
       return setIsPending(false);
     }
 
-    router.push("/");
+    toast.custom(
+      (props) => (
+        <Toast {...props} message={messages.toString()} variant="success" />
+      ),
+      {
+        duration: 7000,
+      },
+    );
+
+    setIsPending(false);
   };
 
   return (
@@ -62,36 +71,17 @@ export const SignInForm = () => {
 
       <div className="flex flex-col gap-5">
         <Input
-          type="text"
-          label="Username"
-          placeholder="davidaragundy"
+          type="email"
+          label="Email"
+          placeholder="david@aragundy.com"
           labelPlacement="inside"
           defaultValue=""
-          startContent={<UserIcon size={20} className="text-default-500" />}
-          errorMessage={errors.username?.message}
-          isInvalid={!!errors.username}
-          {...register("username")}
+          startContent={<EmailIcon size={20} className="text-default-500" />}
+          errorMessage={errors.email?.message}
+          isInvalid={!!errors.email}
+          {...register("email")}
+          description="If you have an account registered, we'll send you an email with a link to reset your password."
         />
-        <div>
-          <Input
-            type="password"
-            label="Password"
-            placeholder="********"
-            labelPlacement="inside"
-            startContent={<LockIcon size={20} className="text-default-500" />}
-            defaultValue=""
-            errorMessage={errors.password?.message}
-            isInvalid={!!errors.password}
-            {...register("password")}
-          />
-          <Link
-            href="/forgot-password"
-            underline="hover"
-            className="text-xs text-default-500"
-          >
-            Forgot password?
-          </Link>
-        </div>
       </div>
 
       <div className="flex flex-col flex-wrap items-center gap-2">
@@ -102,10 +92,10 @@ export const SignInForm = () => {
           className="text-md w-full font-bold"
           isLoading={isPending}
         >
-          Sign in
+          Send link
         </Button>
-        <Link href="/sign-up" underline="hover" className="text-xs">
-          {"Don't have an account?"}
+        <Link href="/sign-in" underline="hover" className="text-xs">
+          {"Did you remember the password?"}
         </Link>
       </div>
     </form>

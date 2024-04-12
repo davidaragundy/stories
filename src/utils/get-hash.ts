@@ -1,13 +1,10 @@
+import { sha256 } from "oslo/crypto";
+import { encodeHex } from "oslo/encoding";
+
 export const getHash = async (text: string) => {
-  const textUint8 = new TextEncoder().encode(text);
+  const data = new TextEncoder().encode(text);
+  const hash = await sha256(data);
+  const hexHash = encodeHex(hash);
 
-  const hashBuffer = await crypto.subtle.digest("SHA-256", textUint8);
-
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-
-  const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-
-  return hashHex;
+  return hexHash;
 };
