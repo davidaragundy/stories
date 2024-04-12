@@ -20,7 +20,7 @@ Stories is an open source social media platform similar to Twitter that preserve
 
 - [x] Add optimistic UI
 - [x] Switch to Firebase Storage
-- [ ] Add forgot password feature
+- [x] Add forgot password feature
 - [ ] Add custom styles for video player with vidstack
 - [ ] Add user comments
 - [ ] Add user likes
@@ -33,11 +33,8 @@ Stories is an open source social media platform similar to Twitter that preserve
 
 ## Setup
 
-### Pre-requisites
-
-- Firebase project
-- Ably account
-- Turso database
+> [!IMPORTANT]  
+> First, you need to create a Firebase project, a Turso database and an Ably account.
 
 1. Clone the repository
 2. Install the dependencies
@@ -47,6 +44,14 @@ npm install
 ```
 
 3. Rename the `.env.example` file to `.env` and fill the environment variables
+
+> [!IMPORTANT]  
+> To generate the FORGOT_PASSWORD_SECRET and CRON_SECRET run the following command (one per variable).
+>
+> ```
+> node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+> ```
+
 4. Run the development server and thats it!
 
 ```

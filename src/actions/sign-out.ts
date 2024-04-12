@@ -30,5 +30,5 @@ export const signOutAction = async (): Promise<ActionResponse> => {
     sessionCookie.attributes,
   );
 
-  return redirect("/signIn");
+  return redirect("/sign-in");
 };

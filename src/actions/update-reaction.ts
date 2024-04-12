@@ -59,8 +59,6 @@ export const updateReactionAction = async (
 
     const targetIdPropName = target === "post" ? "postId" : "commentId";
 
-    // db.transaction()
-
     await Promise.all([
       db.run(
         sql`UPDATE ${targetTable} SET ${targetTableReactionFieldName} = ${targetTableReactionFieldName} + ${increaseOrDecreaseCount} WHERE ${targetTable.id} = ${targetId}`,

@@ -31,7 +31,7 @@ export default async function Home() {
       },
     },
   });
-  if (!user) return redirect("/signIn");
+  if (!user) return redirect("/sign-in");
 
   return (
     <main className="flex h-full flex-1 flex-col overflow-hidden p-7 pl-0">

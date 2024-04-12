@@ -78,13 +78,13 @@ export const Header = ({ user }: { user: User | null }) => {
           <NavbarItem>
             <Button
               as={Link}
-              href={pathname === "/signIn" ? "/signUp" : "/signIn"}
+              href={pathname === "/sign-in" ? "/sign-up" : "/sign-in"}
               color="primary"
               variant="flat"
               size="sm"
               className="text-md font-bold"
             >
-              {pathname === "/signIn" ? "Sign Up" : "Sign In"}
+              {pathname === "/sign-in" ? "Sign Up" : "Sign In"}
             </Button>
           </NavbarItem>
         )}

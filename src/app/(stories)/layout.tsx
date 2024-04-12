@@ -14,7 +14,7 @@ export default async function HomeLayout({
 }>) {
   const { user } = await validateRequest();
 
-  if (!user) return redirect("/signIn");
+  if (!user) return redirect("/sign-in");
 
   return (
     <div className="flex w-full flex-1 overflow-hidden">

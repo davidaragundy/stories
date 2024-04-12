@@ -16,13 +16,13 @@ export const Toast = ({ id, visible, message, variant = "default" }: Props) => {
         "flex select-none items-center gap-2 rounded-xl p-2 text-sm font-semibold",
       )}
     >
-      <span>{message}</span>
+      <span className="text-center">{message}</span>
 
       <XIcon
         size={16}
         className={cn(
           `text-${variant}-500 hover:text-${variant}-700`,
-          "cursor-pointer",
+          "min-h-4 min-w-4 cursor-pointer",
         )}
         onClick={() => toast.dismiss(id)}
       />

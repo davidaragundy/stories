@@ -17,6 +17,13 @@ export const users = sqliteTable("users", {
   createdAt: integer("created_at").notNull(),
 });
 
+export const invalidResetPasswordTokens = sqliteTable(
+  "invalid_reset_password_tokens",
+  {
+    token: text("token").notNull().primaryKey(),
+  },
+);
+
 export const sessions = sqliteTable("sessions", {
   id: text("id").notNull().primaryKey(),
   userId: text("user_id")

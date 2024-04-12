@@ -8,7 +8,7 @@ import { getHash, isEmail } from "@/utils";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Input } from "@nextui-org/input";
 import { Link } from "@nextui-org/link";
-import { InfoIcon, LockIcon, UserIcon } from "@/icons";
+import { EmailIcon, InfoIcon, LockIcon, UserIcon } from "@/icons";
 import { signUpAction } from "@/actions";
 import { signUpSchema } from "@/validation";
 import { SignUpInputs } from "@/types";
@@ -77,7 +77,7 @@ export const SignUpForm = () => {
       },
     );
 
-    router.push("/signIn");
+    router.push("/sign-in");
   };
 
   return (
@@ -87,7 +87,7 @@ export const SignUpForm = () => {
     >
       {errors?.root && (
         <div className="flex flex-col flex-wrap rounded-xl bg-danger-50 p-2 text-sm font-semibold text-danger">
-          {errors.root.message?.split(", ").map((message) => (
+          {errors.root.message?.split("-").map((message) => (
             <span key={message} className="text-center">
               {message}
             </span>
@@ -126,7 +126,7 @@ export const SignUpForm = () => {
           placeholder="david@aragundy.com"
           labelPlacement="inside"
           defaultValue=""
-          startContent={<UserIcon size={20} className="text-default-500" />}
+          startContent={<EmailIcon size={20} className="text-default-500" />}
           errorMessage={errors.email?.message}
           isInvalid={!!errors.email}
           {...register("email")}
@@ -178,7 +178,7 @@ export const SignUpForm = () => {
         >
           Create account
         </Button>
-        <Link href="/signIn" underline="hover" className="text-xs">
+        <Link href="/sign-in" underline="hover" className="text-xs">
           Already have an account?
         </Link>
       </div>
