@@ -4,11 +4,12 @@ import { cn } from "@/utils";
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import { usePathname } from "next/navigation";
+import { ReactNode } from "react";
 
 export const NavButton = ({
   link,
 }: {
-  link: { label: string; path: string; icon: React.ReactNode };
+  link: { label: string; path: string; icon: ReactNode };
 }) => {
   const pathname = usePathname();
 

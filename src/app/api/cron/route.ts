@@ -97,7 +97,6 @@ export async function GET(request: NextRequest) {
           },
         },
       }),
-      ,
     ]);
 
     const mediaToDeleteRefs = postsMediaToDelete

@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { Toast } from "@/components";
 import { cn } from "@/utils";
 import { Reaction } from "@/types";
-import { startTransition, useOptimistic } from "react";
+import { ReactNode, startTransition, useOptimistic } from "react";
 
 export const PostReaction = ({
   reaction,
@@ -19,7 +19,7 @@ export const PostReaction = ({
 }: {
   reaction: Reaction;
   count: number;
-  icon: React.ReactNode;
+  icon: ReactNode;
   color: ButtonProps["color"];
   postId: string;
   reactionsSet: Set<string>;

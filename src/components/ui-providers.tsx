@@ -3,8 +3,9 @@
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useRouter } from "next/navigation";
+import { ReactNode } from "react";
 
-export function UIProviders({ children }: { children: React.ReactNode }) {
+export function UIProviders({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   return (

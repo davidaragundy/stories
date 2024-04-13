@@ -2,6 +2,7 @@ import { Nav } from "@/components";
 import { validateRequest } from "@/lib";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "Stories | Home",
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 export default async function HomeLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   const { user } = await validateRequest();
 

@@ -61,14 +61,16 @@ export const validateRequest = cache(
           sessionCookie.attributes,
         );
       }
-    } catch {}
+    } catch {
+      /* empty */
+    }
 
     return result;
   },
 );
 
 declare module "lucia" {
-  interface Register {
+  export interface Register {
     Lucia: typeof lucia;
     DatabaseUserAttributes: User;
   }

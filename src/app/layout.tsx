@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import { Header, UIProviders } from "@/components";
 import { validateRequest } from "@/lib";
+import { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "Stories",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   const { user } = await validateRequest();
 
