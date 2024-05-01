@@ -10,9 +10,8 @@ import {
 import { validateRequest } from "@/lib";
 import { ActionResponse, Reaction } from "@/types";
 import { and, eq, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
-//TODO: add a rate limiter to this function
+//TODO!: add a rate limiter to this function
 
 export const updateReactionAction = async (
   target: "post" | "comment",
@@ -79,8 +78,6 @@ export const updateReactionAction = async (
               ),
             ),
     ]);
-
-    revalidatePath("/");
 
     return {
       ok: true,

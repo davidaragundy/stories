@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
-import { Toaster } from "react-hot-toast";
-import { Header, UIProviders } from "@/components";
+import { Header, Providers } from "@/components";
 import { validateRequest } from "@/lib";
 import { ReactNode } from "react";
 
@@ -21,13 +20,12 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body>
-        <UIProviders>
-          <Toaster />
+        <Providers>
           <div className="m-auto flex h-dvh w-full flex-col overflow-y-auto overflow-x-hidden lg:w-[clamp(60rem,70%,70rem)]">
             <Header user={user} />
             {children}
           </div>
-        </UIProviders>
+        </Providers>
       </body>
     </html>
   );

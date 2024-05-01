@@ -19,7 +19,10 @@ export const NavButton = ({
       href={link.path}
       variant={pathname === link.path ? "flat" : "light"}
       color={pathname === link.path ? "primary" : "default"}
-      className={cn("text-md", pathname === link.path && "font-bold")}
+      className={cn(
+        "text-md rounded-2xl",
+        pathname === link.path && "font-bold",
+      )}
       startContent={link.icon}
     >
       {link.label}

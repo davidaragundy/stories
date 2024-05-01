@@ -1,53 +1,41 @@
 "use client";
 
-import { updateReactionAction } from "@/actions";
 import { Button, ButtonProps } from "@nextui-org/button";
 import toast from "react-hot-toast";
 import { Toast } from "@/components";
 import { cn } from "@/utils";
-import { Reaction } from "@/types";
-import { ReactNode, startTransition, useOptimistic } from "react";
+import { Reaction as IReaction } from "@/types";
+import { ReactNode } from "react";
+import { useUpdateReactionMutation } from "@/hooks";
 
-export const PostReaction = ({
+export const Reaction = ({
   reaction,
   count,
   icon,
   color,
-  postId,
+  target,
+  targetId,
   reactionsSet,
   userId,
 }: {
-  reaction: Reaction;
+  reaction: IReaction;
   count: number;
   icon: ReactNode;
   color: ButtonProps["color"];
-  postId: string;
+  target: "post" | "comment";
+  targetId: string;
   reactionsSet: Set<string>;
   userId: string;
 }) => {
-  const [optimisticCount, setOptimisticCount] = useOptimistic<number, void>(
-    count,
-    (state) => {
-      if (reactionsSet.has(`${userId}-${reaction}`)) {
-        reactionsSet.delete(`${userId}-${reaction}`);
-        return state - 1;
-      }
-
-      reactionsSet.add(`${userId}-${reaction}`);
-      return state + 1;
-    },
-  );
+  const { mutateAsync } = useUpdateReactionMutation();
 
   const handleReaction = async () => {
-    startTransition(() => {
-      setOptimisticCount();
-    });
-
-    const { ok, messages } = await updateReactionAction(
-      "post",
-      postId,
+    const { ok, messages } = await mutateAsync({
+      target,
+      targetId,
       reaction,
-    );
+      userId,
+    });
 
     if (!ok) {
       toast.custom(
@@ -80,7 +68,7 @@ export const PostReaction = ({
       >
         {icon}
       </Button>
-      <span>{optimisticCount}</span>
+      <span>{count}</span>
     </div>
   );
 };

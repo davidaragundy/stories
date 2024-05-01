@@ -35,3 +35,10 @@ export type Reactions = {
   poop: number;
   cap: number;
 };
+
+export type FullPost = Post & {
+  user: Omit<User, "password">;
+  media: PostMedia[];
+  reactions: { userId: string; type: string }[];
+  isPending?: boolean;
+};

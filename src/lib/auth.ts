@@ -1,3 +1,5 @@
+import "server-only";
+
 import { Lucia, Session, User as AuthUser } from "lucia";
 import { User } from "@/types";
 import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";

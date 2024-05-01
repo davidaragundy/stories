@@ -13,6 +13,7 @@ export * from "./lock";
 export * from "./log-out";
 export * from "./moon";
 export * from "./poop";
+export * from "./send";
 export * from "./settings";
 export * from "./sun";
 export * from "./trash";

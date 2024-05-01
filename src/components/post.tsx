@@ -1,57 +1,62 @@
+"use client";
+
 import Image from "next/image";
 import { Avatar } from "@nextui-org/avatar";
 import { CapIcon, CommentIcon, FireIcon, PoopIcon } from "@/icons";
-import { DeletePostButton, PostReaction } from "@/components";
-import type { Post as IPost, PostMedia, User } from "@/types";
+import { DeletePostButton, Reaction } from "@/components";
+import type { FullPost } from "@/types";
 import { type ComponentProps } from "react";
 import { DateTime } from "luxon";
 import { Button } from "@nextui-org/button";
 import { cn } from "@/utils";
+import { User } from "lucia";
 
-interface Props extends IPost {
-  user: Omit<User, "password" | "createdAt">;
-  media: PostMedia[];
-  reactions: { userId: string; type: string }[];
-}
-
-export const Post = async ({ post }: { post: Props }) => {
+export const Post = ({ post, user }: { post: FullPost; user: User }) => {
   const reactionsSet = new Set(
     post.reactions.map((r) => `${r.userId}-${r.type}`),
   );
 
-  const reactions: ComponentProps<typeof PostReaction>[] = [
+  const reactions: ComponentProps<typeof Reaction>[] = [
     {
       userId: post.user.id,
-      postId: post.id,
+      target: "post",
+      targetId: post.id,
       count: post.fireCount,
       reaction: "fire",
-      icon: <FireIcon size={18} />,
+      icon: <FireIcon size={16} />,
       color: "warning",
       reactionsSet: reactionsSet,
     },
     {
       userId: post.user.id,
-      postId: post.id,
+      target: "post",
+      targetId: post.id,
       count: post.poopCount,
       reaction: "poop",
-      icon: <PoopIcon size={18} />,
+      icon: <PoopIcon size={14} />,
       color: "secondary",
       reactionsSet: reactionsSet,
     },
     {
       userId: post.user.id,
-      postId: post.id,
+      target: "post",
+      targetId: post.id,
       count: post.capCount,
       reaction: "cap",
-      icon: <CapIcon size={18} />,
+      icon: <CapIcon size={16} />,
       color: "primary",
       reactionsSet: reactionsSet,
     },
   ];
 
   return (
-    <div className="flex w-[clamp(10rem,60%,30rem)] flex-col gap-2 p-5">
-      <div className="flex w-full flex-col gap-3">
+    <div
+      className={cn(
+        "flex w-[clamp(10rem,60%,30rem)] flex-col gap-2",
+        post.isPending && "opacity-50",
+      )}
+    >
+      <div className="flex flex-col gap-4 rounded-[2rem] bg-default-50 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-5">
             <Avatar
@@ -70,11 +75,11 @@ export const Post = async ({ post }: { post: Props }) => {
               </p>
             </div>
           </div>
-          <DeletePostButton postId={post.id} />
+          {post.user.id === user.id && <DeletePostButton postId={post.id} />}
         </div>
 
         {post.content && (
-          <p className="whitespace-break-spaces break-words rounded-large py-2 text-justify text-sm">
+          <p className="whitespace-break-spaces break-words rounded-large text-justify text-sm">
             {post.content}
           </p>
         )}
@@ -83,14 +88,14 @@ export const Post = async ({ post }: { post: Props }) => {
           <div
             className={cn(
               "relative w-full",
-              post.media[0].type === "image" && "my-2 aspect-square",
+              post.media[0].type === "image" && "aspect-square",
             )}
           >
             {post.media.map((media) =>
               media.type === "image" ? (
                 <Image
                   key={media.id}
-                  className="w-full rounded-3xl object-cover"
+                  className="w-full rounded-2xl object-cover"
                   fill
                   alt={`${post.user.firstName}'s post image`}
                   src={post.media[0].url}
@@ -99,7 +104,7 @@ export const Post = async ({ post }: { post: Props }) => {
               ) : (
                 <video
                   key={media.id}
-                  className="w-full rounded-3xl object-cover py-2"
+                  className="w-full rounded-2xl object-cover py-2"
                   controls
                 >
                   <source src={media.url} />
@@ -111,9 +116,9 @@ export const Post = async ({ post }: { post: Props }) => {
       </div>
 
       <div className="flex w-full items-center justify-center">
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3 rounded-[2rem] bg-default-50 px-2 py-1">
           {reactions.map((reaction, index) => (
-            <PostReaction key={`${Date.now()}-${index}`} {...reaction} />
+            <Reaction key={`${Date.now()}-${index}`} {...reaction} />
           ))}
 
           <div className="flex items-center gap-1 text-default-500">
@@ -124,9 +129,9 @@ export const Post = async ({ post }: { post: Props }) => {
               radius="full"
               size="sm"
             >
-              <CommentIcon size={18} />
+              <CommentIcon size={16} />
             </Button>
-            <span>{0}</span>
+            <span className="w-4">{0}</span>
           </div>
         </div>
       </div>

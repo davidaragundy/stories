@@ -1,6 +1,7 @@
 export * from "./create-post";
 export * from "./delete-post";
 export * from "./forgot-password";
+export * from "./get-posts";
 export * from "./reset-password";
 export * from "./sign-in";
 export * from "./sign-out";

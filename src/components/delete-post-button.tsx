@@ -1,9 +1,7 @@
 "use client";
 
-import { deletePostAction } from "@/actions";
 import { TrashIcon } from "@/icons";
 import { Button } from "@nextui-org/button";
-import { useState } from "react";
 import toast from "react-hot-toast";
 import { Toast } from "@/components";
 import {
@@ -14,35 +12,29 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/modal";
+import { useDeletePostMutation } from "@/hooks";
 
 export const DeletePostButton = ({ postId }: { postId: string }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [loading, setLoading] = useState(false);
+  const { isPending, mutateAsync } = useDeletePostMutation();
 
   const handleDelete = async () => {
-    setLoading(true);
+    const { ok, messages } = await mutateAsync(postId);
 
-    const { ok, messages } = await deletePostAction(postId);
-
-    toast.custom(
-      (props) => (
-        <Toast
-          {...props}
-          message={messages.toString()}
-          variant={ok ? "default" : "danger"}
-        />
-      ),
-      { duration: 3000 },
-    );
-
-    setLoading(false);
+    !ok &&
+      toast.custom(
+        (props) => (
+          <Toast {...props} message={messages.toString()} variant={"danger"} />
+        ),
+        { duration: 3000 },
+      );
   };
 
   return (
     <>
       <div className="flex flex-wrap items-start justify-end">
         <Button
-          isLoading={loading}
+          isLoading={isPending}
           isIconOnly
           variant="light"
           size="sm"

@@ -2,7 +2,6 @@
 
 import { postsRef, validateRequest } from "@/lib";
 import { ActionResponse } from "@/types";
-import { revalidatePath } from "next/cache";
 import { db, posts } from "@/drizzle";
 import { eq } from "drizzle-orm";
 import { deleteObject, ref } from "firebase/storage";
@@ -40,8 +39,6 @@ export const deletePostAction = async (
     await Promise.all(mediaRefs.map((mr) => deleteObject(mr)));
 
     await db.delete(posts).where(eq(posts.id, postId));
-
-    revalidatePath("/");
 
     return { ok: true, messages: ["Post deleted successfully 💩"] };
   } catch (error) {

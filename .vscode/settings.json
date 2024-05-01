@@ -11,6 +11,10 @@
     "Millis",
     "nextui",
     "tailwindcss",
-    "turso"
+    "tanstack",
+    "turso",
+    "Unposted",
+    "vidstack",
+    "zustand"
   ]
 }

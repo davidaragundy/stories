@@ -1,17 +1,14 @@
 "use server";
 
-import { postsRef, validateRequest } from "@/lib";
-import { ActionResponse } from "@/types";
-import { revalidatePath } from "next/cache";
-import { createPostSchema } from "@/validation";
+import { validateRequest } from "@/lib";
+import { ActionResponse, CreatePostInputsServer } from "@/types";
+import { createPostSchemaServer } from "@/validation";
 import { db, posts, postsMedia } from "@/drizzle";
 import { generateId } from "lucia";
 import { eq } from "drizzle-orm";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export const createPostAction = async (
-  _previousState: ActionResponse,
-  formData: FormData,
+  data: CreatePostInputsServer,
 ): Promise<ActionResponse> => {
   const { user } = await validateRequest();
 
@@ -26,13 +23,9 @@ export const createPostAction = async (
     };
   }
 
-  if ((formData.get("media") as File).size === 0) {
-    formData.delete("media");
-  }
-
-  const validatedFields = createPostSchema.safeParse({
+  const validatedFields = createPostSchemaServer.safeParse({
+    ...data,
     userId: user.id,
-    ...Object.fromEntries(formData),
   });
 
   if (!validatedFields.success) {
@@ -66,21 +59,14 @@ export const createPostAction = async (
     return { ok: false, messages: ["Failed to create post 😭"] };
   }
 
-  if (validatedFields.data.media) {
+  if (validatedFields.data.media?.length) {
     try {
-      const mediaId = `${generateId(15)}.${validatedFields.data.media.type.split("/")[1]}`;
-
-      const mediaRef = ref(postsRef, mediaId);
-
-      await uploadBytes(mediaRef, validatedFields.data.media);
-
-      const mediaUrl = await getDownloadURL(mediaRef);
-
+      //TODO: multiple media? 🤔
       await db.insert(postsMedia).values({
-        id: mediaId,
+        id: validatedFields.data.media[0].id,
         postId,
-        type: validatedFields.data.media.type.split("/")[0],
-        url: mediaUrl,
+        type: validatedFields.data.media[0].type,
+        url: validatedFields.data.media[0].url,
       });
     } catch (error) {
       console.error(error);
@@ -90,8 +76,6 @@ export const createPostAction = async (
       return { ok: false, messages: ["Failed to upload media 😭"] };
     }
   }
-
-  revalidatePath("/");
 
   return { ok: true, messages: ["Post created successfully 💩"] };
 };

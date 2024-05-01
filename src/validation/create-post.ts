@@ -1,12 +1,25 @@
 import { z } from "zod";
 
-export const createPostSchema = z.object({
+export const createPostSchemaClient = z.object({
   content: z.string().optional(),
   media: z
-    .instanceof(File)
-    .refine((file) => (file ? file.size > 0 : false), {
-      message: "Media size should be more than 0.",
+    .unknown()
+    .transform((value) => {
+      return value as FileList | undefined;
     })
+    .optional(),
+  userId: z.string().min(1, "User ID is required."),
+});
+
+export const createPostSchemaServer = z.object({
+  content: z.string().optional(),
+  media: z
+    .object({
+      id: z.string(),
+      type: z.string(),
+      url: z.string(),
+    })
+    .array()
     .optional(),
   userId: z.string().min(1, "User ID is required."),
 });

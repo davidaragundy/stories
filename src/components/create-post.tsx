@@ -1,65 +1,166 @@
 "use client";
 
-import { createPostAction } from "@/actions";
-import { ImageIcon, XIcon } from "@/icons";
-import { ActionResponse } from "@/types";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { ImageIcon, SendIcon, XIcon } from "@/icons";
+import { CreatePostInputsClient, UploadedFilesResponse } from "@/types";
 import { Avatar } from "@nextui-org/avatar";
 import { Button } from "@nextui-org/button";
 import { Textarea } from "@nextui-org/input";
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { useFormState } from "react-dom";
 import toast from "react-hot-toast";
-import { CreatePostButton, Toast } from "@/components";
+import { Toast } from "@/components";
 import { User } from "lucia";
-import { cn } from "@/utils";
+import { cn, removeFiles, removeUnpostedFiles, uploadFiles } from "@/utils";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { createPostSchemaClient } from "@/validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCreatePostMutation } from "@/hooks";
 
 export const CreatePost = ({ user }: { user: User }) => {
-  const [loading, setLoading] = useState<boolean>(false);
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [mediaType, setMediaType] = useState<"image" | "video">();
-
-  const mediaRef = useRef<HTMLInputElement>(null);
-  const contentRef = useRef<HTMLTextAreaElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const [actionResponse, formAction] = useFormState(
-    createPostAction,
-    {} as ActionResponse,
+  const [isFileLoading, setIsFileLoading] = useState<boolean>(false);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFilesResponse[]>(
+    [],
   );
 
-  //TODO: upload media to firebase storage in client side, show progress bar and send the media url to the server
+  const mediaRef = useRef<HTMLInputElement | null>(null);
+
+  const { mutateAsync, isPending } = useCreatePostMutation({
+    user,
+  });
+
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<CreatePostInputsClient>({
+    resolver: zodResolver(createPostSchemaClient),
+    defaultValues: {
+      userId: user.id,
+    },
+  });
+
+  const { ref, ...registerMedia } = register("media");
+
+  const media = watch("media");
 
   useEffect(() => {
-    if (Object.keys(actionResponse).length > 0) {
+    (async () => {
+      if (media && media.length) {
+        if (media[0].size > 4.5 * 10 ** 6) {
+          toast.custom(
+            (props) => (
+              <Toast
+                {...props}
+                message="The file is too large. Max size is 4.5MB. 😠"
+                variant="danger"
+              />
+            ),
+            { duration: 3000 },
+          );
+
+          return;
+        }
+
+        let url = URL.createObjectURL(media[0]);
+
+        setMediaUrl(url);
+        setMediaType(media[0].type.includes("image") ? "image" : "video");
+        setIsFileLoading(true);
+
+        const uploadedFiles = await uploadFiles(media);
+
+        setUploadedFiles(uploadedFiles);
+
+        sessionStorage.setItem(
+          "uploadedFiles",
+          JSON.stringify(uploadedFiles.map((file) => file.id)),
+        );
+
+        URL.revokeObjectURL(url);
+        url = uploadedFiles[0].url;
+
+        setMediaUrl(url);
+        setIsFileLoading(false);
+      }
+    })();
+
+    window.onbeforeunload = removeUnpostedFiles;
+
+    return () => {
+      window.onbeforeunload = null;
+
+      removeUnpostedFiles();
+    };
+  }, [media]);
+
+  //TODO: file or files? decide 🫵
+  const onRemoveFile = async () => {
+    setIsFileLoading(true);
+
+    try {
+      await removeFiles(uploadedFiles.map((file) => file.id));
+
+      sessionStorage.removeItem("uploadedFiles");
+    } catch (error) {
       toast.custom(
         (props) => (
           <Toast
             {...props}
-            message={actionResponse.messages.toString()}
-            variant={actionResponse.ok ? "default" : "danger"}
+            message="Something went wrong while deleting the file. 😭"
+            variant="danger"
           />
         ),
-        {
-          duration: 3000,
-        },
+        { duration: 3000 },
       );
-
-      if (!actionResponse.ok) return;
-
-      URL.revokeObjectURL(mediaUrl);
-
-      formRef.current?.reset();
-      setMediaUrl("");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionResponse]);
+
+    setMediaUrl("");
+    setMediaType(undefined);
+    setUploadedFiles([]);
+
+    setIsFileLoading(false);
+
+    mediaRef.current!.value = "";
+    mediaRef.current!.files = null;
+  };
+
+  const onSubmit: SubmitHandler<CreatePostInputsClient> = async (data) => {
+    if (!getValues("content") && !uploadedFiles.length) {
+      return;
+    }
+
+    const dataToSubmit = {
+      ...data,
+      media: uploadedFiles,
+    };
+
+    const { ok, messages } = await mutateAsync(dataToSubmit);
+
+    if (!ok) {
+      return toast.custom(
+        (props) => (
+          <Toast {...props} message={messages.toString()} variant={"danger"} />
+        ),
+        { duration: 3000 },
+      );
+    }
+
+    reset();
+    setMediaUrl("");
+    setMediaType(undefined);
+    setUploadedFiles([]);
+    sessionStorage.removeItem("uploadedFiles");
+  };
 
   return (
     <form
-      className="flex w-[clamp(10rem,60%,30rem)] flex-col gap-5 rounded-3xl p-5"
-      action={formAction}
-      ref={formRef}
+      className="flex w-[clamp(10rem,60%,30rem)] flex-col gap-4 rounded-[2rem] bg-default-50 p-4"
+      onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-5">
@@ -72,58 +173,51 @@ export const CreatePost = ({ user }: { user: User }) => {
             <h3 className="font-semibold">{`${user.firstName} ${user.lastName}`}</h3>
           </div>
         </div>
-        <CreatePostButton
-          setLoading={setLoading}
-          formRef={formRef}
-          contentRef={contentRef}
-          mediaRef={mediaRef}
-        />
+        <Button
+          isLoading={isPending}
+          disabled={isFileLoading}
+          color="primary"
+          size="sm"
+          radius="lg"
+          variant="flat"
+          className="text-md font-bold"
+          type="submit"
+          isIconOnly
+        >
+          <SendIcon size={18} />
+        </Button>
       </div>
 
       <div className="flex flex-col gap-1">
+        {errors.content && (
+          <p className="text-xs text-red-500">{errors.content.message}</p>
+        )}
+
+        {errors.media && (
+          <p className="text-xs text-red-500">
+            {errors.media.message as string}
+          </p>
+        )}
+
         <Textarea
           placeholder="just start yapping about anything 💩"
           className="w-full"
-          disabled={loading}
+          disabled={isPending}
           radius="lg"
-          name="content"
           defaultValue=""
           minRows={1}
-          ref={contentRef}
+          {...register("content")}
         />
 
         <div className="flex justify-start">
           <input
             type="file"
-            className="hidden"
-            name="media"
-            ref={mediaRef}
-            onChange={({ currentTarget }) => {
-              if (currentTarget.files?.[0]) {
-                if (currentTarget.files[0].size > 4.5 * 10 ** 6) {
-                  toast.custom(
-                    (props) => (
-                      <Toast
-                        {...props}
-                        message="The file is too large. Max size is 4.5MB. 😠"
-                        variant="danger"
-                      />
-                    ),
-                    { duration: 3000 },
-                  );
+            hidden
+            {...registerMedia}
+            ref={(e) => {
+              ref(e);
 
-                  return;
-                }
-
-                const url = URL.createObjectURL(currentTarget.files[0]);
-
-                setMediaUrl(url);
-                setMediaType(
-                  currentTarget.files[0].type.includes("image")
-                    ? "image"
-                    : "video",
-                );
-              }
+              mediaRef.current = e;
             }}
             accept="image/*, video/*"
           />
@@ -137,7 +231,7 @@ export const CreatePost = ({ user }: { user: User }) => {
               size="sm"
               onClick={() => mediaRef.current?.click()}
               type="button"
-              disabled={loading}
+              disabled={isPending}
             >
               <ImageIcon size={18} className="text-default-500" />
             </Button>
@@ -148,6 +242,7 @@ export const CreatePost = ({ user }: { user: User }) => {
               className={cn(
                 "relative mt-2 w-full",
                 mediaType === "image" && "aspect-square",
+                isFileLoading && "animate-pulse",
               )}
             >
               <Button
@@ -157,15 +252,9 @@ export const CreatePost = ({ user }: { user: User }) => {
                 variant="light"
                 title="Remove image"
                 size="sm"
-                onClick={() => {
-                  URL.revokeObjectURL(mediaUrl);
-                  setMediaUrl("");
-
-                  mediaRef.current!.value = "";
-                  mediaRef.current!.files = null;
-                }}
+                onClick={onRemoveFile}
                 type="button"
-                disabled={loading}
+                disabled={isPending || isFileLoading}
               >
                 <XIcon size={18} className="text-default-500" />
               </Button>
@@ -175,6 +264,7 @@ export const CreatePost = ({ user }: { user: User }) => {
                   alt="Post's image"
                   fill
                   className="rounded-2xl object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               ) : (
                 <video

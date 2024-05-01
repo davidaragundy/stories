@@ -13,17 +13,17 @@ Stories is an open source social media platform similar to Twitter that preserve
 - Turso
 - Drizzle
 - Lucia
-- Ably
-- Firebase Storage
+- Firebase
+- Nodemailer
 
 ## Todo
 
 - [x] Add optimistic UI
-- [x] Switch to Firebase Storage
+- [x] Switch to Firebase
 - [x] Add forgot password feature
 - [ ] Add custom styles for video player with vidstack
 - [ ] Add user comments
-- [ ] Add user likes
+- [x] Add user likes
 - [ ] Add user follow
 - [ ] Add user chat
 - [ ] Add user search
@@ -34,7 +34,7 @@ Stories is an open source social media platform similar to Twitter that preserve
 ## Setup
 
 > [!IMPORTANT]  
-> First, you need to create a Firebase project, a Turso database and an Ably account.
+> First, you need to create a Firebase project, a Turso database and SMTP server.
 
 1. Clone the repository
 2. Install the dependencies

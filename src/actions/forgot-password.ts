@@ -6,7 +6,6 @@ import { ActionResponse, ForgotPasswordInputs } from "@/types";
 import { forgotPasswordSchema } from "@/validation";
 import { TimeSpan } from "lucia";
 import { decodeHex } from "oslo/encoding";
-// import { transporter } from "@/lib";
 import { ResetPasswordEmail } from "@/components/emails";
 import { BASE_URL } from "@/constants";
 import { renderAsync } from "@react-email/render";

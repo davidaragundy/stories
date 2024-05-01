@@ -34,7 +34,8 @@ export const Header = ({ user }: { user: User | null }) => {
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
       maxWidth="full"
-      className="bg-transparent"
+      className="mt-4"
+      height={40}
       position={user ? "sticky" : "static"}
     >
       <NavbarContent>
@@ -45,7 +46,7 @@ export const Header = ({ user }: { user: User | null }) => {
           />
         )}
 
-        <NavbarBrand>
+        <NavbarBrand className="flex items-center">
           <h1 className="select-none text-4xl font-extrabold">Stories</h1>
         </NavbarBrand>
       </NavbarContent>
