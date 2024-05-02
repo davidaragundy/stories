@@ -27,6 +27,7 @@ export const deletePostAction = async (
   }
 
   try {
+    //TODO: delete every comment and media associated with the post
     const postMedia = await db.query.postsMedia.findMany({
       columns: {
         id: true,

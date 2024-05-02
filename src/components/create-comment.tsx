@@ -1,23 +1,29 @@
 "use client";
 
+import { useCreateCommentMutation } from "@/hooks";
+import { CreateCommentInputsClient, UploadedFilesResponse } from "@/types";
+import { removeFiles, removeUnpostedFiles, uploadFiles, cn } from "@/utils";
+import { createCommentSchemaClient } from "@/validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { User } from "lucia";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { ImageIcon, SendIcon, XIcon } from "@/icons";
-import { CreatePostInputsClient, UploadedFilesResponse } from "@/types";
+import { SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { Toast } from "@/components";
 import { Avatar } from "@nextui-org/avatar";
 import { Button } from "@nextui-org/button";
 import { Textarea } from "@nextui-org/input";
-import toast from "react-hot-toast";
-import { Toast } from "@/components";
-import { User } from "lucia";
-import { cn, removeFiles, removeUnpostedFiles, uploadFiles } from "@/utils";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { createPostSchemaClient } from "@/validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreatePostMutation } from "@/hooks";
-import { postsRef } from "@/lib/firebase";
+import { ImageIcon, SendIcon, XIcon } from "@/icons";
+import Image from "next/image";
+import { commentsRef } from "@/lib/firebase";
 
-export const CreatePost = ({ user }: { user: User }) => {
+export const CreateComment = ({
+  postId,
+  user,
+}: {
+  postId: string;
+  user: User;
+}) => {
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [mediaType, setMediaType] = useState<"image" | "video">();
   const [isFileLoading, setIsFileLoading] = useState<boolean>(false);
@@ -27,15 +33,17 @@ export const CreatePost = ({ user }: { user: User }) => {
 
   const mediaRef = useRef<HTMLInputElement | null>(null);
 
-  const { mutateAsync, isPending } = useCreatePostMutation({
+  const { mutateAsync, isPending } = useCreateCommentMutation({
     user,
   });
 
   const { register, handleSubmit, getValues, reset, watch } =
-    useForm<CreatePostInputsClient>({
-      resolver: zodResolver(createPostSchemaClient),
+    useForm<CreateCommentInputsClient>({
+      resolver: zodResolver(createCommentSchemaClient),
       defaultValues: {
         userId: user.id,
+        postId,
+        parentId: null,
       },
     });
 
@@ -67,7 +75,7 @@ export const CreatePost = ({ user }: { user: User }) => {
         setMediaType(media[0].type.includes("image") ? "image" : "video");
         setIsFileLoading(true);
 
-        const uploadedFiles = await uploadFiles(postsRef, media);
+        const uploadedFiles = await uploadFiles(commentsRef, media);
 
         setUploadedFiles(uploadedFiles);
 
@@ -84,12 +92,12 @@ export const CreatePost = ({ user }: { user: User }) => {
       }
     })();
 
-    window.onbeforeunload = () => removeUnpostedFiles(postsRef);
+    window.onbeforeunload = () => removeUnpostedFiles(commentsRef);
 
     return () => {
       window.onbeforeunload = null;
 
-      removeUnpostedFiles(postsRef);
+      removeUnpostedFiles(commentsRef);
     };
   }, [media]);
 
@@ -99,7 +107,7 @@ export const CreatePost = ({ user }: { user: User }) => {
 
     try {
       await removeFiles(
-        postsRef,
+        commentsRef,
         uploadedFiles.map((file) => file.id),
       );
 
@@ -127,7 +135,7 @@ export const CreatePost = ({ user }: { user: User }) => {
     mediaRef.current!.files = null;
   };
 
-  const onSubmit: SubmitHandler<CreatePostInputsClient> = async (data) => {
+  const onSubmit: SubmitHandler<CreateCommentInputsClient> = async (data) => {
     if (!getValues("content") && !uploadedFiles.length) {
       return;
     }
@@ -156,37 +164,16 @@ export const CreatePost = ({ user }: { user: User }) => {
   };
 
   return (
-    <form
-      className="flex w-[clamp(10rem,60%,30rem)] flex-col gap-4 rounded-[2rem] bg-default-50 p-4"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-5">
-          <Avatar
-            isBordered
-            name={`${user.firstName} ${user.lastName}`}
-            src={user.avatarUrl}
-          />
-          <div>
-            <h3 className="font-semibold">{`${user.firstName} ${user.lastName}`}</h3>
-          </div>
-        </div>
-        <Button
-          isLoading={isPending}
-          disabled={isFileLoading}
-          color="primary"
-          size="sm"
-          radius="lg"
-          variant="flat"
-          className="text-md font-bold"
-          type="submit"
-          isIconOnly
-        >
-          <SendIcon size={18} />
-        </Button>
+    <form className="flex w-full gap-2" onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex items-start">
+        <Avatar
+          isBordered
+          name={`${user.firstName} ${user.lastName}`}
+          src={user.avatarUrl}
+        />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-1 flex-col gap-1">
         <Textarea
           placeholder="just start yapping about anything 💩"
           className="w-full"
@@ -196,7 +183,6 @@ export const CreatePost = ({ user }: { user: User }) => {
           minRows={1}
           {...register("content")}
         />
-
         <div className="flex justify-start">
           <input
             type="file"
@@ -209,21 +195,6 @@ export const CreatePost = ({ user }: { user: User }) => {
             }}
             accept="image/*, video/*"
           />
-
-          {!mediaUrl && (
-            <Button
-              isIconOnly
-              radius="full"
-              variant="light"
-              title="Add an image"
-              size="sm"
-              onClick={() => mediaRef.current?.click()}
-              type="button"
-              disabled={isPending}
-            >
-              <ImageIcon size={18} className="text-default-500" />
-            </Button>
-          )}
 
           {mediaUrl && (
             <div
@@ -249,7 +220,7 @@ export const CreatePost = ({ user }: { user: User }) => {
               {mediaType === "image" ? (
                 <Image
                   src={mediaUrl}
-                  alt="Post's image"
+                  alt="Comment's image"
                   fill
                   className="rounded-2xl object-cover"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -264,6 +235,37 @@ export const CreatePost = ({ user }: { user: User }) => {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="flex items-start gap-2">
+        {!mediaUrl && (
+          <Button
+            isIconOnly
+            radius="full"
+            variant="light"
+            title="Add an image or video"
+            size="sm"
+            onClick={() => mediaRef.current?.click()}
+            type="button"
+            disabled={isPending}
+          >
+            <ImageIcon size={18} className="text-default-500" />
+          </Button>
+        )}
+
+        <Button
+          isLoading={isPending}
+          disabled={isFileLoading}
+          color="primary"
+          size="sm"
+          radius="lg"
+          variant="flat"
+          className="text-md font-bold"
+          type="submit"
+          isIconOnly
+        >
+          <SendIcon size={18} />
+        </Button>
       </div>
     </form>
   );

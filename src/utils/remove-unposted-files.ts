@@ -1,12 +1,13 @@
 import { removeFiles } from "@/utils";
+import { StorageReference } from "firebase/storage";
 
-export const removeUnpostedFiles = async () => {
+export const removeUnpostedFiles = async (targetRef: StorageReference) => {
   const uploadedFileIds = JSON.parse(
     sessionStorage.getItem("uploadedFiles") || "[]",
   ) as string[];
 
   if (uploadedFileIds.length) {
-    await removeFiles(uploadedFileIds);
+    await removeFiles(targetRef, uploadedFileIds);
 
     sessionStorage.removeItem("uploadedFiles");
   }
