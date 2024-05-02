@@ -17,9 +17,7 @@ export const Posts = ({ user }: { user: User }) => {
     return <PostError refetch={refetch} />;
   }
 
-  return data ? (
-    data.map((post) => <Post key={post.id} post={post} user={user} />)
-  ) : (
-    <PostError refetch={refetch} />
+  return (
+    data && data.map((post) => <Post key={post.id} post={post} user={user} />)
   );
 };

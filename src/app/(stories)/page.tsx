@@ -23,7 +23,7 @@ export default async function Home() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <main className="flex h-full flex-1 flex-col overflow-hidden p-7 pl-0">
-        <div className="flex h-full w-full flex-col items-center gap-10 overflow-y-auto overflow-x-hidden">
+        <div className="flex h-full w-full flex-col items-center gap-14 overflow-y-auto overflow-x-hidden">
           <CreatePost user={user} />
 
           <Posts user={user} />

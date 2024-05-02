@@ -41,6 +41,7 @@ export const posts = sqliteTable("posts", {
   fireCount: integer("fire_count").notNull().default(0),
   poopCount: integer("poop_count").notNull().default(0),
   capCount: integer("cap_count").notNull().default(0),
+  commentsCount: integer("comments_count").notNull().default(0),
   createdAt: integer("created_at").notNull(),
 });
 
@@ -87,6 +88,7 @@ export const comments = sqliteTable("comments", {
   fireCount: integer("fire_count").notNull().default(0),
   poopCount: integer("poop_count").notNull().default(0),
   capCount: integer("cap_count").notNull().default(0),
+  repliesCount: integer("replies_count").notNull().default(0),
   createdAt: integer("created_at").notNull(),
 });
 

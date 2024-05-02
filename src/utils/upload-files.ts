@@ -1,16 +1,21 @@
-import { postsRef } from "@/lib/firebase";
 import { UploadedFilesResponse } from "@/types";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+  StorageReference,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import { generateId } from "lucia";
 
 export const uploadFiles = async (
+  targetRef: StorageReference,
   files: FileList,
 ): Promise<UploadedFilesResponse[]> => {
   try {
     const uploadPromises = Array.from(files).map((file) => {
       const mediaId = `${generateId(15)}.${file.type.split("/")[1]}`;
 
-      const mediaRef = ref(postsRef, mediaId);
+      const mediaRef = ref(targetRef, mediaId);
 
       return uploadBytes(mediaRef, file);
     });

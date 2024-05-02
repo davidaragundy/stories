@@ -59,8 +59,12 @@ export const useUpdateReactionMutation = () => {
     onError: (_error, { target }, context) => {
       queryClient.setQueryData([target + "s"], context?.previousPosts);
     },
-    onSettled: (_data, _error, { target }) => {
+    onSettled: (_data, _error, { target, reaction, targetId }) => {
       queryClient.invalidateQueries({ queryKey: [target + "s"] });
+
+      queryClient.invalidateQueries({
+        queryKey: ["reactions", reaction, targetId],
+      });
     },
   });
 

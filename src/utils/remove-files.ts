@@ -1,9 +1,11 @@
-import { postsRef } from "@/lib/firebase";
-import { deleteObject, ref } from "firebase/storage";
+import { StorageReference, deleteObject, ref } from "firebase/storage";
 
-export const removeFiles = async (fileIds: string[]) => {
+export const removeFiles = async (
+  targetRef: StorageReference,
+  fileIds: string[],
+) => {
   const deletePromises = fileIds.map((id) => {
-    const mediaRef = ref(postsRef, id);
+    const mediaRef = ref(targetRef, id);
 
     return deleteObject(mediaRef);
   });

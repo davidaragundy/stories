@@ -12,14 +12,20 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/modal";
-import { useDeletePostMutation } from "@/hooks";
+import { useDeleteCommentMutation } from "@/hooks";
 
-export const DeletePostButton = ({ postId }: { postId: string }) => {
+export const DeleteCommentButton = ({
+  commentId,
+  postId,
+}: {
+  commentId: string;
+  postId: string;
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isPending, mutateAsync } = useDeletePostMutation();
+  const { isPending, mutateAsync } = useDeleteCommentMutation();
 
   const handleDelete = async () => {
-    const { ok, messages } = await mutateAsync(postId);
+    const { ok, messages } = await mutateAsync({ commentId, postId });
 
     !ok &&
       toast.custom(
@@ -43,7 +49,7 @@ export const DeletePostButton = ({ postId }: { postId: string }) => {
           type="submit"
           onClick={onOpen}
         >
-          <TrashIcon size={18} />
+          <TrashIcon size={14} />
         </Button>
       </div>
       <Modal
@@ -56,11 +62,11 @@ export const DeletePostButton = ({ postId }: { postId: string }) => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Delete post 🤮
+                Delete comment 🤮
               </ModalHeader>
               <ModalBody>
                 <p>
-                  Are you sure you want to delete this post? This action is
+                  Are you sure you want to delete this comment? This action is
                   irreversible.
                 </p>
               </ModalBody>

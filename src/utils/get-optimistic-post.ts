@@ -18,6 +18,7 @@ export const getOptimisticPost = ({
     fireCount: 0,
     poopCount: 0,
     capCount: 0,
+    commentsCount: 0,
     user,
     media:
       media?.map((m) => ({

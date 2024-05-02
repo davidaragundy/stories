@@ -42,3 +42,10 @@ export type FullPost = Post & {
   reactions: { userId: string; type: string }[];
   isPending?: boolean;
 };
+
+export type FullComment = Comment & {
+  user: Omit<User, "password">;
+  media: CommentMedia[];
+  reactions: { userId: string; type: string }[];
+  isPending?: boolean;
+};

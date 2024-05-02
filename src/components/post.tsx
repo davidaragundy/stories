@@ -3,22 +3,29 @@
 import Image from "next/image";
 import { Avatar } from "@nextui-org/avatar";
 import { CapIcon, CommentIcon, FireIcon, PoopIcon } from "@/icons";
-import { DeletePostButton, Reaction } from "@/components";
+import {
+  Comments,
+  CreateComment,
+  DeletePostButton,
+  Reaction,
+} from "@/components";
 import type { FullPost } from "@/types";
-import { type ComponentProps } from "react";
+import { type ComponentProps, useState } from "react";
 import { DateTime } from "luxon";
 import { Button } from "@nextui-org/button";
 import { cn } from "@/utils";
 import { User } from "lucia";
 
 export const Post = ({ post, user }: { post: FullPost; user: User }) => {
+  const [showComments, setShowComments] = useState(false);
+
   const reactionsSet = new Set(
-    post.reactions.map((r) => `${r.userId}-${r.type}`),
+    post.reactions.map((r) => `${post.id}-${r.userId}-${r.type}`),
   );
 
   const reactions: ComponentProps<typeof Reaction>[] = [
     {
-      userId: post.user.id,
+      userId: user.id,
       target: "post",
       targetId: post.id,
       count: post.fireCount,
@@ -28,7 +35,7 @@ export const Post = ({ post, user }: { post: FullPost; user: User }) => {
       reactionsSet: reactionsSet,
     },
     {
-      userId: post.user.id,
+      userId: user.id,
       target: "post",
       targetId: post.id,
       count: post.poopCount,
@@ -38,7 +45,7 @@ export const Post = ({ post, user }: { post: FullPost; user: User }) => {
       reactionsSet: reactionsSet,
     },
     {
-      userId: post.user.id,
+      userId: user.id,
       target: "post",
       targetId: post.id,
       count: post.capCount,
@@ -64,15 +71,15 @@ export const Post = ({ post, user }: { post: FullPost; user: User }) => {
               name={`${post.user.firstName} ${post.user.lastName}`}
               src={post.user.avatarUrl}
             />
-            <div>
+            <div className="flex flex-col">
               <h3 className="font-semibold">
                 {post.user.firstName} {post.user.lastName}
               </h3>
-              <p className="text-xs text-gray-400">
+              <span className="text-xs text-gray-400">
                 {DateTime.fromMillis(post.createdAt).toRelative({
                   locale: "en",
                 })}
-              </p>
+              </span>
             </div>
           </div>
           {post.user.id === user.id && <DeletePostButton postId={post.id} />}
@@ -128,13 +135,22 @@ export const Post = ({ post, user }: { post: FullPost; user: User }) => {
               isIconOnly
               radius="full"
               size="sm"
+              onClick={() => setShowComments(!showComments)}
             >
               <CommentIcon size={16} />
             </Button>
-            <span className="w-4">{0}</span>
+            <span className="w-4">{post.commentsCount}</span>
           </div>
         </div>
       </div>
+
+      {showComments && (
+        <div className="flex flex-col gap-4 rounded-[2rem] bg-default-50 p-4">
+          <Comments postId={post.id} user={user} />
+
+          <CreateComment postId={post.id} user={user} />
+        </div>
+      )}
     </div>
   );
 };
