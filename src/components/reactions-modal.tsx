@@ -71,7 +71,7 @@ export const ReactionsModal = ({
 
               {isError && <ReactionsModalError refetch={refetch} />}
 
-              {data ? (
+              {data && (
                 <Listbox
                   classNames={{
                     list: "max-h-[400px] overflow-y-auto overflow-x-hidden",
@@ -106,8 +106,6 @@ export const ReactionsModal = ({
                     </ListboxItem>
                   )}
                 </Listbox>
-              ) : (
-                <ReactionsModalError refetch={refetch} />
               )}
             </ModalBody>
           </>

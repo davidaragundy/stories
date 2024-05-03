@@ -45,13 +45,14 @@ export const createPostAction = async (
   }
 
   const postId = generateId(15);
+  const postCreatedAt = Date.now();
 
   try {
     await db.insert(posts).values({
       id: postId,
       userId: validatedFields.data.userId,
       content: validatedFields.data.content,
-      createdAt: Date.now(),
+      createdAt: postCreatedAt,
     });
   } catch (error) {
     console.error(error);
@@ -65,6 +66,7 @@ export const createPostAction = async (
       await db.insert(postsMedia).values({
         id: validatedFields.data.media[0].id,
         postId,
+        postCreatedAt,
         type: validatedFields.data.media[0].type,
         url: validatedFields.data.media[0].url,
       });

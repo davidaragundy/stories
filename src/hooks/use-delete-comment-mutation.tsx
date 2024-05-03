@@ -4,7 +4,7 @@ import { deleteCommentAction } from "@/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FullComment } from "@/types";
 
-export const useDeleteCommentMutation = () => {
+export const useDeleteCommentMutation = (queryKey: string) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -35,7 +35,7 @@ export const useDeleteCommentMutation = () => {
     onSettled: (_data, _error, { postId }) => {
       queryClient.invalidateQueries({ queryKey: ["comments", postId] });
 
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
     },
   });
 

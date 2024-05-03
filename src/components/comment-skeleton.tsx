@@ -2,7 +2,7 @@ import { Skeleton } from "@nextui-org/skeleton";
 
 export const CommentSkeleton = () => {
   return (
-    <div className="flex w-full gap-3 rounded-2xl border border-default-100 p-3">
+    <div className="flex w-full gap-3">
       <div>
         <Skeleton className="aspect-square w-10 rounded-full" />
       </div>

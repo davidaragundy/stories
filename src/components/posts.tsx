@@ -1,14 +1,26 @@
 "use client";
 
-import { getPostsAction } from "@/actions";
+import { getPostsAction } from "@/actions/get-posts";
+import { getFollowingPostsAction } from "@/actions/get-following-posts";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "lucia";
 import { Post, PostSkeleton, PostError } from "@/components";
 
-export const Posts = ({ user }: { user: User }) => {
+export const Posts = ({
+  user,
+  following,
+  queryKey,
+}: {
+  user: User;
+  following?: boolean;
+  queryKey: string;
+}) => {
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["posts"],
-    queryFn: async () => await getPostsAction(),
+    queryKey: [queryKey],
+    queryFn: async () =>
+      following
+        ? await getFollowingPostsAction(user.id)
+        : await getPostsAction(),
   });
 
   if (isLoading) return <PostSkeleton />;
@@ -18,6 +30,9 @@ export const Posts = ({ user }: { user: User }) => {
   }
 
   return (
-    data && data.map((post) => <Post key={post.id} post={post} user={user} />)
+    data &&
+    data.map((post) => (
+      <Post key={post.id} post={post} user={user} queryKey={queryKey} />
+    ))
   );
 };

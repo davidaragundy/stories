@@ -17,6 +17,15 @@ export const users = sqliteTable("users", {
   createdAt: integer("created_at").notNull(),
 });
 
+export const follows = sqliteTable("follows", {
+  followerId: text("follower_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  followingId: text("following_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
+
 export const invalidResetPasswordTokens = sqliteTable(
   "invalid_reset_password_tokens",
   {
@@ -50,8 +59,10 @@ export const postsMedia = sqliteTable("posts_media", {
   postId: text("post_id")
     .notNull()
     .references(() => posts.id, { onDelete: "cascade" }),
+  postCreatedAt: integer("post_created_at").notNull(),
   url: text("url").notNull(),
-  //TODO: some kind of enum or check constraint (image and video only)
+  //TODO: check constraint (image and video only), drizzle does not support check constraint yet
+  // https://orm.drizzle.team/docs/indexes-constraints#check
   type: text("type").notNull(),
 });
 
@@ -64,7 +75,8 @@ export const postsReactions = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id),
-    //TODO: some kind of enum or check constraint (fire, poop and cap only)
+    //TODO: check constraint (fire, poop and cap only), drizzle does not support check constraint yet
+    // https://orm.drizzle.team/docs/indexes-constraints#check
     type: text("type").notNull(),
   },
   (table) => ({
@@ -97,8 +109,10 @@ export const commentsMedia = sqliteTable("comments_media", {
   commentId: text("comment_id")
     .notNull()
     .references(() => comments.id, { onDelete: "cascade" }),
+  postCreatedAt: integer("post_created_at").notNull(),
   url: text("url").notNull(),
-  //TODO: some kind of enum or check constraint (image and video only)
+  //TODO: check constraint (image and video only), drizzle does not support check constraint yet
+  // https://orm.drizzle.team/docs/indexes-constraints#check
   type: text("type").notNull(),
 });
 
@@ -111,7 +125,8 @@ export const commentsReactions = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id),
-    //TODO: some kind of enum or check constraint (fire, poop and cap only)
+    //TODO: check constraint (fire, poop and cap only), drizzle does not support check constraint yet
+    // https://orm.drizzle.team/docs/indexes-constraints#check
     type: text("type").notNull(),
   },
   (table) => ({
@@ -121,26 +136,24 @@ export const commentsReactions = sqliteTable(
   }),
 );
 
-//TODO: complete the rest of the messaging schema
-export const messages = sqliteTable("messages", {
-  id: text("id").notNull().primaryKey(),
-  senderId: text("sender_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  receiverId: text("receiver_id")
-    .notNull()
-    .references(() => users.id),
-  content: text("content").notNull(),
-  createdAt: integer("created_at").notNull(),
-});
-
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
+  follows: many(follows),
   posts: many(posts),
   postsReactions: many(postsReactions),
   comments: many(comments),
   commentsReactions: many(commentsReactions),
-  messages: many(messages),
+}));
+
+export const followsRelations = relations(follows, ({ one }) => ({
+  follower: one(users, {
+    fields: [follows.followerId],
+    references: [users.id],
+  }),
+  following: one(users, {
+    fields: [follows.followingId],
+    references: [users.id],
+  }),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({

@@ -7,7 +7,13 @@ import { User } from "lucia";
 import type { FullComment } from "@/types";
 import { getOptimisticComment } from "@/utils";
 
-export const useCreateCommentMutation = ({ user }: { user: User }) => {
+export const useCreateCommentMutation = ({
+  user,
+  queryKey,
+}: {
+  user: User;
+  queryKey: string;
+}) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -44,7 +50,7 @@ export const useCreateCommentMutation = ({ user }: { user: User }) => {
     onSettled: (_data, _error, { postId }) => {
       queryClient.invalidateQueries({ queryKey: ["comments", postId] });
 
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
     },
   });
 

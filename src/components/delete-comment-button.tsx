@@ -17,12 +17,14 @@ import { useDeleteCommentMutation } from "@/hooks";
 export const DeleteCommentButton = ({
   commentId,
   postId,
+  queryKey,
 }: {
   commentId: string;
   postId: string;
+  queryKey: string;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isPending, mutateAsync } = useDeleteCommentMutation();
+  const { isPending, mutateAsync } = useDeleteCommentMutation(queryKey);
 
   const handleDelete = async () => {
     const { ok, messages } = await mutateAsync({ commentId, postId });

@@ -10,51 +10,27 @@ import {
   Reaction,
 } from "@/components";
 import type { FullPost } from "@/types";
-import { type ComponentProps, useState } from "react";
+import { useState } from "react";
 import { DateTime } from "luxon";
 import { Button } from "@nextui-org/button";
 import { cn } from "@/utils";
 import { User } from "lucia";
+import Link from "next/link";
 
-export const Post = ({ post, user }: { post: FullPost; user: User }) => {
+export const Post = ({
+  post,
+  user,
+  queryKey,
+}: {
+  post: FullPost;
+  user: User;
+  queryKey: string;
+}) => {
   const [showComments, setShowComments] = useState(false);
 
   const reactionsSet = new Set(
     post.reactions.map((r) => `${post.id}-${r.userId}-${r.type}`),
   );
-
-  const reactions: ComponentProps<typeof Reaction>[] = [
-    {
-      userId: user.id,
-      target: "post",
-      targetId: post.id,
-      count: post.fireCount,
-      reaction: "fire",
-      icon: <FireIcon size={16} />,
-      color: "warning",
-      reactionsSet: reactionsSet,
-    },
-    {
-      userId: user.id,
-      target: "post",
-      targetId: post.id,
-      count: post.poopCount,
-      reaction: "poop",
-      icon: <PoopIcon size={14} />,
-      color: "secondary",
-      reactionsSet: reactionsSet,
-    },
-    {
-      userId: user.id,
-      target: "post",
-      targetId: post.id,
-      count: post.capCount,
-      reaction: "cap",
-      icon: <CapIcon size={16} />,
-      color: "primary",
-      reactionsSet: reactionsSet,
-    },
-  ];
 
   return (
     <div
@@ -63,7 +39,7 @@ export const Post = ({ post, user }: { post: FullPost; user: User }) => {
         post.isPending && "opacity-50",
       )}
     >
-      <div className="flex flex-col gap-4 rounded-[2rem] bg-default-50 p-4">
+      <div className="flex flex-col gap-4 rounded-[2rem] bg-default-100 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-5">
             <Avatar
@@ -72,9 +48,11 @@ export const Post = ({ post, user }: { post: FullPost; user: User }) => {
               src={post.user.avatarUrl}
             />
             <div className="flex flex-col">
-              <h3 className="font-semibold">
-                {post.user.firstName} {post.user.lastName}
-              </h3>
+              <Link href={`/${post.user.username}`}>
+                <h3 className="font-semibold hover:underline">
+                  {post.user.firstName} {post.user.lastName}
+                </h3>
+              </Link>
               <span className="text-xs text-gray-400">
                 {DateTime.fromMillis(post.createdAt).toRelative({
                   locale: "en",
@@ -123,10 +101,39 @@ export const Post = ({ post, user }: { post: FullPost; user: User }) => {
       </div>
 
       <div className="flex w-full items-center justify-center">
-        <div className="flex items-center gap-3 rounded-[2rem] bg-default-50 px-2 py-1">
-          {reactions.map((reaction, index) => (
-            <Reaction key={`${Date.now()}-${index}`} {...reaction} />
-          ))}
+        <div className="flex items-center gap-3 rounded-[2rem] bg-default-100 px-2 py-1">
+          <Reaction
+            count={post.fireCount}
+            reaction={"fire"}
+            icon={<FireIcon size={16} />}
+            color={"warning"}
+            userId={user.id}
+            target="post"
+            targetId={post.id}
+            reactionsSet={reactionsSet}
+          />
+
+          <Reaction
+            count={post.poopCount}
+            reaction={"poop"}
+            icon={<PoopIcon size={14} />}
+            color={"secondary"}
+            userId={user.id}
+            target="post"
+            targetId={post.id}
+            reactionsSet={reactionsSet}
+          />
+
+          <Reaction
+            count={post.capCount}
+            reaction={"cap"}
+            icon={<CapIcon size={16} />}
+            color={"primary"}
+            userId={user.id}
+            target="post"
+            targetId={post.id}
+            reactionsSet={reactionsSet}
+          />
 
           <div className="flex items-center gap-1 text-default-500">
             <Button
@@ -145,10 +152,10 @@ export const Post = ({ post, user }: { post: FullPost; user: User }) => {
       </div>
 
       {showComments && (
-        <div className="flex flex-col gap-4 rounded-[2rem] bg-default-50 p-4">
-          <Comments postId={post.id} user={user} />
+        <div className="flex flex-col gap-4 rounded-[2rem] bg-default-100 p-4">
+          <Comments postId={post.id} user={user} queryKey={queryKey} />
 
-          <CreateComment postId={post.id} user={user} />
+          <CreateComment postId={post.id} user={user} queryKey={queryKey} />
         </div>
       )}
     </div>

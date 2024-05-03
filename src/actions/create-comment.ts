@@ -88,6 +88,7 @@ export const createCommentAction = async (
       await db.insert(commentsMedia).values({
         id: validatedFields.data.media[0].id,
         commentId,
+        postCreatedAt: post.createdAt,
         type: validatedFields.data.media[0].type,
         url: validatedFields.data.media[0].url,
       });

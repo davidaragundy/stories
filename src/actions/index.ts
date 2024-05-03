@@ -4,6 +4,7 @@ export * from "./delete-post";
 export * from "./delete-comment";
 export * from "./forgot-password";
 export * from "./get-comments";
+export * from "./get-following-posts";
 export * from "./get-posts";
 export * from "./get-reactions";
 export * from "./reset-password";

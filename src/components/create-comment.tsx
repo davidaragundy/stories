@@ -20,9 +20,11 @@ import { commentsRef } from "@/lib/firebase";
 export const CreateComment = ({
   postId,
   user,
+  queryKey,
 }: {
   postId: string;
   user: User;
+  queryKey: string;
 }) => {
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [mediaType, setMediaType] = useState<"image" | "video">();
@@ -35,6 +37,7 @@ export const CreateComment = ({
 
   const { mutateAsync, isPending } = useCreateCommentMutation({
     user,
+    queryKey,
   });
 
   const { register, handleSubmit, getValues, reset, watch } =
@@ -164,7 +167,7 @@ export const CreateComment = ({
   };
 
   return (
-    <form className="flex w-full gap-2" onSubmit={handleSubmit(onSubmit)}>
+    <form className="flex w-full gap-3" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex items-start">
         <Avatar
           isBordered
@@ -175,11 +178,12 @@ export const CreateComment = ({
 
       <div className="flex flex-1 flex-col gap-1">
         <Textarea
-          placeholder="just start yapping about anything 💩"
+          placeholder="more yapping? 🧐"
           className="w-full"
           disabled={isPending}
           radius="lg"
           defaultValue=""
+          // variant="bordered"
           minRows={1}
           {...register("content")}
         />

@@ -17,7 +17,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreatePostMutation } from "@/hooks";
 import { postsRef } from "@/lib/firebase";
 
-export const CreatePost = ({ user }: { user: User }) => {
+export const CreatePost = ({
+  user,
+  queryKey,
+}: {
+  user: User;
+  queryKey: string;
+}) => {
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [mediaType, setMediaType] = useState<"image" | "video">();
   const [isFileLoading, setIsFileLoading] = useState<boolean>(false);
@@ -29,6 +35,7 @@ export const CreatePost = ({ user }: { user: User }) => {
 
   const { mutateAsync, isPending } = useCreatePostMutation({
     user,
+    queryKey,
   });
 
   const { register, handleSubmit, getValues, reset, watch } =
@@ -157,7 +164,7 @@ export const CreatePost = ({ user }: { user: User }) => {
 
   return (
     <form
-      className="flex w-[clamp(10rem,60%,30rem)] flex-col gap-4 rounded-[2rem] bg-default-50 p-4"
+      className="flex w-[clamp(10rem,60%,30rem)] flex-col gap-4 rounded-[2rem] bg-default-100 p-4"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex items-center justify-between">
@@ -171,19 +178,37 @@ export const CreatePost = ({ user }: { user: User }) => {
             <h3 className="font-semibold">{`${user.firstName} ${user.lastName}`}</h3>
           </div>
         </div>
-        <Button
-          isLoading={isPending}
-          disabled={isFileLoading}
-          color="primary"
-          size="sm"
-          radius="lg"
-          variant="flat"
-          className="text-md font-bold"
-          type="submit"
-          isIconOnly
-        >
-          <SendIcon size={18} />
-        </Button>
+
+        <div className="flex gap-2">
+          {!mediaUrl && (
+            <Button
+              isIconOnly
+              radius="full"
+              variant="light"
+              title="Add an image"
+              size="sm"
+              onClick={() => mediaRef.current?.click()}
+              type="button"
+              disabled={isPending}
+            >
+              <ImageIcon size={18} className="text-default-500" />
+            </Button>
+          )}
+
+          <Button
+            isLoading={isPending}
+            disabled={isFileLoading}
+            color="primary"
+            size="sm"
+            radius="lg"
+            variant="flat"
+            className="text-md font-bold"
+            type="submit"
+            isIconOnly
+          >
+            <SendIcon size={18} />
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-1">
@@ -194,6 +219,7 @@ export const CreatePost = ({ user }: { user: User }) => {
           radius="lg"
           defaultValue=""
           minRows={1}
+          // variant="bordered"
           {...register("content")}
         />
 
@@ -209,21 +235,6 @@ export const CreatePost = ({ user }: { user: User }) => {
             }}
             accept="image/*, video/*"
           />
-
-          {!mediaUrl && (
-            <Button
-              isIconOnly
-              radius="full"
-              variant="light"
-              title="Add an image"
-              size="sm"
-              onClick={() => mediaRef.current?.click()}
-              type="button"
-              disabled={isPending}
-            >
-              <ImageIcon size={18} className="text-default-500" />
-            </Button>
-          )}
 
           {mediaUrl && (
             <div

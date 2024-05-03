@@ -22,7 +22,7 @@ export const Nav = () => {
 
   return (
     <nav role="navigation" className="flex flex-col p-7">
-      <div className="flex flex-col gap-2 rounded-3xl bg-default-50 p-2">
+      <div className="flex flex-col gap-2 rounded-3xl bg-default-100 p-2">
         {links.map((link) => (
           <NavButton key={`${link.label} - ${link.path}`} link={link} />
         ))}

@@ -7,23 +7,29 @@ import { User } from "lucia";
 import type { FullPost } from "@/types";
 import { getOptimisticPost } from "@/utils";
 
-export const useCreatePostMutation = ({ user }: { user: User }) => {
+export const useCreatePostMutation = ({
+  user,
+  queryKey,
+}: {
+  user: User;
+  queryKey: string;
+}) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (data: CreatePostInputsServer) =>
       await createPostAction(data),
     onMutate: async (newPost) => {
-      await queryClient.cancelQueries({ queryKey: ["posts"] });
+      await queryClient.cancelQueries({ queryKey: [queryKey] });
 
-      const previousPosts = queryClient.getQueryData<FullPost[]>(["posts"]);
+      const previousPosts = queryClient.getQueryData<FullPost[]>([queryKey]);
 
       const optimisticPost = getOptimisticPost({
         user,
         ...newPost,
       });
 
-      queryClient.setQueryData(["posts"], (old: FullPost[]) => [
+      queryClient.setQueryData([queryKey], (old: FullPost[]) => [
         optimisticPost,
         ...old,
       ]);
@@ -31,10 +37,10 @@ export const useCreatePostMutation = ({ user }: { user: User }) => {
       return { previousPosts };
     },
     onError: (_error, _newPost, context) => {
-      queryClient.setQueryData(["posts"], context?.previousPosts);
+      queryClient.setQueryData([queryKey], context?.previousPosts);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
     },
   });
 
