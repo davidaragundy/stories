@@ -1,5 +1,5 @@
 import { getPostsAction } from "@/actions/get-posts";
-import { Posts, CreatePost } from "@/components";
+import { Posts, CreatePost, Info } from "@/components";
 import { validateRequest } from "@/lib";
 import {
   HydrationBoundary,
@@ -24,13 +24,17 @@ export default async function Home() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <main className="flex h-full flex-1 flex-col overflow-hidden p-7 pl-0">
-        <div className="flex h-full w-full flex-col items-center gap-14 overflow-y-auto overflow-x-hidden">
+      <div className="flex h-full flex-1 gap-4 overflow-hidden pr-7 pt-7">
+        <main className="flex h-full flex-1 flex-col items-center gap-14 overflow-y-auto overflow-x-hidden">
           <CreatePost user={user} queryKey={queryKey} />
 
           <Posts user={user} queryKey={queryKey} />
-        </div>
-      </main>
+        </main>
+        <Info
+          title="Global 🌎?"
+          description="Yep, here you can spread your 💩 to the whole world and see the posts of people who have posted to the whole world 🥳. Remember everything will be deleted in 24 hours. 🫣"
+        />
+      </div>
     </HydrationBoundary>
   );
 }

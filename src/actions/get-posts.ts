@@ -5,8 +5,11 @@ import { db } from "@/drizzle";
 
 export const getPostsAction = async () => {
   const posts = await db.query.posts.findMany({
-    where: (fields, { gt }) =>
-      gt(fields.createdAt, Date.now() - EXPIRATION_TIME),
+    where: (fields, { gt, and, eq }) =>
+      and(
+        gt(fields.createdAt, Date.now() - EXPIRATION_TIME),
+        eq(fields.onlyFollowers, "false"),
+      ),
     orderBy: (fields, { desc }) => [desc(fields.createdAt)],
     with: {
       user: {

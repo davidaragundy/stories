@@ -2,14 +2,14 @@ import { NavButton } from "@/components";
 import {
   ChatIcon,
   FollowingIcon,
-  HomeIcon,
   SettingsIcon,
   UserIcon,
+  WorldIcon,
 } from "@/icons";
 
 export const Nav = () => {
   const links = [
-    { label: "Home", path: "/", icon: <HomeIcon size={18} /> },
+    { label: "Global", path: "/", icon: <WorldIcon size={18} /> },
     {
       label: "Following",
       path: "/following",
@@ -21,7 +21,7 @@ export const Nav = () => {
   ];
 
   return (
-    <nav role="navigation" className="flex flex-col p-7">
+    <nav role="navigation" className="flex flex-col p-7 pr-4">
       <div className="flex flex-col gap-2 rounded-3xl bg-default-100 p-2">
         {links.map((link) => (
           <NavButton key={`${link.label} - ${link.path}`} link={link} />

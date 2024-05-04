@@ -52,6 +52,7 @@ export const createPostAction = async (
       id: postId,
       userId: validatedFields.data.userId,
       content: validatedFields.data.content,
+      onlyFollowers: validatedFields.data.onlyFollowers,
       createdAt: postCreatedAt,
     });
   } catch (error) {

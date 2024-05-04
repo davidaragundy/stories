@@ -8,6 +8,7 @@ export * from "./delete-comment-button";
 export * from "./delete-post-button";
 export * from "./forgot-password-form";
 export * from "./header";
+export * from "./info";
 export * from "./nav-button";
 export * from "./nav";
 export * from "./post-error";

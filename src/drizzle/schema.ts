@@ -18,12 +18,14 @@ export const users = sqliteTable("users", {
 });
 
 export const follows = sqliteTable("follows", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   followerId: text("follower_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   followingId: text("following_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: integer("created_at").notNull(),
 });
 
 export const invalidResetPasswordTokens = sqliteTable(
@@ -47,6 +49,7 @@ export const posts = sqliteTable("posts", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   content: text("content").notNull().default(""),
+  onlyFollowers: text("only_followers").notNull().default("false"),
   fireCount: integer("fire_count").notNull().default(0),
   poopCount: integer("poop_count").notNull().default(0),
   capCount: integer("cap_count").notNull().default(0),

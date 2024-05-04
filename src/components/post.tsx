@@ -35,7 +35,7 @@ export const Post = ({
   return (
     <div
       className={cn(
-        "flex w-[clamp(10rem,60%,30rem)] flex-col gap-2",
+        "flex w-[clamp(10rem,70%,30rem)] flex-col gap-2",
         post.isPending && "opacity-50",
       )}
     >
@@ -60,11 +60,13 @@ export const Post = ({
               </span>
             </div>
           </div>
-          {post.user.id === user.id && <DeletePostButton postId={post.id} />}
+          {post.user.id === user.id && (
+            <DeletePostButton postId={post.id} queryKey={queryKey} />
+          )}
         </div>
 
         {post.content && (
-          <p className="whitespace-break-spaces break-words rounded-large text-justify text-sm">
+          <p className="whitespace-break-spaces break-words text-justify text-sm">
             {post.content}
           </p>
         )}
@@ -111,6 +113,7 @@ export const Post = ({
             target="post"
             targetId={post.id}
             reactionsSet={reactionsSet}
+            queryKey={queryKey}
           />
 
           <Reaction
@@ -122,6 +125,7 @@ export const Post = ({
             target="post"
             targetId={post.id}
             reactionsSet={reactionsSet}
+            queryKey={queryKey}
           />
 
           <Reaction
@@ -133,6 +137,7 @@ export const Post = ({
             target="post"
             targetId={post.id}
             reactionsSet={reactionsSet}
+            queryKey={queryKey}
           />
 
           <div className="flex items-center gap-1 text-default-500">

@@ -14,9 +14,15 @@ import {
 } from "@nextui-org/modal";
 import { useDeletePostMutation } from "@/hooks";
 
-export const DeletePostButton = ({ postId }: { postId: string }) => {
+export const DeletePostButton = ({
+  postId,
+  queryKey,
+}: {
+  postId: string;
+  queryKey: string;
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isPending, mutateAsync } = useDeletePostMutation();
+  const { isPending, mutateAsync } = useDeletePostMutation(queryKey);
 
   const handleDelete = async () => {
     const { ok, messages } = await mutateAsync(postId);

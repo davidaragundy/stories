@@ -1,5 +1,6 @@
 "use server";
 
+import { EXPIRATION_TIME } from "@/constants";
 import { db } from "@/drizzle";
 
 export const getFollowingPostsAction = async (userId: string) => {
@@ -8,13 +9,20 @@ export const getFollowingPostsAction = async (userId: string) => {
     columns: { followingId: true },
   });
 
-  if (!followingUserIds.length) return [];
+  followingUserIds.push({ followingId: userId });
 
   const posts = await db.query.posts.findMany({
-    where: (fields, { eq, or }) =>
-      or(
-        ...followingUserIds.map((user) => eq(fields.userId, user.followingId)),
+    where: (fields, { eq, or, and, gt }) =>
+      and(
+        or(
+          ...followingUserIds.map((user) =>
+            eq(fields.userId, user.followingId),
+          ),
+        ),
+        gt(fields.createdAt, Date.now() - EXPIRATION_TIME),
+        eq(fields.onlyFollowers, "true"),
       ),
+
     orderBy: (fields, { desc }) => [desc(fields.createdAt)],
     with: {
       user: {

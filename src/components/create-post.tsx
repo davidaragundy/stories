@@ -43,6 +43,7 @@ export const CreatePost = ({
       resolver: zodResolver(createPostSchemaClient),
       defaultValues: {
         userId: user.id,
+        onlyFollowers: queryKey === "following" ? "true" : "false",
       },
     });
 
@@ -164,7 +165,7 @@ export const CreatePost = ({
 
   return (
     <form
-      className="flex w-[clamp(10rem,60%,30rem)] flex-col gap-4 rounded-[2rem] bg-default-100 p-4"
+      className="flex w-[clamp(10rem,70%,30rem)] flex-col gap-4 rounded-[2rem] bg-default-100 p-4"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex items-center justify-between">

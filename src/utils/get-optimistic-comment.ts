@@ -28,6 +28,7 @@ export const getOptimisticComment = ({
       media?.map((m) => ({
         ...m,
         commentId: fakeCommentId,
+        postCreatedAt: Date.now(),
       })) || [],
     reactions: [],
     isPending: true,

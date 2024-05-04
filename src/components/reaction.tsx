@@ -18,6 +18,7 @@ export const Reaction = ({
   targetId,
   reactionsSet,
   userId,
+  queryKey,
 }: {
   reaction: IReaction;
   count: number;
@@ -27,9 +28,10 @@ export const Reaction = ({
   targetId: string;
   reactionsSet: Set<string>;
   userId: string;
+  queryKey: string;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { mutateAsync } = useUpdateReactionMutation();
+  const { mutateAsync } = useUpdateReactionMutation(queryKey);
 
   const handleReaction = async () => {
     const { ok, messages } = await mutateAsync({

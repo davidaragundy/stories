@@ -25,7 +25,7 @@ export const Comments = ({
         Comments ({isPending ? "🫣" : data?.length || 0})
       </h4>
 
-      {false && <CommentSkeleton />}
+      {isPending && <CommentSkeleton />}
 
       {isError && <CommentError refetch={refetch} />}
 
