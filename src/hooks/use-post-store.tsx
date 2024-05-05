@@ -3,11 +3,11 @@ import { PostStore } from "@/stores";
 import { useContext } from "react";
 import { useStore } from "zustand";
 
-export const useCounterStore = <T,>(selector: (store: PostStore) => T): T => {
+export const usePostStore = <T,>(selector: (store: PostStore) => T): T => {
   const postStoreContext = useContext(PostStoreContext);
 
   if (!postStoreContext) {
-    throw new Error(`useCounterStore must be use within PostStoreProvider`);
+    throw new Error(`usePostStore must be use within PostStoreProvider`);
   }
 
   return useStore(postStoreContext, selector);

@@ -6,7 +6,7 @@ import { ReactionsModal, Toast } from "@/components";
 import { cn } from "@/utils";
 import { Reaction as IReaction } from "@/types";
 import { ReactNode } from "react";
-import { useUpdateReactionMutation } from "@/hooks";
+import { usePageStore, usePostStore, useUpdateReactionMutation } from "@/hooks";
 import { useDisclosure } from "@nextui-org/modal";
 
 export const Reaction = ({
@@ -17,8 +17,6 @@ export const Reaction = ({
   target,
   targetId,
   reactionsSet,
-  userId,
-  queryKey,
 }: {
   reaction: IReaction;
   count: number;
@@ -27,18 +25,19 @@ export const Reaction = ({
   target: "post" | "comment";
   targetId: string;
   reactionsSet: Set<string>;
-  userId: string;
-  queryKey: string;
 }) => {
+  const { user } = usePageStore((state) => state);
+  const { isPending } = usePostStore((state) => state);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { mutateAsync } = useUpdateReactionMutation(queryKey);
+  const { mutateAsync } = useUpdateReactionMutation();
 
   const handleReaction = async () => {
     const { ok, messages } = await mutateAsync({
       target,
       targetId,
       reaction,
-      userId,
+      userId: user.id,
     });
 
     if (!ok) {
@@ -55,9 +54,10 @@ export const Reaction = ({
     <>
       <div className="flex items-center gap-1 text-default-500">
         <Button
+          disabled={isPending}
           className={cn(
             "text-default-500",
-            reactionsSet.has(`${targetId}-${userId}-${reaction}`) &&
+            reactionsSet.has(`${user.id}-${reaction}`) &&
               (color === "warning"
                 ? "text-warning"
                 : color === "secondary"

@@ -8,8 +8,6 @@ import {
 } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 
-const queryKey = "posts";
-
 export default async function Home() {
   const { user } = await validateRequest();
 
@@ -18,7 +16,7 @@ export default async function Home() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: [queryKey],
+    queryKey: ["posts"],
     queryFn: async () => await getPostsAction(),
   });
 
@@ -26,9 +24,9 @@ export default async function Home() {
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="flex h-full flex-1 gap-4 overflow-hidden pr-7 pt-7">
         <main className="flex h-full flex-1 flex-col items-center gap-14 overflow-y-auto overflow-x-hidden">
-          <CreatePost user={user} queryKey={queryKey} />
+          <CreatePost />
 
-          <Posts user={user} queryKey={queryKey} />
+          <Posts />
         </main>
         <Info
           title="Global 🌎?"

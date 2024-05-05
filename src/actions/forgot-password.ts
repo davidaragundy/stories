@@ -9,7 +9,7 @@ import { decodeHex } from "oslo/encoding";
 import { ResetPasswordEmail } from "@/components/emails";
 import { BASE_URL } from "@/constants";
 import { renderAsync } from "@react-email/render";
-import nodemailer from "nodemailer";
+import { transporter } from "@/lib";
 
 export const forgotPasswordAction = async (
   data: ForgotPasswordInputs,
@@ -53,16 +53,6 @@ export const forgotPasswordAction = async (
           resetPasswordLink: `${BASE_URL}/forgot-password/${token}`,
         }),
       );
-
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: +process.env.SMTP_PORT!,
-        secure: true,
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
-      });
 
       const options = {
         from: "Stories <stories@aragundy.xyz>",

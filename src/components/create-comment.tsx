@@ -1,11 +1,10 @@
 "use client";
 
-import { useCreateCommentMutation } from "@/hooks";
+import { useCreateCommentMutation, usePageStore, usePostStore } from "@/hooks";
 import { CreateCommentInputsClient, UploadedFilesResponse } from "@/types";
 import { removeFiles, removeUnpostedFiles, uploadFiles, cn } from "@/utils";
 import { createCommentSchemaClient } from "@/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "lucia";
 import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -17,15 +16,10 @@ import { ImageIcon, SendIcon, XIcon } from "@/icons";
 import Image from "next/image";
 import { commentsRef } from "@/lib/firebase";
 
-export const CreateComment = ({
-  postId,
-  user,
-  queryKey,
-}: {
-  postId: string;
-  user: User;
-  queryKey: string;
-}) => {
+export const CreateComment = () => {
+  const { user } = usePageStore((state) => state);
+  const { id: postId } = usePostStore((state) => state);
+
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [mediaType, setMediaType] = useState<"image" | "video">();
   const [isFileLoading, setIsFileLoading] = useState<boolean>(false);
@@ -35,10 +29,7 @@ export const CreateComment = ({
 
   const mediaRef = useRef<HTMLInputElement | null>(null);
 
-  const { mutateAsync, isPending } = useCreateCommentMutation({
-    user,
-    queryKey,
-  });
+  const { mutateAsync, isPending } = useCreateCommentMutation();
 
   const { register, handleSubmit, getValues, reset, watch } =
     useForm<CreateCommentInputsClient>({
@@ -183,7 +174,7 @@ export const CreateComment = ({
           disabled={isPending}
           radius="lg"
           defaultValue=""
-          // variant="bordered"
+          variant="bordered"
           minRows={1}
           {...register("content")}
         />

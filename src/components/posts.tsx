@@ -1,25 +1,19 @@
 "use client";
 
 import { getPostsAction } from "@/actions/get-posts";
-import { getFollowingPostsAction } from "@/actions/get-following-posts";
+import { getOnlyFollowersPostsAction } from "@/actions";
 import { useQuery } from "@tanstack/react-query";
-import { User } from "lucia";
-import { Post, PostSkeleton, PostError } from "@/components";
+import { Post, PostSkeleton, PostError, PostStoreProvider } from "@/components";
+import { usePageStore } from "@/hooks";
 
-export const Posts = ({
-  user,
-  following,
-  queryKey,
-}: {
-  user: User;
-  following?: boolean;
-  queryKey: string;
-}) => {
+export const Posts = () => {
+  const { queryKey, onlyFollowers, user } = usePageStore((state) => state);
+
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: [queryKey],
+    queryKey,
     queryFn: async () =>
-      following
-        ? await getFollowingPostsAction(user.id)
+      onlyFollowers
+        ? await getOnlyFollowersPostsAction(user.id)
         : await getPostsAction(),
   });
 
@@ -32,7 +26,9 @@ export const Posts = ({
   return (
     data &&
     data.map((post) => (
-      <Post key={post.id} post={post} user={user} queryKey={queryKey} />
+      <PostStoreProvider key={post.id}>
+        <Post post={post} />
+      </PostStoreProvider>
     ))
   );
 };

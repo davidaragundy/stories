@@ -9,21 +9,16 @@ import { Button } from "@nextui-org/button";
 import { Textarea } from "@nextui-org/input";
 import toast from "react-hot-toast";
 import { Toast } from "@/components";
-import { User } from "lucia";
 import { cn, removeFiles, removeUnpostedFiles, uploadFiles } from "@/utils";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createPostSchemaClient } from "@/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreatePostMutation } from "@/hooks";
+import { useCreatePostMutation, usePageStore } from "@/hooks";
 import { postsRef } from "@/lib/firebase";
 
-export const CreatePost = ({
-  user,
-  queryKey,
-}: {
-  user: User;
-  queryKey: string;
-}) => {
+export const CreatePost = () => {
+  const { user, onlyFollowers } = usePageStore((state) => state);
+
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [mediaType, setMediaType] = useState<"image" | "video">();
   const [isFileLoading, setIsFileLoading] = useState<boolean>(false);
@@ -33,17 +28,14 @@ export const CreatePost = ({
 
   const mediaRef = useRef<HTMLInputElement | null>(null);
 
-  const { mutateAsync, isPending } = useCreatePostMutation({
-    user,
-    queryKey,
-  });
+  const { mutateAsync, isPending } = useCreatePostMutation();
 
   const { register, handleSubmit, getValues, reset, watch } =
     useForm<CreatePostInputsClient>({
       resolver: zodResolver(createPostSchemaClient),
       defaultValues: {
         userId: user.id,
-        onlyFollowers: queryKey === "following" ? "true" : "false",
+        onlyFollowers: String(onlyFollowers),
       },
     });
 
@@ -220,7 +212,7 @@ export const CreatePost = ({
           radius="lg"
           defaultValue=""
           minRows={1}
-          // variant="bordered"
+          variant="bordered"
           {...register("content")}
         />
 

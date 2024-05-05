@@ -3,22 +3,16 @@
 import { FullComment } from "@/types";
 import { cn } from "@/utils";
 import { Avatar } from "@nextui-org/react";
-import { User } from "lucia";
 import { DateTime } from "luxon";
 import Image from "next/image";
 import { DeleteCommentButton } from "@/components";
 import Link from "next/link";
+import { usePageStore } from "@/hooks";
 
 //TODO: check comment width
-export const Comment = ({
-  comment,
-  user,
-  queryKey,
-}: {
-  comment: FullComment;
-  user: User;
-  queryKey: string;
-}) => {
+export const Comment = ({ comment }: { comment: FullComment }) => {
+  const { user } = usePageStore((state) => state);
+
   return (
     <div className={cn("flex w-full gap-3", comment.isPending && "opacity-50")}>
       <div>
@@ -93,9 +87,9 @@ export const Comment = ({
 
         {comment.user.id === user.id && (
           <DeleteCommentButton
+            isCommentPending={!!comment.isPending}
             commentId={comment.id}
             postId={comment.postId}
-            queryKey={queryKey}
           />
         )}
       </div>

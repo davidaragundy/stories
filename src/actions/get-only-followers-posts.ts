@@ -3,7 +3,7 @@
 import { EXPIRATION_TIME } from "@/constants";
 import { db } from "@/drizzle";
 
-export const getFollowingPostsAction = async (userId: string) => {
+export const getOnlyFollowersPostsAction = async (userId: string) => {
   const followingUserIds = await db.query.follows.findMany({
     where: (fields, { eq }) => eq(fields.followerId, userId),
     columns: { followingId: true },

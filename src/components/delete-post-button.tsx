@@ -16,13 +16,13 @@ import { useDeletePostMutation } from "@/hooks";
 
 export const DeletePostButton = ({
   postId,
-  queryKey,
+  isPostPending,
 }: {
   postId: string;
-  queryKey: string;
+  isPostPending: boolean;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isPending, mutateAsync } = useDeletePostMutation(queryKey);
+  const { isPending, mutateAsync } = useDeletePostMutation();
 
   const handleDelete = async () => {
     const { ok, messages } = await mutateAsync(postId);
@@ -41,6 +41,7 @@ export const DeletePostButton = ({
       <div className="flex flex-wrap items-start justify-end">
         <Button
           isLoading={isPending}
+          disabled={isPostPending}
           isIconOnly
           variant="light"
           size="sm"

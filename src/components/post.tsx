@@ -10,27 +10,27 @@ import {
   Reaction,
 } from "@/components";
 import type { FullPost } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { Button } from "@nextui-org/button";
 import { cn } from "@/utils";
-import { User } from "lucia";
 import Link from "next/link";
+import { usePageStore, usePostStore } from "@/hooks";
 
-export const Post = ({
-  post,
-  user,
-  queryKey,
-}: {
-  post: FullPost;
-  user: User;
-  queryKey: string;
-}) => {
+export const Post = ({ post }: { post: FullPost }) => {
+  const { user } = usePageStore((state) => state);
+  const { setIsPending, setId } = usePostStore((state) => state);
+
   const [showComments, setShowComments] = useState(false);
 
   const reactionsSet = new Set(
-    post.reactions.map((r) => `${post.id}-${r.userId}-${r.type}`),
+    post.reactions.map((r) => `${r.userId}-${r.type}`),
   );
+
+  useEffect(() => {
+    setId(post.id);
+    setIsPending(!!post.isPending);
+  }, [post.id, post.isPending, setId, setIsPending]);
 
   return (
     <div
@@ -47,12 +47,14 @@ export const Post = ({
               name={`${post.user.firstName} ${post.user.lastName}`}
               src={post.user.avatarUrl}
             />
+
             <div className="flex flex-col">
               <Link href={`/${post.user.username}`}>
                 <h3 className="font-semibold hover:underline">
                   {post.user.firstName} {post.user.lastName}
                 </h3>
               </Link>
+
               <span className="text-xs text-gray-400">
                 {DateTime.fromMillis(post.createdAt).toRelative({
                   locale: "en",
@@ -60,8 +62,12 @@ export const Post = ({
               </span>
             </div>
           </div>
+
           {post.user.id === user.id && (
-            <DeletePostButton postId={post.id} queryKey={queryKey} />
+            <DeletePostButton
+              postId={post.id}
+              isPostPending={!!post.isPending}
+            />
           )}
         </div>
 
@@ -109,11 +115,9 @@ export const Post = ({
             reaction={"fire"}
             icon={<FireIcon size={16} />}
             color={"warning"}
-            userId={user.id}
             target="post"
             targetId={post.id}
             reactionsSet={reactionsSet}
-            queryKey={queryKey}
           />
 
           <Reaction
@@ -121,11 +125,9 @@ export const Post = ({
             reaction={"poop"}
             icon={<PoopIcon size={14} />}
             color={"secondary"}
-            userId={user.id}
             target="post"
             targetId={post.id}
             reactionsSet={reactionsSet}
-            queryKey={queryKey}
           />
 
           <Reaction
@@ -133,15 +135,14 @@ export const Post = ({
             reaction={"cap"}
             icon={<CapIcon size={16} />}
             color={"primary"}
-            userId={user.id}
             target="post"
             targetId={post.id}
             reactionsSet={reactionsSet}
-            queryKey={queryKey}
           />
 
           <div className="flex items-center gap-1 text-default-500">
             <Button
+              disabled={post.isPending}
               className="text-default-500"
               variant="light"
               isIconOnly
@@ -158,9 +159,9 @@ export const Post = ({
 
       {showComments && (
         <div className="flex flex-col gap-4 rounded-[2rem] bg-default-100 p-4">
-          <Comments postId={post.id} user={user} queryKey={queryKey} />
+          <Comments />
 
-          <CreateComment postId={post.id} user={user} queryKey={queryKey} />
+          <CreateComment />
         </div>
       )}
     </div>

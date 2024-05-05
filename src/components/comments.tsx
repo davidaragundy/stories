@@ -3,19 +3,13 @@
 import { getCommentsAction } from "@/actions";
 import { useQuery } from "@tanstack/react-query";
 import { Comment, CommentError, CommentSkeleton } from "@/components";
-import { User } from "lucia";
+import { usePostStore } from "@/hooks";
 
-export const Comments = ({
-  postId,
-  user,
-  queryKey,
-}: {
-  postId: string;
-  user: User;
-  queryKey: string;
-}) => {
+export const Comments = () => {
+  const { id: postId } = usePostStore((state) => state);
+
   const { data, isPending, isError, refetch } = useQuery({
-    queryKey: ["comments", postId],
+    queryKey: ["post", postId, "comments"],
     queryFn: async () => await getCommentsAction(postId),
   });
 
@@ -32,12 +26,7 @@ export const Comments = ({
       {data && (
         <div className="flex flex-col gap-3">
           {data.map((comment) => (
-            <Comment
-              key={comment.id}
-              comment={comment}
-              user={user}
-              queryKey={queryKey}
-            />
+            <Comment key={comment.id} comment={comment} />
           ))}
         </div>
       )}

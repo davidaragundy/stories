@@ -3,17 +3,13 @@
 import { createCommentAction } from "@/actions";
 import { CreateCommentInputsServer } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { User } from "lucia";
 import type { FullComment } from "@/types";
 import { getOptimisticComment } from "@/utils";
+import { usePageStore } from "@/hooks";
 
-export const useCreateCommentMutation = ({
-  user,
-  queryKey,
-}: {
-  user: User;
-  queryKey: string;
-}) => {
+export const useCreateCommentMutation = () => {
+  const { user, queryKey: pageQueryKey } = usePageStore((state) => state);
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -21,12 +17,13 @@ export const useCreateCommentMutation = ({
       await createCommentAction(data),
     onMutate: async (newComment) => {
       await queryClient.cancelQueries({
-        queryKey: ["comments", newComment.postId],
+        queryKey: ["post", newComment.postId, "comments"],
       });
 
       const previousComments = queryClient.getQueryData<FullComment[]>([
-        "comments",
+        "post",
         newComment.postId,
+        "comments",
       ]);
 
       const optimisticComment = getOptimisticComment({
@@ -35,7 +32,7 @@ export const useCreateCommentMutation = ({
       });
 
       queryClient.setQueryData(
-        ["comments", newComment.postId],
+        ["post", newComment.postId, "comments"],
         (old: FullComment[]) => [...old, optimisticComment],
       );
 
@@ -43,14 +40,16 @@ export const useCreateCommentMutation = ({
     },
     onError: (_error, newComment, context) => {
       queryClient.setQueryData(
-        ["comments", newComment.postId],
+        ["post", newComment.postId, "comments"],
         context?.previousComments,
       );
     },
-    onSettled: (_data, _error, { postId }) => {
-      queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+    onSettled: (_data, _error, newComment) => {
+      queryClient.invalidateQueries({
+        queryKey: ["post", newComment.postId, "comments"],
+      });
 
-      queryClient.invalidateQueries({ queryKey: [queryKey] });
+      queryClient.invalidateQueries({ queryKey: pageQueryKey });
     },
   });
 

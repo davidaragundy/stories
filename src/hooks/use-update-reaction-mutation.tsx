@@ -3,8 +3,11 @@
 import { updateReactionAction } from "@/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FullPost, Reaction } from "@/types";
+import { usePageStore } from "@/hooks";
 
-export const useUpdateReactionMutation = (queryKey: string) => {
+export const useUpdateReactionMutation = () => {
+  const { queryKey: pageQueryKey } = usePageStore((state) => state);
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -20,15 +23,15 @@ export const useUpdateReactionMutation = (queryKey: string) => {
     }) => await updateReactionAction(target, targetId, reaction),
     onMutate: async ({ target, targetId, reaction, userId }) => {
       await queryClient.cancelQueries({
-        queryKey: [target === "post" ? queryKey : "comments"],
+        queryKey: target === "post" ? pageQueryKey : ["comments"],
       });
 
-      const previousPosts = queryClient.getQueryData<FullPost[]>([
-        target === "post" ? queryKey : "comments",
-      ]);
+      const previousPosts = queryClient.getQueryData<FullPost[]>(
+        target === "post" ? pageQueryKey : ["comments"],
+      );
 
       queryClient.setQueryData(
-        [target === "post" ? queryKey : "comments"],
+        target === "post" ? pageQueryKey : ["comments"],
         (old: FullPost[]) =>
           old.map((post) => {
             if (post.id === targetId) {
@@ -62,13 +65,13 @@ export const useUpdateReactionMutation = (queryKey: string) => {
     },
     onError: (_error, { target }, context) => {
       queryClient.setQueryData(
-        [target === "post" ? queryKey : "comments"],
+        target === "post" ? pageQueryKey : ["comments"],
         context?.previousPosts,
       );
     },
     onSettled: (_data, _error, { target, reaction, targetId }) => {
       queryClient.invalidateQueries({
-        queryKey: [target === "post" ? queryKey : "comments"],
+        queryKey: target === "post" ? pageQueryKey : ["comments"],
       });
 
       queryClient.invalidateQueries({

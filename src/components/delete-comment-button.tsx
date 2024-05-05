@@ -17,14 +17,14 @@ import { useDeleteCommentMutation } from "@/hooks";
 export const DeleteCommentButton = ({
   commentId,
   postId,
-  queryKey,
+  isCommentPending,
 }: {
   commentId: string;
   postId: string;
-  queryKey: string;
+  isCommentPending: boolean;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isPending, mutateAsync } = useDeleteCommentMutation(queryKey);
+  const { isPending, mutateAsync } = useDeleteCommentMutation();
 
   const handleDelete = async () => {
     const { ok, messages } = await mutateAsync({ commentId, postId });
@@ -43,6 +43,7 @@ export const DeleteCommentButton = ({
       <div className="flex flex-wrap items-start justify-end">
         <Button
           isLoading={isPending}
+          disabled={isCommentPending}
           isIconOnly
           variant="light"
           size="sm"
