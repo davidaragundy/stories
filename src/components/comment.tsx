@@ -7,11 +7,11 @@ import { DateTime } from "luxon";
 import Image from "next/image";
 import { DeleteCommentButton } from "@/components";
 import Link from "next/link";
-import { usePageStore } from "@/hooks";
+import { usePageState } from "@/hooks";
 
 //TODO: check comment width
 export const Comment = ({ comment }: { comment: FullComment }) => {
-  const { user } = usePageStore((state) => state);
+  const { user } = usePageState();
 
   return (
     <div className={cn("flex w-full gap-3", comment.isPending && "opacity-50")}>

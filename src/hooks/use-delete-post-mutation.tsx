@@ -3,10 +3,10 @@
 import { deletePostAction } from "@/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FullPost } from "@/types";
-import { usePageStore } from "@/hooks";
+import { usePageState } from "@/hooks";
 
 export const useDeletePostMutation = () => {
-  const { queryKey } = usePageStore((state) => state);
+  const { queryKey } = usePageState();
 
   const queryClient = useQueryClient();
 

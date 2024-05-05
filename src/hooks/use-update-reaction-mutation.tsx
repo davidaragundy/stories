@@ -3,10 +3,10 @@
 import { updateReactionAction } from "@/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FullPost, Reaction } from "@/types";
-import { usePageStore } from "@/hooks";
+import { usePageState } from "@/hooks";
 
 export const useUpdateReactionMutation = () => {
-  const { queryKey: pageQueryKey } = usePageStore((state) => state);
+  const { queryKey: pageQueryKey } = usePageState();
 
   const queryClient = useQueryClient();
 

@@ -3,10 +3,10 @@
 import { deleteCommentAction } from "@/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FullComment } from "@/types";
-import { usePageStore } from "@/hooks";
+import { usePageState } from "@/hooks";
 
 export const useDeleteCommentMutation = () => {
-  const { queryKey: pageQueryKey } = usePageStore((state) => state);
+  const { queryKey: pageQueryKey } = usePageState();
 
   const queryClient = useQueryClient();
 

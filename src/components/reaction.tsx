@@ -6,7 +6,7 @@ import { ReactionsModal, Toast } from "@/components";
 import { cn } from "@/utils";
 import { Reaction as IReaction } from "@/types";
 import { ReactNode } from "react";
-import { usePageStore, usePostStore, useUpdateReactionMutation } from "@/hooks";
+import { usePageState, usePostStore, useUpdateReactionMutation } from "@/hooks";
 import { useDisclosure } from "@nextui-org/modal";
 
 export const Reaction = ({
@@ -26,7 +26,7 @@ export const Reaction = ({
   targetId: string;
   reactionsSet: Set<string>;
 }) => {
-  const { user } = usePageStore((state) => state);
+  const { user } = usePageState();
   const { isPending } = usePostStore((state) => state);
 
   const { isOpen, onOpen, onClose } = useDisclosure();

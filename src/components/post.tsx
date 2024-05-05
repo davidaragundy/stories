@@ -15,10 +15,10 @@ import { DateTime } from "luxon";
 import { Button } from "@nextui-org/button";
 import { cn } from "@/utils";
 import Link from "next/link";
-import { usePageStore, usePostStore } from "@/hooks";
+import { usePageState, usePostStore } from "@/hooks";
 
 export const Post = ({ post }: { post: FullPost }) => {
-  const { user } = usePageStore((state) => state);
+  const { user } = usePageState();
   const { setIsPending, setId } = usePostStore((state) => state);
 
   const [showComments, setShowComments] = useState(false);

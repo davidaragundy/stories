@@ -3,12 +3,12 @@
 import { createCommentAction } from "@/actions";
 import { CreateCommentInputsServer } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { FullComment } from "@/types";
+import type { FullComment, FullPost } from "@/types";
 import { getOptimisticComment } from "@/utils";
-import { usePageStore } from "@/hooks";
+import { usePageState } from "@/hooks";
 
 export const useCreateCommentMutation = () => {
-  const { user, queryKey: pageQueryKey } = usePageStore((state) => state);
+  const { user, queryKey: pageQueryKey } = usePageState();
 
   const queryClient = useQueryClient();
 
@@ -34,6 +34,19 @@ export const useCreateCommentMutation = () => {
       queryClient.setQueryData(
         ["post", newComment.postId, "comments"],
         (old: FullComment[]) => [...old, optimisticComment],
+      );
+
+      queryClient.setQueryData(pageQueryKey, (old: FullPost[]) =>
+        old.map((post) => {
+          if (post.id === newComment.postId) {
+            return {
+              ...post,
+              commentsCount: post.commentsCount + 1,
+            };
+          }
+
+          return post;
+        }),
       );
 
       return { previousComments };

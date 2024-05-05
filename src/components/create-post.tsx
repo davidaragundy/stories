@@ -13,11 +13,11 @@ import { cn, removeFiles, removeUnpostedFiles, uploadFiles } from "@/utils";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createPostSchemaClient } from "@/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreatePostMutation, usePageStore } from "@/hooks";
+import { useCreatePostMutation, usePageState } from "@/hooks";
 import { postsRef } from "@/lib/firebase";
 
 export const CreatePost = () => {
-  const { user, onlyFollowers } = usePageStore((state) => state);
+  const { user, onlyFollowers } = usePageState();
 
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [mediaType, setMediaType] = useState<"image" | "video">();

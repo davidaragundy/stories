@@ -4,10 +4,10 @@ import { getPostsAction } from "@/actions/get-posts";
 import { getOnlyFollowersPostsAction } from "@/actions";
 import { useQuery } from "@tanstack/react-query";
 import { Post, PostSkeleton, PostError, PostStoreProvider } from "@/components";
-import { usePageStore } from "@/hooks";
+import { usePageState } from "@/hooks";
 
 export const Posts = () => {
-  const { queryKey, onlyFollowers, user } = usePageStore((state) => state);
+  const { queryKey, onlyFollowers, user } = usePageState();
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey,

@@ -2,7 +2,7 @@ import { Skeleton } from "@nextui-org/skeleton";
 
 export const PostSkeleton = () => {
   return (
-    <div className="flex w-[clamp(10rem,60%,30rem)] flex-col gap-4 rounded-[2rem] bg-default-50 p-4">
+    <div className="flex w-[clamp(10rem,70%,30rem)] flex-col gap-4 rounded-[2rem] bg-default-50 p-4">
       <div className="flex items-center gap-5">
         <Skeleton className="aspect-square w-12 rounded-full" />
         <div className="flex flex-1 flex-col gap-2">

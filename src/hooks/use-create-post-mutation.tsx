@@ -5,10 +5,10 @@ import { CreatePostInputsServer } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FullPost } from "@/types";
 import { getOptimisticPost } from "@/utils";
-import { usePageStore } from "@/hooks";
+import { usePageState } from "@/hooks";
 
 export const useCreatePostMutation = () => {
-  const { queryKey, user } = usePageStore((state) => state);
+  const { queryKey, user } = usePageState();
 
   const queryClient = useQueryClient();
 

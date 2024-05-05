@@ -1,6 +1,6 @@
 "use client";
 
-import { useCreateCommentMutation, usePageStore, usePostStore } from "@/hooks";
+import { useCreateCommentMutation, usePageState, usePostStore } from "@/hooks";
 import { CreateCommentInputsClient, UploadedFilesResponse } from "@/types";
 import { removeFiles, removeUnpostedFiles, uploadFiles, cn } from "@/utils";
 import { createCommentSchemaClient } from "@/validation";
@@ -17,7 +17,7 @@ import Image from "next/image";
 import { commentsRef } from "@/lib/firebase";
 
 export const CreateComment = () => {
-  const { user } = usePageStore((state) => state);
+  const { user } = usePageState();
   const { id: postId } = usePostStore((state) => state);
 
   const [mediaUrl, setMediaUrl] = useState<string>("");

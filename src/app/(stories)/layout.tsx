@@ -1,4 +1,4 @@
-import { Nav, PageStoreDispatcher, PageStoreProvider } from "@/components";
+import { Nav } from "@/components";
 import { validateRequest } from "@/lib";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -18,13 +18,9 @@ export default async function StoriesLayout({
   if (!user) return redirect("/sign-in");
 
   return (
-    <PageStoreProvider>
-      <PageStoreDispatcher user={user}>
-        <div className="flex w-full flex-1 overflow-hidden">
-          <Nav />
-          {children}
-        </div>
-      </PageStoreDispatcher>
-    </PageStoreProvider>
+    <div className="flex w-full flex-1 overflow-hidden">
+      <Nav />
+      {children}
+    </div>
   );
 }
