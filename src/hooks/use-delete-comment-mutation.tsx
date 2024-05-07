@@ -2,22 +2,22 @@
 
 import { deleteCommentAction } from "@/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { FullComment } from "@/types";
+import type { FullComment, FullPost } from "@/types";
 import { usePageState } from "@/hooks";
 
+interface MutationProps {
+  postId: string;
+  commentId: string;
+}
+
 export const useDeleteCommentMutation = () => {
-  const { queryKey: pageQueryKey } = usePageState();
+  const { posts } = usePageState();
 
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async ({
-      commentId,
-      postId,
-    }: {
-      postId: string;
-      commentId: string;
-    }) => await deleteCommentAction(commentId, postId),
+    mutationFn: async (data: MutationProps) =>
+      await deleteCommentAction({ ...data }),
     onMutate: async ({ commentId, postId }) => {
       await queryClient.cancelQueries({
         queryKey: ["post", postId, "comments"],
@@ -31,7 +31,21 @@ export const useDeleteCommentMutation = () => {
 
       queryClient.setQueryData(
         ["post", postId, "comments"],
-        (old: FullComment[]) => old.filter((c) => c.id !== commentId),
+        (old: FullComment[]) =>
+          old.filter((comment) => comment.id !== commentId),
+      );
+
+      queryClient.setQueryData(posts!.queryKey, (old: FullPost[]) =>
+        old.map((post) => {
+          if (post.id === postId) {
+            return {
+              ...post,
+              commentsCount: post.commentsCount - 1,
+            };
+          }
+
+          return post;
+        }),
       );
 
       return { previousPosts };
@@ -45,7 +59,7 @@ export const useDeleteCommentMutation = () => {
     onSettled: (_data, _error, { postId }) => {
       queryClient.invalidateQueries({ queryKey: ["post", postId, "comments"] });
 
-      queryClient.invalidateQueries({ queryKey: pageQueryKey });
+      queryClient.invalidateQueries({ queryKey: posts!.queryKey });
     },
   });
 

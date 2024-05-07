@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
-import { Header, Providers } from "@/components";
+import { Header, RootProviders } from "@/components";
 import { validateRequest } from "@/lib";
 import { ReactNode } from "react";
 
@@ -20,12 +20,12 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body>
-        <Providers user={user!}>
+        <RootProviders user={user}>
           <div className="m-auto flex h-dvh w-full flex-col overflow-y-auto overflow-x-hidden lg:w-[clamp(60rem,70%,70rem)]">
-            <Header user={user} />
+            <Header />
             {children}
           </div>
-        </Providers>
+        </RootProviders>
       </body>
     </html>
   );

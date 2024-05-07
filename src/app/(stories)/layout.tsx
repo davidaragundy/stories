@@ -19,7 +19,7 @@ export default async function StoriesLayout({
 
   return (
     <div className="flex w-full flex-1 overflow-hidden">
-      <Nav />
+      <Nav username={user.username} />
       {children}
     </div>
   );

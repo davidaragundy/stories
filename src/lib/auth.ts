@@ -24,6 +24,9 @@ export const lucia = new Lucia(adapter, {
     email: attributes.email,
     avatarUrl: attributes.avatarUrl,
     createdAt: attributes.createdAt,
+    postsCount: attributes.postsCount,
+    followersCount: attributes.followersCount,
+    followingsCount: attributes.followingsCount,
   }),
 });
 

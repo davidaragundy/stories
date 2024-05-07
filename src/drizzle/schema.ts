@@ -14,19 +14,32 @@ export const users = sqliteTable("users", {
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
   avatarUrl: text("avatar_url").notNull(),
+  postsCount: integer("posts_count").notNull().default(0),
+  followersCount: integer("followers_count").notNull().default(0),
+  followingsCount: integer("followings_count").notNull().default(0),
   createdAt: integer("created_at").notNull(),
 });
 
-export const follows = sqliteTable("follows", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  followerId: text("follower_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  followingId: text("following_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  createdAt: integer("created_at").notNull(),
-});
+export const follows = sqliteTable(
+  "follows",
+  {
+    followerId: text("follower_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    followingId: text("following_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => {
+    return {
+      pkWithCustomName: primaryKey({
+        name: "follow_id",
+        columns: [table.followerId, table.followingId],
+      }),
+    };
+  },
+);
 
 export const invalidResetPasswordTokens = sqliteTable(
   "invalid_reset_password_tokens",
@@ -112,6 +125,11 @@ export const commentsMedia = sqliteTable("comments_media", {
   commentId: text("comment_id")
     .notNull()
     .references(() => comments.id, { onDelete: "cascade" }),
+  postId: text("post_id")
+    .notNull()
+    .references(() => posts.id, {
+      onDelete: "cascade",
+    }),
   postCreatedAt: integer("post_created_at").notNull(),
   url: text("url").notNull(),
   //TODO: check constraint (image and video only), drizzle does not support check constraint yet
@@ -141,7 +159,8 @@ export const commentsReactions = sqliteTable(
 
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
-  follows: many(follows),
+  followers: many(follows, { relationName: "followers" }),
+  followings: many(follows, { relationName: "followings" }),
   posts: many(posts),
   postsReactions: many(postsReactions),
   comments: many(comments),
@@ -149,13 +168,15 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const followsRelations = relations(follows, ({ one }) => ({
-  follower: one(users, {
-    fields: [follows.followerId],
-    references: [users.id],
-  }),
-  following: one(users, {
+  followers: one(users, {
     fields: [follows.followingId],
     references: [users.id],
+    relationName: "followers",
+  }),
+  followings: one(users, {
+    fields: [follows.followerId],
+    references: [users.id],
+    relationName: "followings",
   }),
 }));
 

@@ -8,7 +8,7 @@ import { getOptimisticComment } from "@/utils";
 import { usePageState } from "@/hooks";
 
 export const useCreateCommentMutation = () => {
-  const { user, queryKey: pageQueryKey } = usePageState();
+  const { user, posts } = usePageState();
 
   const queryClient = useQueryClient();
 
@@ -28,7 +28,7 @@ export const useCreateCommentMutation = () => {
 
       const optimisticComment = getOptimisticComment({
         ...newComment,
-        user,
+        user: user!,
       });
 
       queryClient.setQueryData(
@@ -36,7 +36,7 @@ export const useCreateCommentMutation = () => {
         (old: FullComment[]) => [...old, optimisticComment],
       );
 
-      queryClient.setQueryData(pageQueryKey, (old: FullPost[]) =>
+      queryClient.setQueryData(posts!.queryKey, (old: FullPost[]) =>
         old.map((post) => {
           if (post.id === newComment.postId) {
             return {
@@ -62,7 +62,7 @@ export const useCreateCommentMutation = () => {
         queryKey: ["post", newComment.postId, "comments"],
       });
 
-      queryClient.invalidateQueries({ queryKey: pageQueryKey });
+      queryClient.invalidateQueries({ queryKey: posts?.queryKey });
     },
   });
 

@@ -1,17 +1,17 @@
 "use server";
 
-import { postsRef, validateRequest } from "@/lib";
+import { commentsRef, postsRef, validateRequest } from "@/lib";
 import { ActionResponse } from "@/types";
 import { db, posts } from "@/drizzle";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { deleteObject, ref } from "firebase/storage";
 
 export const deletePostAction = async (
   postId: string,
 ): Promise<ActionResponse> => {
-  const { session } = await validateRequest();
+  const { user } = await validateRequest();
 
-  if (!session) {
+  if (!user) {
     return {
       ok: false,
       messages: [
@@ -27,19 +27,33 @@ export const deletePostAction = async (
   }
 
   try {
-    //TODO: delete every comment and media associated with the post
-    const postMedia = await db.query.postsMedia.findMany({
-      columns: {
-        id: true,
-      },
-      where: (pm, { eq }) => eq(pm.postId, postId),
-    });
+    const [postMedia, postCommentsMedia] = await Promise.all([
+      db.query.postsMedia.findMany({
+        columns: {
+          id: true,
+        },
+        where: (pm, { eq }) => eq(pm.postId, postId),
+      }),
+      db.query.commentsMedia.findMany({
+        columns: {
+          id: true,
+        },
+        where: (pm, { eq }) => eq(pm.postId, postId),
+      }),
+    ]);
 
-    const mediaRefs = postMedia.map((pm) => ref(postsRef, pm.id));
+    const mediaRefs = postMedia
+      .map((pm) => ref(postsRef, pm.id))
+      .concat(postCommentsMedia.map((pcm) => ref(commentsRef, pcm.id)));
 
     await Promise.all(mediaRefs.map((mr) => deleteObject(mr)));
 
-    await db.delete(posts).where(eq(posts.id, postId));
+    await Promise.all([
+      db.delete(posts).where(eq(posts.id, postId)),
+      db.run(
+        sql`UPDATE users SET posts_count = posts_count - 1 WHERE users.id = ${user.id}`,
+      ),
+    ]);
 
     return { ok: true, messages: ["Post deleted successfully 💩"] };
   } catch (error) {

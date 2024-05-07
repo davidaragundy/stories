@@ -2,6 +2,7 @@ import {
   comments,
   commentsMedia,
   commentsReactions,
+  follows,
   posts,
   postsMedia,
   postsReactions,
@@ -10,6 +11,8 @@ import {
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+
+export type Follows = typeof follows.$inferSelect;
 
 export type Post = typeof posts.$inferSelect;
 export type NewPost = typeof posts.$inferInsert;
@@ -37,15 +40,26 @@ export type Reactions = {
 };
 
 export type FullPost = Post & {
-  user: Omit<User, "password">;
+  user: Omit<
+    User,
+    "password" | "postsCount" | "followersCount" | "followingsCount"
+  >;
   media: PostMedia[];
   reactions: { userId: string; type: string }[];
   isPending?: boolean;
 };
 
 export type FullComment = Comment & {
-  user: Omit<User, "password">;
+  user: Omit<
+    User,
+    "password" | "postsCount" | "followersCount" | "followingsCount"
+  >;
   media: CommentMedia[];
   reactions: { userId: string; type: string }[];
   isPending?: boolean;
+};
+
+export type ProfileData = Omit<User, "password"> & {
+  followers: Follows[];
+  followings: Follows[];
 };

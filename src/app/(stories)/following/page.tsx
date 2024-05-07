@@ -1,5 +1,5 @@
-import { getOnlyFollowersPostsAction } from "@/actions/get-only-followers-posts";
-import { CreatePost, Posts, Info, FollowingPageProvider } from "@/components";
+import { getFollowingPostsAction } from "@/actions/get-following-posts";
+import { CreatePost, Posts, Info } from "@/components";
 import { validateRequest } from "@/lib";
 import {
   HydrationBoundary,
@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 
-const queryKey = ["following"];
+const postsQueryKey = ["following", "posts"];
 
 export default async function Following() {
   const { user } = await validateRequest();
@@ -18,25 +18,23 @@ export default async function Following() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey,
-    queryFn: async () => await getOnlyFollowersPostsAction(user.id),
+    queryKey: postsQueryKey,
+    queryFn: async () => await getFollowingPostsAction(user.id),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <FollowingPageProvider>
-        <div className="flex h-full flex-1 gap-4 overflow-hidden pr-7 pt-7">
-          <main className="flex h-full flex-1 flex-col items-center gap-14 overflow-y-auto overflow-x-hidden">
-            <CreatePost />
+      <div className="flex h-full flex-1 gap-4 overflow-hidden pr-7 pt-7">
+        <main className="flex h-full flex-1 flex-col items-center gap-14 overflow-y-auto overflow-x-hidden">
+          <CreatePost />
 
-            <Posts />
-          </main>
-          <Info
-            title="Following 🚶‍♀️..🏃?"
-            description="Here you can spread your 💩 only to your followers and see the posts of people you follow who have posted only to their followers. 🤮 Remember, everything will be deleted in 24 hours. 🫣"
-          />
-        </div>
-      </FollowingPageProvider>
+          <Posts />
+        </main>
+        <Info
+          title="Following 🚶‍♀️..🏃?"
+          description="Here you can spread your 💩 only to your followers and see the posts of people you follow who have posted only to their followers. 🤮 Remember, everything will be deleted in 24 hours. 🫣"
+        />
+      </div>
     </HydrationBoundary>
   );
 }
