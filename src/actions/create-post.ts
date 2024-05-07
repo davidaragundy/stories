@@ -3,7 +3,7 @@
 import { validateRequest } from "@/lib";
 import { ActionResponse, CreatePostInputsServer } from "@/types";
 import { createPostSchemaServer } from "@/validation";
-import { db, posts, postsMedia } from "@/drizzle";
+import { db, posts, postsMedia, users } from "@/drizzle";
 import { generateId } from "lucia";
 import { eq } from "drizzle-orm";
 
@@ -45,14 +45,31 @@ export const createPostAction = async (
   }
 
   const postId = generateId(15);
+  const postCreatedAt = Date.now();
+
+  const userData = await db.query.users.findFirst({
+    where: (fields, { eq }) => eq(fields.id, user.id),
+    columns: {
+      postsCount: true,
+    },
+  });
 
   try {
-    await db.insert(posts).values({
-      id: postId,
-      userId: validatedFields.data.userId,
-      content: validatedFields.data.content,
-      createdAt: Date.now(),
-    });
+    await Promise.all([
+      db
+        .update(users)
+        .set({
+          postsCount: (userData?.postsCount || 0) + 1,
+        })
+        .where(eq(users.id, user.id)),
+      db.insert(posts).values({
+        id: postId,
+        userId: validatedFields.data.userId,
+        content: validatedFields.data.content,
+        onlyFollowers: validatedFields.data.onlyFollowers,
+        createdAt: postCreatedAt,
+      }),
+    ]);
   } catch (error) {
     console.error(error);
 
@@ -65,6 +82,7 @@ export const createPostAction = async (
       await db.insert(postsMedia).values({
         id: validatedFields.data.media[0].id,
         postId,
+        postCreatedAt,
         type: validatedFields.data.media[0].type,
         url: validatedFields.data.media[0].url,
       });

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Stories | Home",
 };
 
-export default async function HomeLayout({
+export default async function StoriesLayout({
   children,
 }: Readonly<{
   children: ReactNode;
@@ -19,7 +19,7 @@ export default async function HomeLayout({
 
   return (
     <div className="flex w-full flex-1 overflow-hidden">
-      <Nav />
+      <Nav username={user.username} />
       {children}
     </div>
   );

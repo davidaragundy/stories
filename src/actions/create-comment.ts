@@ -52,7 +52,7 @@ export const createCommentAction = async (
     });
 
     if (!post) {
-      return { ok: false, messages: ["Post not found 😠"] };
+      return { ok: false, messages: ["The post no longer exists 😭"] };
     }
   } catch (error) {
     console.error(error);
@@ -88,6 +88,8 @@ export const createCommentAction = async (
       await db.insert(commentsMedia).values({
         id: validatedFields.data.media[0].id,
         commentId,
+        postId: validatedFields.data.postId,
+        postCreatedAt: post.createdAt,
         type: validatedFields.data.media[0].type,
         url: validatedFields.data.media[0].url,
       });

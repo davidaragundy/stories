@@ -18,4 +18,5 @@ export * from "./settings";
 export * from "./sun";
 export * from "./trash";
 export * from "./user";
+export * from "./world";
 export * from "./x";

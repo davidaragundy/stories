@@ -6,10 +6,15 @@ import { db, comments, posts } from "@/drizzle";
 import { eq } from "drizzle-orm";
 import { deleteObject, ref } from "firebase/storage";
 
-export const deleteCommentAction = async (
-  commentId: string,
-  postId: string,
-): Promise<ActionResponse> => {
+interface Props {
+  commentId: string;
+  postId: string;
+}
+
+export const deleteCommentAction = async ({
+  commentId,
+  postId,
+}: Props): Promise<ActionResponse> => {
   const { session } = await validateRequest();
 
   if (!session) {

@@ -9,6 +9,12 @@ export const createPostSchemaClient = z.object({
     })
     .optional(),
   userId: z.string().min(1, "User ID is required."),
+  onlyFollowers: z
+    .string()
+    .refine((value) => {
+      return ["true", "false"].includes(value);
+    }, "onlyFollowers must be true or false.")
+    .default("false"),
 });
 
 export const createPostSchemaServer = z.object({
@@ -22,4 +28,10 @@ export const createPostSchemaServer = z.object({
     .array()
     .optional(),
   userId: z.string().min(1, "User ID is required."),
+  onlyFollowers: z
+    .string()
+    .refine((value) => {
+      return ["true", "false"].includes(value);
+    }, "onlyFollowers must be true or false.")
+    .default("false"),
 });

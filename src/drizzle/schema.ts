@@ -14,8 +14,32 @@ export const users = sqliteTable("users", {
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
   avatarUrl: text("avatar_url").notNull(),
+  postsCount: integer("posts_count").notNull().default(0),
+  followersCount: integer("followers_count").notNull().default(0),
+  followingsCount: integer("followings_count").notNull().default(0),
   createdAt: integer("created_at").notNull(),
 });
+
+export const follows = sqliteTable(
+  "follows",
+  {
+    followerId: text("follower_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    followingId: text("following_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => {
+    return {
+      pkWithCustomName: primaryKey({
+        name: "follow_id",
+        columns: [table.followerId, table.followingId],
+      }),
+    };
+  },
+);
 
 export const invalidResetPasswordTokens = sqliteTable(
   "invalid_reset_password_tokens",
@@ -38,6 +62,7 @@ export const posts = sqliteTable("posts", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   content: text("content").notNull().default(""),
+  onlyFollowers: text("only_followers").notNull().default("false"),
   fireCount: integer("fire_count").notNull().default(0),
   poopCount: integer("poop_count").notNull().default(0),
   capCount: integer("cap_count").notNull().default(0),
@@ -50,8 +75,10 @@ export const postsMedia = sqliteTable("posts_media", {
   postId: text("post_id")
     .notNull()
     .references(() => posts.id, { onDelete: "cascade" }),
+  postCreatedAt: integer("post_created_at").notNull(),
   url: text("url").notNull(),
-  //TODO: some kind of enum or check constraint (image and video only)
+  //TODO: check constraint (image and video only), drizzle does not support check constraint yet
+  // https://orm.drizzle.team/docs/indexes-constraints#check
   type: text("type").notNull(),
 });
 
@@ -64,7 +91,8 @@ export const postsReactions = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id),
-    //TODO: some kind of enum or check constraint (fire, poop and cap only)
+    //TODO: check constraint (fire, poop and cap only), drizzle does not support check constraint yet
+    // https://orm.drizzle.team/docs/indexes-constraints#check
     type: text("type").notNull(),
   },
   (table) => ({
@@ -97,8 +125,15 @@ export const commentsMedia = sqliteTable("comments_media", {
   commentId: text("comment_id")
     .notNull()
     .references(() => comments.id, { onDelete: "cascade" }),
+  postId: text("post_id")
+    .notNull()
+    .references(() => posts.id, {
+      onDelete: "cascade",
+    }),
+  postCreatedAt: integer("post_created_at").notNull(),
   url: text("url").notNull(),
-  //TODO: some kind of enum or check constraint (image and video only)
+  //TODO: check constraint (image and video only), drizzle does not support check constraint yet
+  // https://orm.drizzle.team/docs/indexes-constraints#check
   type: text("type").notNull(),
 });
 
@@ -111,7 +146,8 @@ export const commentsReactions = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id),
-    //TODO: some kind of enum or check constraint (fire, poop and cap only)
+    //TODO: check constraint (fire, poop and cap only), drizzle does not support check constraint yet
+    // https://orm.drizzle.team/docs/indexes-constraints#check
     type: text("type").notNull(),
   },
   (table) => ({
@@ -121,26 +157,27 @@ export const commentsReactions = sqliteTable(
   }),
 );
 
-//TODO: complete the rest of the messaging schema
-export const messages = sqliteTable("messages", {
-  id: text("id").notNull().primaryKey(),
-  senderId: text("sender_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  receiverId: text("receiver_id")
-    .notNull()
-    .references(() => users.id),
-  content: text("content").notNull(),
-  createdAt: integer("created_at").notNull(),
-});
-
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
+  followers: many(follows, { relationName: "followers" }),
+  followings: many(follows, { relationName: "followings" }),
   posts: many(posts),
   postsReactions: many(postsReactions),
   comments: many(comments),
   commentsReactions: many(commentsReactions),
-  messages: many(messages),
+}));
+
+export const followsRelations = relations(follows, ({ one }) => ({
+  followers: one(users, {
+    fields: [follows.followingId],
+    references: [users.id],
+    relationName: "followers",
+  }),
+  followings: one(users, {
+    fields: [follows.followerId],
+    references: [users.id],
+    relationName: "followings",
+  }),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
