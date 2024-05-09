@@ -1,7 +1,7 @@
 {
   "name": "stories",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "author": {
     "name": "David Aragundy",
     "email": "davidaragundy@outlook.com"
@@ -28,7 +28,7 @@
     "@tanstack/react-query": "^5.35.1",
     "drizzle-orm": "^0.30.10",
     "firebase": "^10.11.1",
-    "framer-motion": "^11.1.8",
+    "framer-motion": "^11.1.9",
     "lucia": "^3.2.0",
     "luxon": "^3.4.4",
     "next": "^14.2.3",
@@ -40,7 +40,7 @@
     "react-hook-form": "^7.51.4",
     "react-hot-toast": "^2.4.1",
     "server-only": "^0.0.1",
-    "zod": "^3.23.6"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/luxon": "^3.4.2",
@@ -49,7 +49,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
-    "drizzle-kit": "^0.20.18",
+    "drizzle-kit": "^0.21.0",
     "eslint": "^8",
     "eslint-config-next": "^14.2.3",
     "eslint-config-prettier": "^9.1.0",
