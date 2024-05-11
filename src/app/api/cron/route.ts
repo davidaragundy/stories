@@ -89,7 +89,8 @@ export async function GET(request: NextRequest) {
     await Promise.all([
       db
         .delete(posts)
-        .where(lte(posts.createdAt, Date.now() - EXPIRATION_TIME)),
+        .where(lte(posts.createdAt, Date.now() - EXPIRATION_TIME))
+        .returning({ deletedId: posts.id }),
     ]);
   } catch (error) {
     console.error(error);

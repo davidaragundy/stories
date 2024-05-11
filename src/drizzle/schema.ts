@@ -14,7 +14,6 @@ export const users = sqliteTable("users", {
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
   avatarUrl: text("avatar_url").notNull(),
-  postsCount: integer("posts_count").notNull().default(0),
   followersCount: integer("followers_count").notNull().default(0),
   followingsCount: integer("followings_count").notNull().default(0),
   createdAt: integer("created_at").notNull(),
