@@ -2,11 +2,16 @@
 
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/modal";
 import { Listbox, ListboxItem } from "@nextui-org/listbox";
-// import { Button } from "@nextui-org/button";
+import { DateTime } from "luxon";
 import { Avatar } from "@nextui-org/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { getFollowsAction } from "@/actions";
-import { ProfileInfoModalSkeleton, ProfileInfoModalError } from "@/components";
+import {
+  ProfileInfoModalSkeleton,
+  ProfileInfoModalError,
+  UserFollowButton,
+  RemoveFollowButton,
+} from "@/components";
 import { useRouter } from "next/navigation";
 import { usePageState } from "@/hooks";
 
@@ -18,10 +23,10 @@ interface Props {
 }
 
 export const ProfileInfoModal = ({ target, isOpen, onClose }: Props) => {
-  const { profile } = usePageState();
+  const { user, profile } = usePageState();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["profile", profile?.username, "info", target],
+    queryKey: ["profile", profile!.username, "info", target],
     queryFn: async () => await getFollowsAction(profile!.username, target),
   });
 
@@ -37,11 +42,11 @@ export const ProfileInfoModal = ({ target, isOpen, onClose }: Props) => {
       <ModalContent>
         {(_onClose) => (
           <>
-            <ModalHeader className="flex items-center gap-2">
+            <ModalHeader className="flex items-center gap-2 pl-3">
               <h3 className="font-bold">{target}</h3>
               <span>({isLoading ? "🫣" : data?.length || 0})</span>
             </ModalHeader>
-            <ModalBody>
+            <ModalBody className="p-0">
               {isLoading && <ProfileInfoModalSkeleton />}
 
               {isError && <ProfileInfoModalError target={target} />}
@@ -71,23 +76,37 @@ export const ProfileInfoModal = ({ target, isOpen, onClose }: Props) => {
                         />
 
                         <div className="flex flex-1 flex-col">
-                          <span className="text-small">
-                            {follow.user.firstName} {follow.user.lastName}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-small">
+                              {follow.user.firstName} {follow.user.lastName}
+                            </span>
+
+                            <span className="text-tiny text-default-400">
+                              {DateTime.fromMillis(
+                                follow.followCreatedAt,
+                              ).toRelative({
+                                locale: "en",
+                              })}
+                            </span>
+                          </div>
+
                           <span className="text-tiny text-default-400">
                             {follow.user.username}
                           </span>
                         </div>
 
-                        {/* <Button
-                          size="sm"
-                          variant="flat"
-                          radius="lg"
-                          color="primary"
-                          className="font-bold"
-                        >
-                          Follow?
-                        </Button> */}
+                        {profile!.username === user!.username &&
+                        target === "followers" ? (
+                          <RemoveFollowButton
+                            id={follow.user.id}
+                            username={follow.user.username}
+                          />
+                        ) : (
+                          <UserFollowButton
+                            id={follow.user.id}
+                            username={follow.user.username}
+                          />
+                        )}
                       </div>
                     </ListboxItem>
                   )}

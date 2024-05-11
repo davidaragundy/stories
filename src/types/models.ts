@@ -63,3 +63,14 @@ export type ProfileData = Omit<User, "password"> & {
   followers: Follows[];
   followings: Follows[];
 };
+
+export type FollowsData = {
+  followCreatedAt: number;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+    avatarUrl: string;
+  };
+};

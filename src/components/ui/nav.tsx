@@ -13,7 +13,7 @@ export const Nav = ({ username }: Props) => {
       path: "/following",
       icon: <FollowingIcon size={18} />,
     },
-    { label: "Rooms", path: "/rooms", icon: <ChatIcon size={18} /> },
+    { label: "Chat", path: "/chat", icon: <ChatIcon size={18} /> },
     { label: "Profile", path: `/${username}`, icon: <UserIcon size={18} /> },
   ];
 

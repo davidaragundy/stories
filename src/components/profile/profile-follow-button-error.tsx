@@ -4,7 +4,7 @@ import { usePageState } from "@/hooks";
 import { Button } from "@nextui-org/button";
 import { useQuery } from "@tanstack/react-query";
 
-export const FollowButtonError = () => {
+export const ProfileFollowButtonError = () => {
   const { profile } = usePageState();
 
   const { isRefetching, refetch } = useQuery({

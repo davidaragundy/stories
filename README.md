@@ -16,18 +16,6 @@ Stories is an open source social media platform similar to Twitter that preserve
 - Firebase
 - Nodemailer
 
-## Todo
-
-- [ ] Add follow/unfollow button in followers/following list
-- [ ] Responsive design!!!
-- [ ] Add search
-- [ ] Add comments reactions
-- [ ] Add comments replies
-- [ ] Add chat
-- [ ] Add custom styles for video player with vidstack
-- [ ] Allow multiple images/videos in a post/comment
-- [ ] Add notifications
-
 ## Setup
 
 > [!IMPORTANT]  
