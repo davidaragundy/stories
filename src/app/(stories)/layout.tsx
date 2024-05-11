@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Stories | Home",
+  title: "Stories | Global",
 };
 
 export default async function StoriesLayout({

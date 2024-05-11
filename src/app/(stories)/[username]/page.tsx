@@ -1,6 +1,6 @@
 import { validateRequest } from "@/lib";
 import { redirect } from "next/navigation";
-import { FollowButton, Posts, ProfileInfo } from "@/components";
+import { ProfileFollowButton, Posts, ProfileInfo } from "@/components";
 import {
   HydrationBoundary,
   QueryClient,
@@ -58,7 +58,7 @@ export default async function Profile({
             <p className="text-default-400">@{profileData.username}</p>
           </div>
 
-          {user.username !== params.username && <FollowButton />}
+          <ProfileFollowButton />
 
           <ProfileInfo />
         </div>

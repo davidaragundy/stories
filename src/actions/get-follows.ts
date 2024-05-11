@@ -16,6 +16,7 @@ export const getFollowsAction = async (
       where: (fields, { eq }) => eq(fields.username, username),
       with: {
         followers: {
+          orderBy: (fields, { desc }) => [desc(fields.createdAt)],
           columns: {
             createdAt: true,
           },
@@ -52,6 +53,7 @@ export const getFollowsAction = async (
       where: (fields, { eq }) => eq(fields.username, username),
       with: {
         followings: {
+          orderBy: (fields, { desc }) => [desc(fields.createdAt)],
           columns: {
             createdAt: true,
           },

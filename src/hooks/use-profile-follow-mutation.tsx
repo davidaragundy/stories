@@ -2,17 +2,17 @@
 
 import { followAction } from "@/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ProfileData } from "@/types";
+import type { Follows, ProfileData } from "@/types";
 import { usePageState } from "@/hooks";
 
-export const useFollowMutation = () => {
+export const useProfileFollowMutation = () => {
   const { user, profile, info } = usePageState();
 
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (userId: string) => await followAction(userId),
-    onMutate: async () => {
+    onMutate: async (userId) => {
       await queryClient.cancelQueries({
         queryKey: info!.queryKey,
       });
@@ -36,18 +36,17 @@ export const useFollowMutation = () => {
             : [
                 ...old.followers,
                 {
-                  id: Date.now(),
                   followerId: user!.id,
-                  followingId: old.id,
+                  followingId: userId,
                   createdAt: Date.now(),
-                },
+                } satisfies Follows,
               ],
         };
       });
 
       return { previousData };
     },
-    onError: (_error, _newPost, context) => {
+    onError: (_error, _variables, context) => {
       queryClient.setQueryData(info!.queryKey, context?.previousData);
     },
     onSettled: () => {
@@ -56,7 +55,7 @@ export const useFollowMutation = () => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["profile", profile?.username, "followers"],
+        queryKey: ["profile", profile?.username, "info", "followers"],
       });
 
       queryClient.invalidateQueries({
@@ -64,7 +63,7 @@ export const useFollowMutation = () => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["profile", user!.username, "following"],
+        queryKey: ["profile", user!.username, "info", "following"],
       });
 
       queryClient.invalidateQueries({
