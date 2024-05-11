@@ -1,6 +1,8 @@
 "use server";
 
-import { db } from "@/drizzle";
+import { EXPIRATION_TIME } from "@/constants";
+import { db, posts } from "@/drizzle";
+import { and, count, eq, gt } from "drizzle-orm";
 
 export const getProfileDataAction = async (username: string) => {
   const userData = await db.query.users.findFirst({
@@ -15,7 +17,6 @@ export const getProfileDataAction = async (username: string) => {
       createdAt: true,
       followersCount: true,
       followingsCount: true,
-      postsCount: true,
     },
     with: {
       followers: true,
@@ -27,5 +28,17 @@ export const getProfileDataAction = async (username: string) => {
     throw new Error("User not found");
   }
 
-  return userData;
+  const userPostsCount = await db
+    .select({
+      postsCount: count(),
+    })
+    .from(posts)
+    .where(
+      and(
+        eq(posts.userId, userData.id),
+        gt(posts.createdAt, Date.now() - EXPIRATION_TIME),
+      ),
+    );
+
+  return { ...userData, postsCount: userPostsCount[0].postsCount };
 };

@@ -40,26 +40,21 @@ export type Reactions = {
 };
 
 export type FullPost = Post & {
-  user: Omit<
-    User,
-    "password" | "postsCount" | "followersCount" | "followingsCount"
-  >;
+  user: Omit<User, "password" | "followersCount" | "followingsCount">;
   media: PostMedia[];
   reactions: { userId: string; type: string }[];
   isPending?: boolean;
 };
 
 export type FullComment = Comment & {
-  user: Omit<
-    User,
-    "password" | "postsCount" | "followersCount" | "followingsCount"
-  >;
+  user: Omit<User, "password" | "followersCount" | "followingsCount">;
   media: CommentMedia[];
   reactions: { userId: string; type: string }[];
   isPending?: boolean;
 };
 
 export type ProfileData = Omit<User, "password"> & {
+  postsCount: number;
   followers: Follows[];
   followings: Follows[];
 };

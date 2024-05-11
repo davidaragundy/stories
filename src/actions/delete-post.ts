@@ -3,7 +3,7 @@
 import { commentsRef, postsRef, validateRequest } from "@/lib";
 import { ActionResponse } from "@/types";
 import { db, posts } from "@/drizzle";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { deleteObject, ref } from "firebase/storage";
 
 export const deletePostAction = async (
@@ -48,12 +48,7 @@ export const deletePostAction = async (
 
     await Promise.all(mediaRefs.map((mr) => deleteObject(mr)));
 
-    await Promise.all([
-      db.delete(posts).where(eq(posts.id, postId)),
-      db.run(
-        sql`UPDATE users SET posts_count = posts_count - 1 WHERE users.id = ${user.id}`,
-      ),
-    ]);
+    await db.delete(posts).where(eq(posts.id, postId));
 
     return { ok: true, messages: ["Post deleted successfully 💩"] };
   } catch (error) {
