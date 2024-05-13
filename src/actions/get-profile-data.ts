@@ -3,6 +3,7 @@
 import { EXPIRATION_TIME } from "@/constants";
 import { db, posts } from "@/drizzle";
 import { and, count, eq, gt } from "drizzle-orm";
+import { notFound } from "next/navigation";
 
 export const getProfileDataAction = async (username: string) => {
   const userData = await db.query.users.findFirst({
@@ -25,7 +26,7 @@ export const getProfileDataAction = async (username: string) => {
   });
 
   if (!userData) {
-    throw new Error("User not found");
+    return notFound();
   }
 
   const userPostsCount = await db

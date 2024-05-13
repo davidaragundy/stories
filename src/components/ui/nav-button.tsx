@@ -1,8 +1,7 @@
 "use client";
 
 import { cn } from "@/utils";
-import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 
@@ -14,18 +13,17 @@ export const NavButton = ({ link }: Props) => {
   const pathname = usePathname();
 
   return (
-    <Button
-      as={Link}
+    <Link
       href={link.path}
-      variant={pathname === link.path ? "flat" : "light"}
-      color={pathname === link.path ? "primary" : "default"}
       className={cn(
-        "text-md rounded-2xl",
-        pathname === link.path && "font-bold",
+        "flex cursor-pointer items-center justify-center gap-2 rounded-2xl p-2",
+        pathname === link.path
+          ? "bg-primary-100 font-bold text-primary"
+          : "hover:bg-default-200",
       )}
-      startContent={link.icon}
     >
+      {link.icon}
       {link.label}
-    </Button>
+    </Link>
   );
 };

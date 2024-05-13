@@ -40,7 +40,7 @@ export const DeleteCommentButton = ({
 
   return (
     <>
-      <div className="flex flex-wrap items-start justify-end">
+      <div className="flex w-[10%] flex-wrap items-start justify-center">
         <Button
           isLoading={isPending}
           disabled={isCommentPending}

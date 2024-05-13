@@ -42,11 +42,11 @@ export const ProfileInfoModal = ({ target, isOpen, onClose }: Props) => {
       <ModalContent>
         {(_onClose) => (
           <>
-            <ModalHeader className="flex items-center gap-2 pl-3">
+            <ModalHeader className="flex items-center gap-2 pl-3 sm:pl-6">
               <h3 className="font-bold">{target}</h3>
               <span>({isLoading ? "🫣" : data?.length || 0})</span>
             </ModalHeader>
-            <ModalBody className="p-0">
+            <ModalBody className="p-0 sm:px-6 sm:py-2">
               {isLoading && <ProfileInfoModalSkeleton />}
 
               {isError && <ProfileInfoModalError target={target} />}

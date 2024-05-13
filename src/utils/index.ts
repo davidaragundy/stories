@@ -1,5 +1,6 @@
 export * from "./cn";
 export * from "./get-hash";
+export * from "./get-messages-to-delete";
 export * from "./get-optimistic-comment";
 export * from "./get-optimistic-post";
 export * from "./is-email";

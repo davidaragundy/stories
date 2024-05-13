@@ -1,6 +1,7 @@
 import {
   createCommentSchemaClient,
   createCommentSchemaServer,
+  createMessageSchema,
   createPostSchemaClient,
   createPostSchemaServer,
   forgotPasswordSchema,
@@ -27,3 +28,5 @@ export type CreateCommentInputsServer = z.infer<
 export type ForgotPasswordInputs = z.infer<typeof forgotPasswordSchema>;
 
 export type ResetPasswordInputs = z.infer<typeof resetPasswordSchema>;
+
+export type CreateMessageInputs = z.infer<typeof createMessageSchema>;

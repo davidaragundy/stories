@@ -187,7 +187,7 @@ export const Post = ({ post }: { post: FullPost }) => {
       </div>
 
       {showComments && (
-        <div className="flex flex-col gap-4 rounded-[2rem] bg-default-100 p-4">
+        <div className="flex w-full flex-col gap-4 rounded-[2rem] bg-default-100 p-4">
           <Comments />
 
           <CreateComment />
