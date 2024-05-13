@@ -5,7 +5,8 @@ import type { NextRequest } from "next/server";
 import { EXPIRATION_TIME } from "@/constants";
 import { deleteObject, ref } from "firebase/storage";
 import { commentsRef, postsRef } from "@/lib";
-import { isValidToken } from "@/utils";
+import { getMessagesRefToDelete, isValidToken } from "@/utils";
+import { remove } from "firebase/database";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -51,7 +52,12 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  //TODO: refactor this 💀💀💀
+  const [messagesRefToDelete, messagesMediaRefToDelete] =
+    await getMessagesRefToDelete();
+
   try {
+    //TODO: delete messages media files
     const [postsMediaToDelete, commentsMediaToDelete] = await Promise.all([
       db.query.postsMedia.findMany({
         columns: {
@@ -71,7 +77,8 @@ export async function GET(request: NextRequest) {
 
     const mediaToDeleteRefs = postsMediaToDelete
       .map((media) => ref(postsRef, media.id))
-      .concat(commentsMediaToDelete.map((media) => ref(commentsRef, media.id)));
+      .concat(commentsMediaToDelete.map((media) => ref(commentsRef, media.id)))
+      .concat(messagesMediaRefToDelete);
 
     await Promise.all(mediaToDeleteRefs.map((mr) => deleteObject(mr)));
   } catch (error) {
@@ -84,13 +91,11 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    //TODO: delete messages from firebase
-
     await Promise.all([
       db
         .delete(posts)
-        .where(lte(posts.createdAt, Date.now() - EXPIRATION_TIME))
-        .returning({ deletedId: posts.id }),
+        .where(lte(posts.createdAt, Date.now() - EXPIRATION_TIME)),
+      ...messagesRefToDelete.map((mr) => remove(mr)),
     ]);
   } catch (error) {
     console.error(error);

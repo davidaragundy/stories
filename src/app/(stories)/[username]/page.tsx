@@ -41,7 +41,7 @@ export default async function Profile({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <main className="flex h-full flex-1 flex-col items-center gap-14 overflow-y-auto overflow-x-hidden pr-7 pt-7">
+      <main className="flex h-full flex-1 flex-col items-center gap-14 overflow-y-auto overflow-x-hidden">
         <div className="flex flex-col items-center gap-2 text-center">
           <Avatar
             src={profileData.avatarUrl}

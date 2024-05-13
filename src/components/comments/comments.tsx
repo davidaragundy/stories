@@ -14,7 +14,7 @@ export const Comments = () => {
   });
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex w-full flex-col gap-3">
       <h4 className="font-bold">
         Comments ({isPending ? "🫣" : data?.length || 0})
       </h4>
@@ -24,7 +24,7 @@ export const Comments = () => {
       {isError && <CommentsError />}
 
       {data && (
-        <div className="flex flex-col gap-3">
+        <div className="flex w-full flex-col gap-5">
           {data.map((comment) => (
             <Comment key={comment.id} comment={comment} />
           ))}

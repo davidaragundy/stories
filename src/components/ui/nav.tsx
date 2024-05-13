@@ -18,7 +18,7 @@ export const Nav = ({ username }: Props) => {
   ];
 
   return (
-    <nav role="navigation" className="flex flex-col p-7 pr-4">
+    <nav role="navigation" className="flex w-[20%] flex-col">
       <div className="flex flex-col gap-2 rounded-3xl bg-default-100 p-2">
         {links.map((link) => (
           <NavButton key={`${link.label} - ${link.path}`} link={link} />

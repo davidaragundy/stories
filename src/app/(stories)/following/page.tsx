@@ -24,7 +24,7 @@ export default async function Following() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="flex h-full flex-1 gap-4 overflow-hidden pr-7 pt-7">
+      <div className="flex h-full flex-1 gap-4 overflow-hidden">
         <main className="flex h-full flex-1 flex-col items-center gap-14 overflow-y-auto overflow-x-hidden">
           <CreatePost />
 

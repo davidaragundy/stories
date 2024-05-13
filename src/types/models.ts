@@ -69,3 +69,19 @@ export type FollowsData = {
     avatarUrl: string;
   };
 };
+
+export type Message = {
+  id: string;
+  content?: string;
+  media?: MessageMedia[];
+  createdAt: number;
+  userId: string;
+};
+
+export type MessageMedia = {
+  id: string;
+  messageId: string;
+  type: "image" | "video";
+  url: string;
+  messageCreatedAt: number;
+};

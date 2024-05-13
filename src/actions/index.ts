@@ -11,6 +11,7 @@ export * from "./get-global-posts";
 export * from "./get-post-reactions";
 export * from "./get-profile-data";
 export * from "./get-profile-posts";
+export * from "./get-users-to-chat";
 export * from "./remove-follow";
 export * from "./reset-password";
 export * from "./sign-in";

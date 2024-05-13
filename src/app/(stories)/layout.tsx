@@ -18,7 +18,7 @@ export default async function StoriesLayout({
   if (!user) return redirect("/sign-in");
 
   return (
-    <div className="flex w-full flex-1 overflow-hidden">
+    <div className="flex w-full flex-1 gap-4 overflow-hidden p-6">
       <Nav username={user.username} />
       {children}
     </div>

@@ -9,41 +9,38 @@ import { DeleteCommentButton } from "@/components";
 import Link from "next/link";
 import { usePageState } from "@/hooks";
 
-//TODO: check comment width
 export const Comment = ({ comment }: { comment: FullComment }) => {
   const { user } = usePageState();
 
   return (
-    <div className={cn("flex w-full gap-3", comment.isPending && "opacity-50")}>
-      <div>
+    <div className={cn("flex w-full", comment.isPending && "opacity-50")}>
+      <div className="flex w-[15%] flex-wrap items-start justify-center">
         <Avatar
           src={comment.user.avatarUrl}
           alt={`${comment.user.firstName}'s profile picture`}
-          isBordered
-          className="mt-3"
+          className="mt-1"
         />
       </div>
 
-      <div className="flex flex-1 items-start">
+      <div className="flex w-[85%] items-start pl-3">
         <div
           className={cn(
-            "flex flex-1 flex-col flex-wrap p-2",
+            "flex w-[90%] flex-col flex-wrap",
             !comment.content && comment.media.length ? "gap-2" : "gap-1",
           )}
         >
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-2">
-              <Link href={`/${comment.user.username}`}>
-                <h4 className="text-sm font-semibold hover:underline">
-                  {comment.user.firstName} {comment.user.lastName}
-                </h4>
-              </Link>
-              <span className="text-xs text-gray-400">
-                {DateTime.fromMillis(comment.createdAt).toRelative({
-                  locale: "en",
-                })}
-              </span>
-            </div>
+          <div className="flex w-full items-center gap-2">
+            <Link href={`/${comment.user.username}`}>
+              <h4 className="text-sm font-semibold hover:underline">
+                {comment.user.firstName} {comment.user.lastName}
+              </h4>
+            </Link>
+
+            <span className="text-xs text-gray-400">
+              {DateTime.fromMillis(comment.createdAt).toRelative({
+                locale: "en",
+              })}
+            </span>
           </div>
 
           <div className="flex w-full flex-col gap-2">
