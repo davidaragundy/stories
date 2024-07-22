@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Header, RootProviders } from "@/components";
 import { validateRequest } from "@/lib";
 import { ReactNode } from "react";
@@ -26,6 +28,8 @@ export default async function RootLayout({
             {children}
           </div>
         </RootProviders>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

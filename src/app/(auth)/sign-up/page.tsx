@@ -18,7 +18,7 @@ export default function SignUp() {
       <div className="flex flex-1 flex-wrap place-content-center">
         <div className="flex w-3/5 flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <h2 className=" text-4xl font-extrabold">Sign up</h2>
+            <h2 className="text-4xl font-extrabold">Sign up</h2>
             <p className="text-sm font-semibold text-default-500">
               Here you can say whatever you want, nobody will give a f*ck. 🌴
             </p>

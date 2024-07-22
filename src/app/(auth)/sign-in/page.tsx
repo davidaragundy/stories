@@ -18,7 +18,7 @@ export default function SignIn() {
       <div className="flex flex-1 flex-wrap place-content-center">
         <div className="flex w-3/5 flex-col gap-10">
           <div className="flex flex-col gap-2">
-            <h2 className=" text-4xl font-extrabold">Sign in</h2>
+            <h2 className="text-4xl font-extrabold">Sign in</h2>
             <p className="text-sm font-semibold text-default-500">
               Come on, just say it! 🔥
             </p>
