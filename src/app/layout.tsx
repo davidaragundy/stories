@@ -1,12 +1,6 @@
-import type { Metadata } from "next";
-import { ThemeProvider } from "@/shared/components";
+import { ThemeProvider, Toaster } from "@/shared/components";
 
 import "@/shared/styles/globals.css";
-
-export const metadata: Metadata = {
-  title: "Stories | Home",
-  description: "Fuck it, we balling",
-};
 
 export default function RootLayout({
   children,
@@ -23,6 +17,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
