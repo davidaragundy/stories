@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { APIError } from "better-auth/api";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/shared/lib/prisma";
 import { resend } from "@/shared/lib/resend";
@@ -10,6 +11,7 @@ export const auth = betterAuth({
     account: {
         accountLinking: {
             enabled: true,
+            trustedProviders: ["emailAndPassword", "github"],
         }
     },
     emailVerification: {
@@ -20,18 +22,22 @@ export const auth = betterAuth({
                 from: "Stories <mail@stories.aragundy.com>",
                 to: [user.email],
                 subject: 'Verify your email address',
+                //TODO: use React Email
                 html: `<p>Click <a href="${url}">here</a> to verify your email:</p>`,
             });
 
-            //TODO: way to signal client that email was not sent
+            if (error) {
+                console.error(error);
 
-            if (error) console.error(error);
+                throw new APIError("FAILED_DEPENDENCY", {
+                    message: "Failed to send verification email"
+                });
+            };
         },
     },
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: true,
-
     },
     socialProviders: {
         github: {

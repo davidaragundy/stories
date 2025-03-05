@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -40,6 +41,7 @@ export function SignUpForm({
     },
   });
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
     const hash = await getHash(values.email);
@@ -68,6 +70,38 @@ export function SignUpForm({
           toast.dismiss(toastId);
           return;
 
+        case "FAILED_TO_SEND_VERIFICATION_EMAIL":
+          toast.error("Failed to send verification email. 😢", {
+            id: toastId,
+            duration: 10000,
+            action: {
+              label: "Resend email",
+              onClick: async () => {
+                const id = toast.loading("Resending email...");
+
+                const { error } = await authClient.sendVerificationEmail({
+                  email: values.email,
+                  callbackURL: "/home",
+                });
+
+                if (error) {
+                  toast.dismiss(id);
+                  toast.error("Failed to resend email. 😢", {
+                    id: toastId,
+                    duration: 10000,
+                  });
+                  return;
+                }
+
+                toast.success("Email sent successfully! 🎉", {
+                  description: "Don't forget to check your spam folder.",
+                  id,
+                });
+              },
+            },
+          });
+          return;
+
         default:
           toast.error("Something went wrong. Please try again later. 😢", {
             id: toastId,
@@ -93,7 +127,29 @@ export function SignUpForm({
         </CardHeader>
         <CardContent className="grid gap-6">
           <div className="flex flex-col gap-4">
-            <Button type="button" variant="outline" className="w-full">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              disabled={isLoading}
+              onClick={async () => {
+                setIsLoading(true);
+
+                const { data, error } = await authClient.signIn.social({
+                  provider: "github",
+                  callbackURL: "/home",
+                  requestSignUp: true,
+                });
+
+                if (error) {
+                  toast.error("Failed to sign up with GitHub.");
+                }
+
+                if (data?.redirect) router.push(data.url as string);
+
+                setIsLoading(false);
+              }}
+            >
               <svg
                 role="img"
                 viewBox="0 0 24 24"
@@ -177,4 +233,3 @@ export function SignUpForm({
     </div>
   );
 }
-
