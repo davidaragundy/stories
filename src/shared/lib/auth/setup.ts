@@ -3,8 +3,11 @@ import { APIError } from "better-auth/api";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/shared/lib/prisma";
 import { resend } from "@/shared/lib/resend";
+import { VerifyEmail } from "@/shared/lib/react-email";
+import { BASE_URL } from "@/shared/constants";
 
 export const auth = betterAuth({
+    baseURL: BASE_URL,
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
@@ -22,8 +25,7 @@ export const auth = betterAuth({
                 from: "Stories <mail@stories.aragundy.com>",
                 to: [user.email],
                 subject: 'Verify your email address',
-                //TODO: use React Email
-                html: `<p>Click <a href="${url}">here</a> to verify your email:</p>`,
+                react: VerifyEmail({ name: user.name, url }),
             });
 
             if (error) {
