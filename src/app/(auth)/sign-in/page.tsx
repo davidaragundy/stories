@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
-import { SignUpForm } from "@/features/auth/components";
+import { SignInForm } from "@/features/auth/components";
 
 export const metadata: Metadata = {
-  title: "Stories | Sign Up",
-  description: "Sign up to Stories",
+  title: "Stories | Sign In",
+  description: "Sign in to Stories",
 };
 
-export default function SignUpPage() {
+export default function SignInPage() {
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -21,7 +21,7 @@ export default function SignUpPage() {
           </div>
           Stories
         </Link>
-        <SignUpForm />
+        <SignInForm />
       </div>
     </div>
   );
