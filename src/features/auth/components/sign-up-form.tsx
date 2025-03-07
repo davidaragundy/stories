@@ -104,7 +104,11 @@ export function SignUpForm({
       }
     }
 
-    if (data) toast.success("Account created successfully! 🎉");
+    if (data)
+      toast.success("Account created successfully! 🎉", {
+        description: "Please check your email to verify your account.",
+        duration: 10000,
+      });
   };
 
   return (
