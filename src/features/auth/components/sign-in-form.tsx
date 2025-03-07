@@ -54,12 +54,52 @@ export function SignInForm({
       setIsLoading(false);
 
       switch (error.code) {
-        //TODO: use hasn't verified email
-        case "USER_ALREADY_EXISTS":
+        case "INVALID_EMAIL_OR_PASSWORD":
           form.setError("email", {
-            message: "A user with that email already exists",
+            message: "Invalid email or password.",
           });
+          form.setError("password", {
+            message: "Invalid email or password.",
+          });
+          return;
 
+        case "EMAIL_NOT_VERIFIED":
+          toast.error("Verify your email to sign in. 📧", {
+            description:
+              "Check your inbox (or spam folder) for the verification email.",
+            duration: 10000,
+          });
+          return;
+
+        case "FAILED_TO_SEND_VERIFICATION_EMAIL":
+          const toastId = toast.error("Failed to send verification email. 😢", {
+            duration: 10000,
+            action: {
+              label: "Resend email",
+              onClick: async () => {
+                const id = toast.loading("Resending email...");
+
+                const { error } = await authClient.sendVerificationEmail({
+                  email: values.email,
+                  callbackURL: "/home",
+                });
+
+                if (error) {
+                  toast.dismiss(id);
+                  toast.error("Failed to resend email. 😢", {
+                    id: toastId,
+                    duration: 10000,
+                  });
+                  return;
+                }
+
+                toast.success("Email sent successfully! 🎉", {
+                  description: "Don't forget to check your spam folder.",
+                  id,
+                });
+              },
+            },
+          });
           return;
 
         default:
@@ -118,11 +158,13 @@ export function SignInForm({
               Sign in with GitHub
             </Button>
           </div>
+
           <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
             <span className="bg-background text-muted-foreground relative z-10 px-2">
               Or continue with
             </span>
           </div>
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -133,6 +175,7 @@ export function SignInForm({
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={isLoading}
                         type="email"
                         placeholder="david@aragundy.com"
                         {...field}
@@ -142,6 +185,7 @@ export function SignInForm({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="password"
@@ -150,6 +194,7 @@ export function SignInForm({
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={isLoading}
                         type="password"
                         placeholder="••••••••"
                         {...field}
@@ -159,12 +204,14 @@ export function SignInForm({
                   </FormItem>
                 )}
               />
+
               <Button disabled={isLoading} type="submit" className="w-full">
                 {isLoading && <Loader2 className="animate-spin" />}
                 Submit
               </Button>
             </form>
           </Form>
+
           <div className="text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link href="/sign-up" className="underline underline-offset-4">
