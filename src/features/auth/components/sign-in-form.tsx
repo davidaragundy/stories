@@ -207,7 +207,7 @@ export function SignInForm({
 
               <Button disabled={isLoading} type="submit" className="w-full">
                 {isLoading && <Loader2 className="animate-spin" />}
-                Submit
+                Sign in
               </Button>
             </form>
           </Form>
