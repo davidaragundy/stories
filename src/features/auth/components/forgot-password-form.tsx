@@ -97,7 +97,7 @@ export function ForgotPasswordForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="border-none">
+      <Card className="border-none bg-background shadow-none">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Forgot your password? 😒</CardTitle>
           <CardDescription>
