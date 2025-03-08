@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
-import { SignInForm } from "@/features/auth/components";
+import { ForgotPasswordForm } from "@/features/auth/components";
 
 export const metadata: Metadata = {
-  title: "Stories | Sign In",
-  description: "Sign in to Stories",
+  title: "Stories | Forgot Password",
+  description: "Reset your password",
 };
 
-export default function SignInPage() {
+export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -21,7 +21,7 @@ export default function SignInPage() {
           </div>
           Stories
         </Link>
-        <SignInForm />
+        <ForgotPasswordForm />
       </div>
     </div>
   );

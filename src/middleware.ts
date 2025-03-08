@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
 export async function middleware(request: NextRequest) {
-  const authURLs = ["/sign-in", "/sign-up"];
+  const authURLs = [
+    "/sign-in",
+    "/sign-up",
+    "/forgot-password",
+    "/reset-password",
+  ];
   const isAuthURL = authURLs.includes(request.nextUrl.pathname);
 
   const publicURLs = ["/"];

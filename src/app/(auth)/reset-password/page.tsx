@@ -1,14 +1,29 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Suspense, use } from "react";
 import { GalleryVerticalEnd } from "lucide-react";
-import { SignInForm } from "@/features/auth/components";
+import { ResetPasswordForm } from "@/features/auth/components";
 
 export const metadata: Metadata = {
-  title: "Stories | Sign In",
-  description: "Sign in to Stories",
+  title: "Stories | Reset Password",
+  description: "Reset your password",
 };
 
-export default function SignInPage() {
+//TODO: Implement ResetPasswordFormFallback
+function ResetPasswordFormFallback() {
+  return <></>;
+}
+
+export default function ForgotPasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const { token } = use(searchParams);
+
+  if (!token) return redirect("/forgot-password");
+
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -21,7 +36,9 @@ export default function SignInPage() {
           </div>
           Stories
         </Link>
-        <SignInForm />
+        <Suspense fallback={<ResetPasswordFormFallback />}>
+          <ResetPasswordForm />
+        </Suspense>
       </div>
     </div>
   );
