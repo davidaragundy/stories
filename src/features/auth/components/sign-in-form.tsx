@@ -117,7 +117,7 @@ export function SignInForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="border-none">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back 🧍</CardTitle>
           <CardDescription>Sign in with your GitHub account</CardDescription>
@@ -191,7 +191,15 @@ export function SignInForm({
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>
+                      Password
+                      <Link
+                        href="/forgot-password"
+                        className="ml-auto text-xs underline-offset-4 hover:underline"
+                      >
+                        Forgot your password?
+                      </Link>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
