@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
-import { APIError } from "better-auth/api";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { APIError } from "better-auth/api";
+import { username } from "better-auth/plugins";
 import { BASE_URL } from "@/shared/constants";
 import prisma from "@/shared/lib/prisma";
 import { ResetPassword, VerifyEmail } from "@/shared/lib/react-email";
@@ -18,6 +19,7 @@ export const auth = betterAuth({
       trustedProviders: ["emailAndPassword", "github"],
     },
   },
+  plugins: [username()],
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,

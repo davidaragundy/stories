@@ -34,7 +34,7 @@ export function SignInForm({
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
@@ -44,22 +44,21 @@ export function SignInForm({
   const onSubmit = async (values: z.infer<typeof signInSchema>) => {
     setIsLoading(true);
 
-    const { data, error } = await authClient.signIn.email({
-      email: values.email,
+    const { data, error } = await authClient.signIn.username({
+      username: values.username,
       password: values.password,
-      callbackURL: "/home",
     });
 
     if (error) {
       setIsLoading(false);
 
       switch (error.code) {
-        case "INVALID_EMAIL_OR_PASSWORD":
-          form.setError("email", {
-            message: "Invalid email or password.",
+        case "INVALID_USERNAME_OR_PASSWORD":
+          form.setError("username", {
+            message: "Invalid username or password.",
           });
           form.setError("password", {
-            message: "Invalid email or password.",
+            message: "Invalid username or password.",
           });
           return;
 
@@ -71,36 +70,7 @@ export function SignInForm({
           });
           return;
 
-        case "FAILED_TO_SEND_VERIFICATION_EMAIL":
-          const toastId = toast.error("Failed to send verification email. 😢", {
-            duration: 10000,
-            action: {
-              label: "Resend email",
-              onClick: async () => {
-                const id = toast.loading("Resending email...");
-
-                const { error } = await authClient.sendVerificationEmail({
-                  email: values.email,
-                  callbackURL: "/home",
-                });
-
-                if (error) {
-                  toast.dismiss(id);
-                  toast.error("Failed to resend email. 😢", {
-                    id: toastId,
-                    duration: 10000,
-                  });
-                  return;
-                }
-
-                toast.success("Email sent successfully! 🎉", {
-                  description: "Don't forget to check your spam folder.",
-                  id,
-                });
-              },
-            },
-          });
-          return;
+        //TODO: failed to send verification email
 
         default:
           toast.error("Something went wrong. Please try again later. 😢");
@@ -108,8 +78,8 @@ export function SignInForm({
       }
     }
 
-    if (data.redirect) {
-      router.push(data.url as string);
+    if (data) {
+      router.push("/home");
     }
 
     setIsLoading(false);
@@ -137,11 +107,9 @@ export function SignInForm({
                   callbackURL: "/home",
                 });
 
-                if (error) {
-                  toast.error("Failed to sign in with GitHub.");
-                }
+                if (error) toast.error("Failed to sign in with GitHub.");
 
-                if (data?.redirect) router.push(data.url as string);
+                if (data?.redirect) router.push(data?.url as string);
 
                 setIsLoading(false);
               }}
@@ -169,15 +137,14 @@ export function SignInForm({
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="email"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        type="email"
-                        placeholder="david@aragundy.com"
+                        placeholder="davidaragundy"
                         {...field}
                       />
                     </FormControl>
