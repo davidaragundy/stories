@@ -35,8 +35,8 @@ export const VerifyEmail = ({ url, name }: Props) => {
               Hello {name},
             </Text>
             <Text className="text-black text-[14px] leading-[24px]">
-              In order to reset your password, please click the button below.
-              This link will expire in one hour.
+              In order to reset your password, please click the button below
+              (this link will expire in one hour).
             </Text>
             <Section className="text-center mt-[32px] mb-[32px]">
               <Button

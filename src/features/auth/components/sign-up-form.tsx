@@ -36,6 +36,7 @@ export function SignUpForm({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
+      username: "",
       email: "",
       password: "",
     },
@@ -53,6 +54,8 @@ export function SignUpForm({
       email: values.email,
       password: values.password,
       name: values.name,
+      username: values.username,
+      displayUsername: values.username,
       image,
       callbackURL: "/home",
     });
@@ -61,6 +64,12 @@ export function SignUpForm({
 
     if (error) {
       switch (error.code) {
+        case "USERNAME_IS_ALREADY_TAKEN_PLEASE_TRY_ANOTHER":
+          form.setError("username", {
+            message: "Username is already taken. Please try another.",
+          });
+          return;
+
         case "USER_ALREADY_EXISTS":
           form.setError("email", {
             message: "A user with that email already exists",
@@ -131,12 +140,9 @@ export function SignUpForm({
                 const { data, error } = await authClient.signIn.social({
                   provider: "github",
                   callbackURL: "/home",
-                  requestSignUp: true,
                 });
 
-                if (error) {
-                  toast.error("Failed to sign up with GitHub.");
-                }
+                if (error) toast.error("Failed to sign up with GitHub.");
 
                 if (data?.redirect) router.push(data.url as string);
 
@@ -164,23 +170,43 @@ export function SignUpForm({
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={isLoading}
-                        placeholder="David Aragundy"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex items-start gap-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={isLoading}
+                          placeholder="David Aragundy"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={isLoading}
+                          placeholder="davidaragundy"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
