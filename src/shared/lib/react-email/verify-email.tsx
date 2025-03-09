@@ -37,6 +37,7 @@ export const VerifyEmail = ({ url, name }: Props) => {
             <Text className="text-black text-[14px] leading-[24px]">
               In order to start using your account, you need to verify your
               email address. Click the button below to verify your email address
+              (this link will expire in one hour).
             </Text>
             <Section className="text-center mt-[32px] mb-[32px]">
               <Button

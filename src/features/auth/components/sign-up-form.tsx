@@ -55,6 +55,7 @@ export function SignUpForm({
       password: values.password,
       name: values.name,
       username: values.username,
+      displayUsername: values.username,
       image,
       callbackURL: "/home",
     });
