@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const signInSchema = z.object({
+export const signInWithUsernameAndPasswordSchema = z.object({
   username: z
     .string()
     .min(3, {
@@ -17,4 +17,10 @@ export const signInSchema = z.object({
     .max(50, {
       message: "Password must be at most 50 characters long",
     }),
+});
+
+export const signInWithMagicLinkSchema = z.object({
+  email: z.string().email({
+    message: "Invalid email address",
+  }),
 });
