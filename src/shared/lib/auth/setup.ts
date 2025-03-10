@@ -1,10 +1,14 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError } from "better-auth/api";
-import { username } from "better-auth/plugins";
+import { username, magicLink } from "better-auth/plugins";
 import { BASE_URL } from "@/shared/constants";
 import prisma from "@/shared/lib/prisma";
-import { ResetPassword, VerifyEmail } from "@/shared/lib/react-email";
+import {
+  ResetPassword,
+  VerifyEmail,
+  MagicLink,
+} from "@/shared/lib/react-email";
 import { resend } from "@/shared/lib/resend";
 
 export const auth = betterAuth({
@@ -19,7 +23,28 @@ export const auth = betterAuth({
       trustedProviders: ["emailAndPassword", "github"],
     },
   },
-  plugins: [username()],
+  plugins: [
+    username(),
+    magicLink({
+      disableSignUp: true,
+      sendMagicLink: async ({ email, url }) => {
+        const { error } = await resend.emails.send({
+          from: "Stories <mail@stories.aragundy.com>",
+          to: [email],
+          subject: "Sign in with Magic Link",
+          react: MagicLink({ url }),
+        });
+
+        if (error) {
+          console.error(error);
+
+          throw new APIError("FAILED_DEPENDENCY", {
+            message: "Failed to send magic link",
+          });
+        }
+      },
+    }),
+  ],
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,

@@ -77,7 +77,7 @@ export function SignUpForm({
           return;
 
         case "FAILED_TO_SEND_VERIFICATION_EMAIL":
-          const toastId = toast.error("Failed to send verification email. 😢", {
+          const toastId = toast.error("Failed to send verification email 😢", {
             duration: 10000,
             action: {
               label: "Resend email",
@@ -91,14 +91,14 @@ export function SignUpForm({
 
                 if (error) {
                   toast.dismiss(id);
-                  toast.error("Failed to resend email. 😢", {
+                  toast.error("Failed to resend email 😢", {
                     id: toastId,
                     duration: 10000,
                   });
                   return;
                 }
 
-                toast.success("Email sent successfully! 🎉", {
+                toast.success("Email sent successfully 🎉", {
                   description: "Don't forget to check your spam folder.",
                   id,
                 });
@@ -108,13 +108,13 @@ export function SignUpForm({
           return;
 
         default:
-          toast.error("Something went wrong. Please try again later. 😢");
+          toast.error("Something went wrong, please try again later 😢");
           return;
       }
     }
 
     if (data)
-      toast.success("Account created successfully! 🎉", {
+      toast.success("Account created successfully 🎉", {
         description: "Please check your email to verify your account.",
         duration: 10000,
       });
@@ -125,7 +125,9 @@ export function SignUpForm({
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create an account 🔥</CardTitle>
-          <CardDescription>Sign up with your GitHub account</CardDescription>
+          <CardDescription>
+            Here you can say whatever you want, nobody will give a f*ck. 🌴
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
           <div className="flex flex-col gap-4">

@@ -52,7 +52,7 @@ export function ForgotPasswordForm({
       switch (error.code) {
         case "FAILED_TO_SEND_RESET_PASSWORD_EMAIL":
           const toastId = toast.error(
-            "Failed to send reset password email. 😢",
+            "Failed to send reset password email 😢",
             {
               duration: 10000,
               action: {
@@ -67,14 +67,14 @@ export function ForgotPasswordForm({
 
                   if (error) {
                     toast.dismiss(id);
-                    toast.error("Failed to resend email. 😢", {
+                    toast.error("Failed to resend email 😢", {
                       id: toastId,
                       duration: 10000,
                     });
                     return;
                   }
 
-                  toast.success("Email sent successfully! 🎉", {
+                  toast.success("Email sent successfully 🎉", {
                     description: "Don't forget to check your spam folder.",
                     id,
                   });
@@ -85,12 +85,12 @@ export function ForgotPasswordForm({
           return;
 
         default:
-          toast.error("Something went wrong. Please try again later. 😢");
+          toast.error("Something went wrong, please try again later 😢");
           return;
       }
     }
 
-    toast.success("Reset link sent successfully! 🎉", {
+    toast.success("Reset link sent successfully 🎉", {
       description: "Don't forget to check your spam folder.",
     });
   };

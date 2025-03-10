@@ -57,7 +57,7 @@ export function ResetPasswordForm({
     if (error) {
       switch (error.code) {
         case "INVALID_TOKEN":
-          toast.error("Invalid token. 😢", {
+          toast.error("Invalid token 😢", {
             description: "Please request a new password reset link.",
             duration: 10000,
             action: {
@@ -68,14 +68,14 @@ export function ResetPasswordForm({
           return;
 
         default:
-          toast.error("Something went wrong. Please try again later. 😢");
+          toast.error("Something went wrong, please try again later 😢");
           return;
       }
     }
 
-    toast.success("Password reset successfully! 🎉", {
+    toast.success("Password reset successfully 🎉", {
       duration: 10000,
-      description: "You can now sign in with your new password",
+      description: "You can now sign in with your new password.",
     });
 
     router.push("/sign-in");
