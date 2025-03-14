@@ -48,7 +48,10 @@ export const VerifyEmail = ({ url, name }: Props) => {
             </Section>
             <Text className="text-black text-[14px] leading-[24px]">
               or copy and paste this URL into your browser:{" "}
-              <Link href={url} className="text-blue-600 no-underline">
+              <Link
+                href={url}
+                className="text-blue-600 no-underline text-wrap break-all"
+              >
                 {url}
               </Link>
             </Text>
@@ -60,7 +63,7 @@ export const VerifyEmail = ({ url, name }: Props) => {
 };
 
 VerifyEmail.PreviewProps = {
-  url: "https://stories.aragundy.com",
+  url: "https://stories.aragundy.com/api/auth/reset-password/JiiTi6msThuQRQghOkN1pWpR?callbackURL=/reset-password",
   name: "David Aragundy",
 } as Props;
 
