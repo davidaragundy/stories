@@ -1,23 +1,21 @@
 import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError } from "better-auth/api";
 import { username, magicLink, twoFactor } from "better-auth/plugins";
 import { BASE_URL } from "@/shared/constants";
-import prisma from "@/shared/lib/prisma";
 import {
   ResetPassword,
   VerifyEmail,
   MagicLink,
 } from "@/shared/lib/react-email";
 import { resend } from "@/shared/lib/resend";
+import { db } from "@/shared/lib/db";
 
 export const auth = betterAuth({
   appName: "Stories",
   baseURL: BASE_URL,
-  //TODO: update
-  trustedOrigins: ["http://192.168.0.120:3000"],
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
+  database: drizzleAdapter(db, {
+    provider: "pg",
   }),
   account: {
     accountLinking: {
