@@ -8,3 +8,5 @@ import {
 export const authClient = createAuthClient({
   plugins: [usernameClient(), magicLinkClient(), twoFactorClient()],
 });
+
+export type Session = typeof authClient.$Infer.Session;

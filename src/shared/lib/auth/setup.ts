@@ -14,6 +14,8 @@ import { resend } from "@/shared/lib/resend";
 export const auth = betterAuth({
   appName: "Stories",
   baseURL: BASE_URL,
+  //TODO: update
+  trustedOrigins: ["http://192.168.0.120:3000"],
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),

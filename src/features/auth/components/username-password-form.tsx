@@ -38,10 +38,21 @@ export function UsernamePasswordForm() {
   ) => {
     setIsLoading(true);
 
-    const { data, error } = await authClient.signIn.username({
-      username: values.username,
-      password: values.password,
-    });
+    const { error } = await authClient.signIn.username(
+      {
+        username: values.username,
+        password: values.password,
+      },
+      {
+        async onSuccess(context) {
+          if (context.data.twoFactorRedirect) {
+            return router.push("/2fa");
+          }
+
+          router.push("/home");
+        },
+      }
+    );
 
     if (error) {
       setIsLoading(false);
@@ -68,10 +79,6 @@ export function UsernamePasswordForm() {
           toast.error("Something went wrong, please try again later 😢");
           return;
       }
-    }
-
-    if (data) {
-      router.push("/home");
     }
 
     setIsLoading(false);

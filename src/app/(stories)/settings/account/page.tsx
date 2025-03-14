@@ -1,7 +1,18 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { Separator } from "@/shared/components";
+import { auth } from "@/shared/lib/auth";
 import { AccountForm } from "@/features/settings/components";
 
-export default function SettingsAccountPage() {
+export default async function SettingsAccountPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    return redirect("/sign-in");
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -11,7 +22,7 @@ export default function SettingsAccountPage() {
         </p>
       </div>
       <Separator />
-      <AccountForm />
+      <AccountForm session={session} />
     </div>
   );
 }
