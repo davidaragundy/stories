@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError } from "better-auth/api";
-import { username, magicLink } from "better-auth/plugins";
+import { username, magicLink, twoFactor } from "better-auth/plugins";
 import { BASE_URL } from "@/shared/constants";
 import prisma from "@/shared/lib/prisma";
 import {
@@ -44,6 +44,7 @@ export const auth = betterAuth({
         }
       },
     }),
+    twoFactor(),
   ],
   emailVerification: {
     sendOnSignUp: true,

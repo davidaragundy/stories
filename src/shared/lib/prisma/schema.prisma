@@ -22,6 +22,9 @@ model User {
   username        String?
   displayUsername String?
 
+  twoFactorEnabled Boolean?
+  twofactors       TwoFactor[]
+
   @@unique([email])
   @@map("user")
   @@unique([username])
@@ -70,4 +73,14 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model TwoFactor {
+  id          String @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("twoFactor")
 }
