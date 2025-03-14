@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider, Toaster } from "@/shared/components";
 import { GeistSans } from "geist/font/sans";
 
@@ -18,6 +19,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <SpeedInsights />
           <Toaster />
         </ThemeProvider>
       </body>
