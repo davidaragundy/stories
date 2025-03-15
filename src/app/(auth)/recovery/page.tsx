@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+
+import { RecoveryForm } from "@/features/auth/components";
+
 import { GalleryVerticalEnd } from "lucide-react";
-import { TwoFactorForm } from "@/features/auth/components";
 
 export const metadata: Metadata = {
-  title: "Stories | 2FA",
-  description: "2FA for your account",
+  title: "Stories | Recovery",
+  description: "Use recovery code to access your account.",
 };
 
-export default function TwoFactorPage() {
+export default function RecoveryPage() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-6">
       <Link
@@ -20,7 +22,7 @@ export default function TwoFactorPage() {
         </div>
         Stories
       </Link>
-      <TwoFactorForm />
+      <RecoveryForm />
     </div>
   );
 }

@@ -96,7 +96,6 @@ export function TwoFactorForm({
 
           <div className="text-center text-sm">
             Don&apos;t have access to your authenticator app?{" "}
-            {/*TODO: use recovery  */}
             <Link href="/recovery" className="underline underline-offset-4">
               Use recovery code
             </Link>

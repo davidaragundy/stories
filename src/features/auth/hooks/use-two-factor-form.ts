@@ -16,6 +16,7 @@ export const useTwoFactorForm = () => {
       code: "",
     },
   });
+
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
