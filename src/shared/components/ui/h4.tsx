@@ -1,4 +1,4 @@
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/utils/cn";
 
 export const H4: React.FC<React.ComponentProps<"h4">> = ({
   className,

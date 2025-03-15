@@ -1,13 +1,7 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+
 import {
   Button,
   Card,
@@ -23,63 +17,17 @@ import {
   FormMessage,
   Input,
 } from "@/shared/components";
-import { resetPasswordSchema } from "@/features/auth/schemas";
-import { authClient } from "@/shared/lib/auth/client";
-import { toast } from "sonner";
+import { cn } from "@/shared/utils";
+
+import { useResetPasswordForm } from "@/features/auth/hooks";
+
+import { Loader2 } from "lucide-react";
 
 export function ResetPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const form = useForm<z.infer<typeof resetPasswordSchema>>({
-    resolver: zodResolver(resetPasswordSchema),
-    defaultValues: {
-      password: "",
-      confirmPassword: "",
-    },
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const token = searchParams.get("token");
-
-  const onSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
-    setIsLoading(true);
-
-    const { error } = await authClient.resetPassword({
-      newPassword: values.password,
-      token: token as string,
-    });
-
-    setIsLoading(false);
-
-    if (error) {
-      switch (error.code) {
-        case "INVALID_TOKEN":
-          toast.error("Invalid token 😢", {
-            description: "Please request a new password reset link.",
-            duration: 10000,
-            action: {
-              label: "Request new link",
-              onClick: () => router.push("/forgot-password"),
-            },
-          });
-          return;
-
-        default:
-          toast.error("Something went wrong, please try again later 😢");
-          return;
-      }
-    }
-
-    toast.success("Password reset successfully 🎉", {
-      duration: 10000,
-      description: "You can now sign in with your new password.",
-    });
-
-    router.push("/sign-in");
-  };
+  const { form, isLoading, onSubmit } = useResetPasswordForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

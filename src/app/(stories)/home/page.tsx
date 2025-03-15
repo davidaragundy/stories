@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Button, H1 } from "@/shared/components";
-import { auth } from "@/shared/lib/auth";
+import { auth } from "@/shared/lib/auth/server";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 

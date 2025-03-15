@@ -1,4 +1,4 @@
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/utils/cn";
 
 export const Muted: React.FC<React.ComponentProps<"p">> = ({
   className,

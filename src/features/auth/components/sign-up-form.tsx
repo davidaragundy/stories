@@ -1,13 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+
 import {
   Button,
   Card,
@@ -23,102 +17,17 @@ import {
   FormMessage,
   Input,
 } from "@/shared/components";
-import { signUpSchema } from "@/features/auth/schemas";
-import { authClient } from "@/shared/lib/auth/client";
-import { getHash } from "@/features/auth/helpers";
-import { toast } from "sonner";
+import { cn } from "@/shared/utils";
+
+import { useSignUpForm } from "@/features/auth/hooks";
+
+import { Loader2 } from "lucide-react";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const form = useForm<z.infer<typeof signUpSchema>>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      name: "",
-      username: "",
-      email: "",
-      password: "",
-    },
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
-  const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
-    const hash = await getHash(values.email);
-    const image = `https://gravatar.com/avatar/${hash}?size=500&d=robohash&r=x`;
-
-    setIsLoading(true);
-
-    const { data, error } = await authClient.signUp.email({
-      email: values.email,
-      password: values.password,
-      name: values.name,
-      username: values.username,
-      displayUsername: values.username,
-      image,
-      callbackURL: "/home",
-    });
-
-    setIsLoading(false);
-
-    if (error) {
-      switch (error.code) {
-        case "USERNAME_IS_ALREADY_TAKEN_PLEASE_TRY_ANOTHER":
-          form.setError("username", {
-            message: "Username is already taken. Please try another.",
-          });
-          return;
-
-        case "USER_ALREADY_EXISTS":
-          form.setError("email", {
-            message: "A user with that email already exists",
-          });
-          return;
-
-        case "FAILED_TO_SEND_VERIFICATION_EMAIL":
-          const toastId = toast.error("Failed to send verification email 😢", {
-            duration: 10000,
-            action: {
-              label: "Resend email",
-              onClick: async () => {
-                const id = toast.loading("Resending email...");
-
-                const { error } = await authClient.sendVerificationEmail({
-                  email: values.email,
-                  callbackURL: "/home",
-                });
-
-                if (error) {
-                  toast.dismiss(id);
-                  toast.error("Failed to resend email 😢", {
-                    id: toastId,
-                    duration: 10000,
-                  });
-                  return;
-                }
-
-                toast.success("Email sent successfully 🎉", {
-                  description: "Don't forget to check your spam folder.",
-                  id,
-                });
-              },
-            },
-          });
-          return;
-
-        default:
-          toast.error("Something went wrong, please try again later 😢");
-          return;
-      }
-    }
-
-    if (data)
-      toast.success("Account created successfully 🎉", {
-        description: "Please check your email to verify your account.",
-        duration: 10000,
-      });
-  };
+  const { form, isLoading, onSubmit, handleSignUpWithGithub } = useSignUpForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -136,20 +45,7 @@ export function SignUpForm({
               variant="outline"
               className="w-full"
               disabled={isLoading}
-              onClick={async () => {
-                setIsLoading(true);
-
-                const { data, error } = await authClient.signIn.social({
-                  provider: "github",
-                  callbackURL: "/home",
-                });
-
-                if (error) toast.error("Failed to sign up with GitHub.");
-
-                if (data?.redirect) router.push(data.url as string);
-
-                setIsLoading(false);
-              }}
+              onClick={handleSignUpWithGithub}
             >
               <svg
                 role="img"

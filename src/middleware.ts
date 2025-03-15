@@ -7,6 +7,8 @@ export async function middleware(request: NextRequest) {
     "/sign-up",
     "/forgot-password",
     "/reset-password",
+    "/2fa",
+    "/recovery",
   ];
   const isAuthURL = authURLs.includes(request.nextUrl.pathname);
 
