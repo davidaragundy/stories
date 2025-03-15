@@ -1,12 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+
 import {
   Button,
   Card,
@@ -22,78 +17,17 @@ import {
   FormMessage,
   Input,
 } from "@/shared/components";
-import { forgotPasswordSchema } from "@/features/auth/schemas";
-import { authClient } from "@/shared/lib/auth/client";
-import { toast } from "sonner";
+import { cn } from "@/shared/utils";
+
+import { useForgotPasswordForm } from "@/features/auth/hooks";
+
+import { Loader2 } from "lucide-react";
 
 export function ForgotPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const form = useForm<z.infer<typeof forgotPasswordSchema>>({
-    resolver: zodResolver(forgotPasswordSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
-  const [isLoading, setIsLoading] = useState(false);
-
-  const onSubmit = async (values: z.infer<typeof forgotPasswordSchema>) => {
-    setIsLoading(true);
-
-    const { error } = await authClient.forgetPassword({
-      email: values.email,
-      redirectTo: "/reset-password",
-    });
-
-    setIsLoading(false);
-
-    if (error) {
-      switch (error.code) {
-        case "FAILED_TO_SEND_RESET_PASSWORD_EMAIL":
-          const toastId = toast.error(
-            "Failed to send reset password email 😢",
-            {
-              duration: 10000,
-              action: {
-                label: "Resend email",
-                onClick: async () => {
-                  const id = toast.loading("Resending email...");
-
-                  const { error } = await authClient.forgetPassword({
-                    email: values.email,
-                    redirectTo: "/reset-password",
-                  });
-
-                  if (error) {
-                    toast.dismiss(id);
-                    toast.error("Failed to resend email 😢", {
-                      id: toastId,
-                      duration: 10000,
-                    });
-                    return;
-                  }
-
-                  toast.success("Email sent successfully 🎉", {
-                    description: "Don't forget to check your spam folder.",
-                    id,
-                  });
-                },
-              },
-            }
-          );
-          return;
-
-        default:
-          toast.error("Something went wrong, please try again later 😢");
-          return;
-      }
-    }
-
-    toast.success("Reset link sent successfully 🎉", {
-      description: "Don't forget to check your spam folder.",
-    });
-  };
+  const { form, onSubmit, isLoading } = useForgotPasswordForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

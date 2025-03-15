@@ -1,12 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+
 import {
   Button,
   Card,
@@ -23,52 +18,18 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/shared/components";
-import { authClient } from "@/shared/lib/auth/client";
-import { toast } from "sonner";
-import { twoFactorSchema } from "@/shared/schemas";
-import { useRouter } from "next/navigation";
+import { cn } from "@/shared/utils";
+
+import { useTwoFactorForm } from "@/features/auth/hooks";
+
 import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { Loader2 } from "lucide-react";
 
 export function TwoFactorForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const form = useForm<z.infer<typeof twoFactorSchema>>({
-    resolver: zodResolver(twoFactorSchema),
-    defaultValues: {
-      code: "",
-    },
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
-  const onSubmit = async (values: z.infer<typeof twoFactorSchema>) => {
-    setIsLoading(true);
-
-    const { error } = await authClient.twoFactor.verifyTotp({
-      code: values.code,
-    });
-
-    if (error) {
-      setIsLoading(false);
-
-      switch (error.code) {
-        case "INVALID_TWO_FACTOR_AUTHENTICATION":
-          form.setError("code", {
-            message: "Invalid one-time password",
-          });
-          return;
-
-        default:
-          toast.error("An error occurred, please try again later 😢");
-          return;
-      }
-    }
-
-    router.push("/home");
-
-    setIsLoading(false);
-  };
+  const { form, isLoading, onSubmit } = useTwoFactorForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -136,7 +97,7 @@ export function TwoFactorForm({
           <div className="text-center text-sm">
             Don&apos;t have access to your authenticator app?{" "}
             {/*TODO: use recovery  */}
-            <Link href="/sign-up" className="underline underline-offset-4">
+            <Link href="/recovery" className="underline underline-offset-4">
               Use recovery code
             </Link>
           </div>

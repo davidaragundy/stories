@@ -2,18 +2,17 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError } from "better-auth/api";
 import { username, magicLink, twoFactor } from "better-auth/plugins";
+
 import { BASE_URL } from "@/shared/constants";
-import {
-  ResetPassword,
-  VerifyEmail,
-  MagicLink,
-} from "@/shared/lib/react-email";
+import { db } from "@/shared/lib/db/server";
+import { ResetPassword, VerifyEmail, MagicLink } from "@/shared/lib/emails";
 import { resend } from "@/shared/lib/resend";
-import { db } from "@/shared/lib/db";
 
 export const auth = betterAuth({
   appName: "Stories",
   baseURL: BASE_URL,
+  //TODO
+  trustedOrigins: ["http://192.168.0.120:3000"],
   database: drizzleAdapter(db, {
     provider: "pg",
   }),

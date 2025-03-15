@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
-import { SignIn } from "@/features/auth/components";
+import { SignInForm } from "@/features/auth/components";
 
 export const metadata: Metadata = {
   title: "Stories | Sign In",
@@ -20,7 +20,7 @@ export default function SignInPage() {
         </div>
         Stories
       </Link>
-      <SignIn />
+      <SignInForm />
     </div>
   );
 }

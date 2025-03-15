@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
+
 import {
   Button,
   Card,
@@ -12,24 +10,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components";
-import { authClient } from "@/shared/lib/auth/client";
-import { cn } from "@/shared/lib/utils";
-import {
-  UsernamePasswordForm,
-  MagicLinkForm,
-} from "@/features/auth/components";
-import { WandSparklesIcon, IdCardIcon } from "lucide-react";
+import { cn } from "@/shared/utils";
 
-export function SignIn({ className, ...props }: React.ComponentProps<"div">) {
-  const router = useRouter();
+import { useSignInForm } from "@/features/auth/hooks";
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [signInMethod, setSignInMethod] = useState<"username" | "magicLink">(
-    "username"
-  );
-
-  const form =
-    signInMethod === "username" ? <UsernamePasswordForm /> : <MagicLinkForm />;
+export function SignInForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  const {
+    form,
+    handleSignInWithGitHub,
+    isLoading,
+    toggleSignInMethod,
+    toggleSignInMethodButtonContent,
+  } = useSignInForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -47,20 +42,7 @@ export function SignIn({ className, ...props }: React.ComponentProps<"div">) {
               variant="outline"
               className="w-full"
               disabled={isLoading}
-              onClick={async () => {
-                setIsLoading(true);
-
-                const { data, error } = await authClient.signIn.social({
-                  provider: "github",
-                  callbackURL: "/home",
-                });
-
-                if (error) toast.error("Failed to sign in with GitHub 😢");
-
-                if (data?.redirect) router.push(data?.url as string);
-
-                setIsLoading(false);
-              }}
+              onClick={handleSignInWithGitHub}
             >
               <svg
                 role="img"
@@ -78,22 +60,9 @@ export function SignIn({ className, ...props }: React.ComponentProps<"div">) {
               type="button"
               variant="outline"
               className="w-full"
-              onClick={() =>
-                signInMethod === "username"
-                  ? setSignInMethod("magicLink")
-                  : setSignInMethod("username")
-              }
+              onClick={toggleSignInMethod}
             >
-              {signInMethod === "username" ? (
-                <>
-                  <WandSparklesIcon /> Sign in with Magic Link
-                </>
-              ) : (
-                <>
-                  <IdCardIcon />
-                  Sign in with Credentials
-                </>
-              )}
+              {toggleSignInMethodButtonContent}
             </Button>
           </div>
 

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "dev:email": "email dev --dir src/shared/lib/react-email",
+    "dev:email": "email dev --dir src/shared/lib/emails",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

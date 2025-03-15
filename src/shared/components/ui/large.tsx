@@ -1,4 +1,4 @@
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/utils/cn";
 
 export const Large: React.FC<React.HTMLProps<HTMLDivElement>> = ({
   className,

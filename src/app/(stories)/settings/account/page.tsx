@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Separator } from "@/shared/components";
-import { auth } from "@/shared/lib/auth";
+import { auth } from "@/shared/lib/auth/server";
 import { AccountForm } from "@/features/settings/components";
 
 export default async function SettingsAccountPage() {
