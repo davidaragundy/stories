@@ -1,10 +1,11 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError } from "better-auth/api";
+import { nextCookies } from "better-auth/next-js";
 import { username, magicLink, twoFactor } from "better-auth/plugins";
 
 import { BASE_URL } from "@/shared/constants";
-import { db } from "@/shared/lib/db/server";
+import { db, redis } from "@/shared/lib/db/server";
 import { ResetPassword, VerifyEmail, MagicLink } from "@/shared/lib/emails";
 import { resend } from "@/shared/lib/resend";
 
@@ -16,13 +17,33 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
+  secondaryStorage: {
+    get: async (key) => {
+      const value = await redis.get<string>(key);
+      return value ? value : null;
+    },
+    set: async (key, value, ttl) => {
+      if (ttl) await redis.set(key, value, { ex: ttl });
+      else await redis.set(key, value);
+    },
+    delete: async (key) => {
+      await redis.del(key);
+    },
+  },
+  rateLimit: {
+    storage: "secondary-storage",
+  },
   account: {
     accountLinking: {
       enabled: true,
       trustedProviders: ["emailAndPassword", "github"],
     },
   },
+  advanced: {
+    cookiePrefix: "stories",
+  },
   plugins: [
+    nextCookies(),
     username(),
     magicLink({
       disableSignUp: true,

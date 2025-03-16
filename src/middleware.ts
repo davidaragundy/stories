@@ -15,7 +15,9 @@ export async function middleware(request: NextRequest) {
   const publicURLs: string[] = [];
   const isPublicURL = publicURLs.includes(request.nextUrl.pathname);
 
-  const sessionCookie = getSessionCookie(request);
+  const sessionCookie = getSessionCookie(request, {
+    cookiePrefix: "stories",
+  });
 
   if (isPublicURL) return NextResponse.next();
 
