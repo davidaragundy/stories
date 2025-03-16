@@ -12,7 +12,7 @@ export const auth = betterAuth({
   appName: "Stories",
   baseURL: BASE_URL,
   //TODO
-  trustedOrigins: ["http://192.168.0.120:3000"],
+  trustedOrigins: ["http://192.168.0.110:3000"],
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
