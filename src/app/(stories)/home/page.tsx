@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { Button, H1 } from "@/shared/components";
-import { auth } from "@/shared/lib/auth/server";
-import { cookies, headers } from "next/headers";
-import { redirect } from "next/navigation";
+
+import { H1, P } from "@/shared/components";
 
 export const metadata: Metadata = {
   title: "Stories | Home",
@@ -10,25 +8,14 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <>
+    <main className="flex flex-col gap-6">
       <H1>Home</H1>
-      <form
-        action={async () => {
-          "use server";
-
-          const { success } = await auth.api.signOut({
-            headers: await headers(),
-          });
-
-          (await cookies()).delete("better-auth.session_token");
-
-          console.log({ success });
-
-          redirect("/sign-in");
-        }}
-      >
-        <Button>Sign out</Button>
-      </form>
-    </>
+      <P>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque,
+        corrupti numquam beatae optio eum necessitatibus iusto hic tempore
+        dolores obcaecati magni fugit nisi nostrum est pariatur. Repudiandae
+        suscipit sunt nesciunt?
+      </P>
+    </main>
   );
 }
