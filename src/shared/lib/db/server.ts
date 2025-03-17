@@ -8,7 +8,6 @@ loadEnvConfig(process.cwd());
 
 export const db = drizzle(process.env.DATABASE_URL!, { schema });
 
-export const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+export const redis = Redis.fromEnv({
+  automaticDeserialization: false,
 });
