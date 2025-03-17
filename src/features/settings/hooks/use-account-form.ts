@@ -35,6 +35,8 @@ export const useAccountForm = (session: Session) => {
       setIsLoading(false);
 
       if (error) {
+        if (error.status === 429) return;
+
         switch (error.code) {
           case "INVALID_PASSWORD":
             form.setError("password", {
@@ -69,6 +71,8 @@ export const useAccountForm = (session: Session) => {
       setIsLoading(false);
 
       if (error) {
+        if (error.status === 429) return;
+
         switch (error.code) {
           case "INVALID_PASSWORD":
             form.setError("password", {

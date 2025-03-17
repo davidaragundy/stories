@@ -45,6 +45,8 @@ export const useQrCodeDialog = ({
     setIsLoading(false);
 
     if (error) {
+      if (error.status === 429) return;
+
       switch (error.code) {
         case "INVALID_TWO_FACTOR_AUTHENTICATION":
           form.setError("code", {

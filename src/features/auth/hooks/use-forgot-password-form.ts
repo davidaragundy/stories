@@ -29,7 +29,11 @@ export const useForgotPasswordForm = () => {
 
     setIsLoading(false);
 
-    if (error) return handleSubmitError(error.code!, values.email);
+    if (error) {
+      if (error.status === 429) return;
+
+      return handleSubmitError(error.code!, values.email);
+    }
 
     toast.success("Reset link sent successfully 🎉", {
       description: "Don't forget to check your spam folder.",

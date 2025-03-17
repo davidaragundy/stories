@@ -30,6 +30,8 @@ export const useTwoFactorForm = () => {
     if (error) {
       setIsLoading(false);
 
+      if (error.status === 429) return;
+
       switch (error.code) {
         case "INVALID_TWO_FACTOR_AUTHENTICATION":
           form.setError("code", {

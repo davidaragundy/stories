@@ -30,7 +30,7 @@ export const useRecoveryForm = () => {
     setIsLoading(false);
 
     if (error) {
-      console.log({ error });
+      if (error.status === 429) return;
 
       switch (error.code) {
         case "INVALID_BACKUP_CODE":

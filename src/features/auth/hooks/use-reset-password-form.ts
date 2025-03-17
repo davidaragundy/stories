@@ -36,6 +36,8 @@ export const useResetPasswordForm = () => {
     setIsLoading(false);
 
     if (error) {
+      if (error.status === 429) return;
+
       switch (error.code) {
         case "INVALID_TOKEN":
           toast.error("Invalid token 😢", {

@@ -58,6 +58,8 @@ export const useSignUpForm = () => {
     setIsLoading(false);
 
     if (error) {
+      if (error.status === 429) return;
+
       switch (error.code) {
         case "USERNAME_IS_ALREADY_TAKEN_PLEASE_TRY_ANOTHER":
           form.setError("username", {

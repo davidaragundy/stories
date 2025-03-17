@@ -30,6 +30,8 @@ export const useMagicLinkForm = () => {
     if (error) {
       setIsLoading(false);
 
+      if (error.status === 429) return;
+
       switch (error.code) {
         case "USER_NOT_FOUND":
           form.setError("email", {

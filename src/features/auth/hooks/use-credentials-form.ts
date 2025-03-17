@@ -44,6 +44,8 @@ export const useCredentialsForm = () => {
     if (error) {
       setIsLoading(false);
 
+      if (error.status === 429) return;
+
       switch (error.code) {
         case "INVALID_USERNAME_OR_PASSWORD":
           form.setError("username", {
