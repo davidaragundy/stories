@@ -26,7 +26,9 @@ export const useSignInForm = () => {
       callbackURL: "/home",
     });
 
-    if (error) toast.error("Failed to sign in with GitHub 😢");
+    if (error) {
+      if (error.status !== 429) toast.error("Failed to sign in with GitHub 😢");
+    }
 
     if (data?.redirect) router.push(data?.url as string);
 

@@ -56,6 +56,8 @@ export const useForgotPasswordForm = () => {
               });
 
               if (error) {
+                if (error.status !== 429) return;
+
                 toast.dismiss(id);
                 toast.error("Failed to resend email 😢", {
                   id: toastId,

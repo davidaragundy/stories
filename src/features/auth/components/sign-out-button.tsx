@@ -15,6 +15,8 @@ export const SignOutButton = () => {
     const { error } = await authClient.signOut();
 
     if (error) {
+      if (error.status !== 429) return;
+
       toast.error("Something went wrong, please try again later 😢");
       return;
     }

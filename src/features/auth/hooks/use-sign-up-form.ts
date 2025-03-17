@@ -32,7 +32,9 @@ export const useSignUpForm = () => {
       callbackURL: "/home",
     });
 
-    if (error) toast.error("Failed to sign up with GitHub.");
+    if (error) {
+      if (error.status !== 429) toast.error("Failed to sign up with GitHub 😢");
+    }
 
     if (data?.redirect) router.push(data.url as string);
 
@@ -87,6 +89,8 @@ export const useSignUpForm = () => {
                 });
 
                 if (error) {
+                  if (error.status === 429) return;
+
                   toast.dismiss(id);
                   toast.error("Failed to resend email 😢", {
                     id: toastId,
