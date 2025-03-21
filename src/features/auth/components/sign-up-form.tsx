@@ -50,6 +50,7 @@ export function SignUpForm({
           <CardTitle>
             <H1>Sign up</H1>
           </CardTitle>
+
           <CardDescription>
             <P className="leading-normal">
               Here you can say whatever you want, nobody will give a f*ck. 🌴
@@ -57,7 +58,7 @@ export function SignUpForm({
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-4">
             <Button
               type="button"
               variant="secondary"
