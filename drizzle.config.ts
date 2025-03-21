@@ -11,4 +11,5 @@ export default defineConfig({
     url: process.env.DATABASE_URL!,
   },
   strict: true,
+  verbose: true,
 });

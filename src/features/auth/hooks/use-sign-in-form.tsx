@@ -18,22 +18,25 @@ export const useSignInForm = () => {
 
   const router = useRouter();
 
-  const handleSignInWithGitHub = async () => {
+  const handleSignInWithSocial = async (provider: "google" | "github") => {
     setIsLoading(true);
 
     const { data, error } = await authClient.signIn.social({
-      provider: "github",
+      provider,
       callbackURL: "/home",
     });
 
-    if (error) {
-      if (error.status !== 429) toast.error("Failed to sign in with GitHub 😢");
-    }
+    if (error && error.status !== 429)
+      toast.error(`Failed to sign in with ${provider} 😢`);
 
-    if (data?.redirect) router.push(data?.url as string);
+    if (data?.redirect) router.push(data.url as string);
 
     setIsLoading(false);
   };
+
+  const handleSignInWithGitHub = () => handleSignInWithSocial("github");
+
+  const handleSignInWithGoogle = () => handleSignInWithSocial("google");
 
   const toggleSignInMethod = () =>
     setSignInMethod(
@@ -46,12 +49,11 @@ export const useSignInForm = () => {
   const toggleSignInMethodButtonContent =
     signInMethod === "credentials" ? (
       <>
-        <WandSparklesIcon /> Sign in with Magic Link
+        <WandSparklesIcon /> Magic Link
       </>
     ) : (
       <>
-        <IdCardIcon />
-        Sign in with Credentials
+        <IdCardIcon /> Credentials
       </>
     );
 
@@ -64,5 +66,6 @@ export const useSignInForm = () => {
     toggleSignInMethod,
     toggleSignInMethodButtonContent,
     handleSignInWithGitHub,
+    handleSignInWithGoogle,
   };
 };

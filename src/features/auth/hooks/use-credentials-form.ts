@@ -41,9 +41,9 @@ export const useCredentialsForm = () => {
       }
     );
 
-    if (error) {
-      setIsLoading(false);
+    setIsLoading(false);
 
+    if (error) {
       if (error.status === 429) return;
 
       switch (error.code) {
@@ -69,8 +69,6 @@ export const useCredentialsForm = () => {
           return;
       }
     }
-
-    setIsLoading(false);
   };
 
   return { form, isLoading, onSubmit };

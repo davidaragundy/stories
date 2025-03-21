@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   ];
   const isAuthURL = authURLs.includes(request.nextUrl.pathname);
 
-  const publicURLs: string[] = [];
+  const publicURLs: string[] = ["/terms", "/privacy"];
   const isPublicURL = publicURLs.includes(request.nextUrl.pathname);
 
   const sessionCookie = getSessionCookie(request, {
