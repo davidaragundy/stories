@@ -27,9 +27,9 @@ export const useTwoFactorForm = () => {
       code: values.code,
     });
 
-    if (error) {
-      setIsLoading(false);
+    setIsLoading(false);
 
+    if (error) {
       if (error.status === 429) return;
 
       switch (error.code) {
@@ -46,8 +46,6 @@ export const useTwoFactorForm = () => {
     }
 
     router.push("/home");
-
-    setIsLoading(false);
   };
 
   return { form, isLoading, onSubmit };

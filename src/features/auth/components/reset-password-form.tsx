@@ -15,13 +15,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  H1,
   Input,
+  P,
 } from "@/shared/components";
 import { cn } from "@/shared/utils";
 
 import { useResetPasswordForm } from "@/features/auth/hooks";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, LockIcon } from "lucide-react";
 
 export function ResetPasswordForm({
   className,
@@ -33,9 +35,12 @@ export function ResetPasswordForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Reset your password</CardTitle>
+          <CardTitle>
+            <H1>Reset password</H1>
+          </CardTitle>
+
           <CardDescription>
-            You better remember it this time! 🫵
+            <P>You better remember it this time! 🫵</P>
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
@@ -44,17 +49,36 @@ export function ResetPasswordForm({
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={isLoading}
-                        type="password"
-                        placeholder="••••••••"
-                        {...field}
-                      />
-                    </FormControl>
+
+                    <div className="relative">
+                      <FormControl>
+                        <Input
+                          className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
+                          disabled={isLoading}
+                          type="password"
+                          placeholder={
+                            fieldState.invalid ? undefined : "••••••••"
+                          }
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <div
+                        className={cn(
+                          "text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50",
+                          fieldState.invalid && "text-destructive-foreground",
+                          fieldState.isDirty &&
+                            !fieldState.invalid &&
+                            "text-foreground"
+                        )}
+                      >
+                        <LockIcon size={16} aria-hidden="true" />
+                      </div>
+                    </div>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -63,17 +87,36 @@ export function ResetPasswordForm({
               <FormField
                 control={form.control}
                 name="confirmPassword"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Confirm password</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={isLoading}
-                        type="password"
-                        placeholder="••••••••"
-                        {...field}
-                      />
-                    </FormControl>
+
+                    <div className="relative">
+                      <FormControl>
+                        <Input
+                          className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
+                          disabled={isLoading}
+                          type="password"
+                          placeholder={
+                            fieldState.invalid ? undefined : "••••••••"
+                          }
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <div
+                        className={cn(
+                          "text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50",
+                          fieldState.invalid && "text-destructive-foreground",
+                          fieldState.isDirty &&
+                            !fieldState.invalid &&
+                            "text-foreground"
+                        )}
+                      >
+                        <LockIcon size={16} aria-hidden="true" />
+                      </div>
+                    </div>
+
                     <FormMessage />
                   </FormItem>
                 )}

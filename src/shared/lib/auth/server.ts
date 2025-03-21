@@ -13,7 +13,7 @@ export const auth = betterAuth({
   appName: "Stories",
   baseURL: BASE_URL,
   //TODO
-  trustedOrigins: ["http://192.168.0.110:3000"],
+  trustedOrigins: ["http://192.168.0.109:3000"],
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
@@ -114,6 +114,16 @@ export const auth = betterAuth({
         return {
           username: profile.login,
           displayUsername: profile.login,
+        };
+      },
+    },
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      mapProfileToUser: (profile) => {
+        return {
+          username: profile.email.split("@")[0],
+          displayUsername: profile.email.split("@")[0],
         };
       },
     },

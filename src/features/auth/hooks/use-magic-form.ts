@@ -27,9 +27,9 @@ export const useMagicLinkForm = () => {
       callbackURL: "/home",
     });
 
-    if (error) {
-      setIsLoading(false);
+    setIsLoading(false);
 
+    if (error) {
       if (error.status === 429) return;
 
       switch (error.code) {
@@ -59,8 +59,6 @@ export const useMagicLinkForm = () => {
         duration: 10000,
       });
     }
-
-    setIsLoading(false);
   };
 
   return { form, isLoading, onSubmit };

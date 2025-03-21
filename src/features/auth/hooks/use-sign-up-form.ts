@@ -24,22 +24,27 @@ export const useSignUpForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSignUpWithGithub = async () => {
+  const handleSignUpWithSocial = async (provider: "google" | "github") => {
     setIsLoading(true);
 
     const { data, error } = await authClient.signIn.social({
-      provider: "github",
+      provider,
       callbackURL: "/home",
     });
 
     if (error) {
-      if (error.status !== 429) toast.error("Failed to sign up with GitHub 😢");
+      if (error.status !== 429)
+        toast.error(`Failed to sign up with ${provider} 😢`);
     }
 
     if (data?.redirect) router.push(data.url as string);
 
     setIsLoading(false);
   };
+
+  const handleSignUpWithGithub = () => handleSignUpWithSocial("github");
+
+  const handleSignUpWithGoogle = () => handleSignUpWithSocial("google");
 
   const onSubmit = async (values: SignUpValues) => {
     const hash = await getHash(values.email);
@@ -126,5 +131,6 @@ export const useSignUpForm = () => {
     isLoading,
     onSubmit,
     handleSignUpWithGithub,
+    handleSignUpWithGoogle,
   };
 };

@@ -26,6 +26,8 @@ export const useResetPasswordForm = () => {
   const token = searchParams.get("token");
 
   const onSubmit = async (values: ResetPasswordValues) => {
+    router.prefetch("/sign-in");
+
     setIsLoading(true);
 
     const { error } = await authClient.resetPassword({
