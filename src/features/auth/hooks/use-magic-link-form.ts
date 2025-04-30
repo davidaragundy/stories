@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { authClient } from "@/shared/lib/auth/client";
-
-import { signInWithMagicLinkSchema } from "@/features/auth/schemas";
-import { MagicLinkValues } from "@/features/auth/types";
-
 import { toast } from "sonner";
+
+import { authClient } from "@/shared/lib/better-auth/client";
+
+import { signInWithMagicLinkSchema } from "@/features/auth/schemas/sign-in-schema";
+import type { MagicLinkValues } from "@/features/auth/types";
 
 export const useMagicLinkForm = () => {
   const form = useForm<MagicLinkValues>({

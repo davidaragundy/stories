@@ -4,7 +4,6 @@ import {
   magicLinkClient,
   twoFactorClient,
 } from "better-auth/client/plugins";
-
 import { toast } from "sonner";
 
 export const authClient = createAuthClient({

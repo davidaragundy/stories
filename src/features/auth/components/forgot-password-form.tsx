@@ -1,29 +1,30 @@
 "use client";
 
 import Link from "next/link";
+import { Loader2, MailIcon } from "lucide-react";
 
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+} from "@/shared/components/ui/card";
+import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  H1,
-  Input,
-  P,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/form";
+import { H1 } from "@/shared/components/ui/h1";
+import { Input } from "@/shared/components/ui/input";
+import { P } from "@/shared/components/ui/p";
+import { cn } from "@/shared/utils/cn";
 
-import { useForgotPasswordForm } from "@/features/auth/hooks";
-
-import { Loader2, MailIcon } from "lucide-react";
+import { useForgotPasswordForm } from "@/features/auth/hooks/use-forgot-password-form";
 
 export function ForgotPasswordForm({
   className,

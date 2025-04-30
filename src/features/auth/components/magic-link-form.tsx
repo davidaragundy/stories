@@ -1,20 +1,20 @@
 "use client";
 
+import { Loader2, MailIcon } from "lucide-react";
+
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import { cn } from "@/shared/utils/cn";
 
-import { useMagicLinkForm } from "@/features/auth/hooks";
-
-import { Loader2, MailIcon } from "lucide-react";
+import { useMagicLinkForm } from "@/features/auth/hooks/use-magic-link-form";
 
 export function MagicLinkForm() {
   const { form, onSubmit, isLoading } = useMagicLinkForm();

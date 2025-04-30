@@ -2,14 +2,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { authClient } from "@/shared/lib/auth/client";
-
-import { signUpSchema } from "@/features/auth/schemas";
-import { SignUpValues } from "@/features/auth/types";
-import { getHash } from "@/features/auth/utils";
-
 import { toast } from "sonner";
+
+import { authClient } from "@/shared/lib/better-auth/client";
+
+import { signUpSchema } from "@/features/auth/schemas/sign-up-schema";
+import type { SignUpValues } from "@/features/auth/types";
+import { getHash } from "@/features/auth/utils/get-hash";
 
 export const useSignUpForm = () => {
   const form = useForm<SignUpValues>({

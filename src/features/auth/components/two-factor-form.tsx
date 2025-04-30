@@ -1,29 +1,32 @@
 "use client";
 
 import Link from "next/link";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { Loader2 } from "lucide-react";
 
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+} from "@/shared/components/ui/card";
+import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
+} from "@/shared/components/ui/form";
+import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/input-otp";
+import { cn } from "@/shared/utils/cn";
 
-import { useTwoFactorForm } from "@/features/auth/hooks";
-
-import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { Loader2 } from "lucide-react";
+import { useTwoFactorForm } from "@/features/auth/hooks/use-two-factor-form";
 
 export function TwoFactorForm({
   className,

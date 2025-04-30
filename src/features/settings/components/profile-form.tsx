@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Form,
   FormControl,
   FormDescription,
@@ -11,17 +11,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Textarea,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/select";
+import { Textarea } from "@/shared/components/ui/textarea";
+import { cn } from "@/shared/utils/cn";
 
-import { useProfileForm } from "@/features/settings/hooks";
+import { useProfileForm } from "@/features/settings/hooks/use-profile-form";
 
 export function ProfileForm() {
   const { form, onSubmit, append, fields } = useProfileForm();

@@ -1,14 +1,13 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { authClient } from "@/shared/lib/auth/client";
-import { twoFactorSchema } from "@/shared/schemas";
-import { TwoFactorValues } from "@/shared/types";
-
-import { getTxtArrayBuffer } from "@/features/settings/utils";
-
 import { toast } from "sonner";
+
+import { authClient } from "@/shared/lib/better-auth/client";
+import { twoFactorSchema } from "@/shared/schemas/two-factor-schema";
+import type { TwoFactorValues } from "@/shared/types";
+
+import { getTxtArrayBuffer } from "@/features/settings/utils/get-txt-array-buffer";
 
 interface Props {
   URI: string;

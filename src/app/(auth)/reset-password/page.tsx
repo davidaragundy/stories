@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Suspense, use } from "react";
 import { GalleryVerticalEnd } from "lucide-react";
-import { ResetPasswordForm } from "@/features/auth/components";
+
+import { ResetPasswordForm } from "@/features/auth/components/reset-password-form";
 
 export const metadata: Metadata = {
   title: "Stories | Reset Password",

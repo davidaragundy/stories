@@ -1,16 +1,21 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { Loader2 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
+import { Button } from "@/shared/components/ui/button";
+import { Code } from "@/shared/components/ui/code";
 import {
-  Button,
-  Code,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+} from "@/shared/components/ui/dialog";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -18,16 +23,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+} from "@/shared/components/ui/form";
+import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@/shared/components";
+} from "@/shared/components/ui/input-otp";
 
-import { useQrCodeDialog } from "@/features/settings/hooks";
-
-import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { Loader2 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+import { useQrCodeDialog } from "@/features/settings/hooks/use-qr-code-dialog";
 
 interface Props {
   URI: string;

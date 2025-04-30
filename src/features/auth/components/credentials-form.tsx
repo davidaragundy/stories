@@ -1,22 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { Loader2, LockIcon, User2Icon } from "lucide-react";
 
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import { cn } from "@/shared/utils/cn";
 
-import { useCredentialsForm } from "@/features/auth/hooks";
-
-import { Loader2, LockIcon, User2Icon } from "lucide-react";
+import { useCredentialsForm } from "@/features/auth/hooks/use-credentials-form";
 
 export function CredentialsForm() {
   const { form, isLoading, onSubmit } = useCredentialsForm();

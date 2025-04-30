@@ -1,7 +1,7 @@
 "use client";
 
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Form,
   FormControl,
   FormDescription,
@@ -9,14 +9,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  H3,
-  Input,
-  Switch,
-} from "@/shared/components";
-import { Session } from "@/shared/lib/auth/client";
+} from "@/shared/components/ui/form";
+import { H3 } from "@/shared/components/ui/h3";
+import { Input } from "@/shared/components/ui/input";
+import { Switch } from "@/shared/components/ui/switch";
+import { Session } from "@/shared/lib/better-auth/client";
 
-import { QRCodeDialog } from "@/features/settings/components";
-import { useAccountForm } from "@/features/settings/hooks";
+import { QRCodeDialog } from "@/features/settings/components/qr-code-dialog";
+import { useAccountForm } from "@/features/settings/hooks/use-account-form";
 
 interface Props {
   session: Session;

@@ -2,11 +2,10 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { profileFormSchema } from "@/features/settings/schemas";
-import { ProfileFormValues } from "@/features/settings/types";
-
 import { toast } from "sonner";
+
+import { profileFormSchema } from "@/features/settings/schemas/profile-form-schema";
+import type { ProfileFormValues } from "@/features/settings/types";
 
 // This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {

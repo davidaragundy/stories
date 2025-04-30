@@ -1,5 +1,9 @@
-import { H1, H2, Muted, P } from "@/shared/components";
 import type { Metadata } from "next";
+
+import { H1 } from "@/shared/components/ui/h1";
+import { H2 } from "@/shared/components/ui/h2";
+import { Muted } from "@/shared/components/ui/muted";
+import { P } from "@/shared/components/ui/p";
 
 export const metadata: Metadata = {
   title: "Stories | Terms and Conditions",

@@ -1,8 +1,10 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { Separator } from "@/shared/components";
-import { auth } from "@/shared/lib/auth/server";
-import { AccountForm } from "@/features/settings/components";
+
+import { Separator } from "@/shared/components/ui/separator";
+import { auth } from "@/shared/lib/better-auth/server";
+
+import { AccountForm } from "@/features/settings/components/account-form";
 
 export default async function SettingsAccountPage() {
   const session = await auth.api.getSession({

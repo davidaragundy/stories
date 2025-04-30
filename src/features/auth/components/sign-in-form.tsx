@@ -2,19 +2,19 @@
 
 import Link from "next/link";
 
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  H1,
-  P,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/card";
+import { H1 } from "@/shared/components/ui/h1";
+import { P } from "@/shared/components/ui/p";
+import { cn } from "@/shared/utils/cn";
 
-import { useSignInForm } from "@/features/auth/hooks";
+import { useSignInForm } from "@/features/auth/hooks/use-sign-in-form";
 
 export function SignInForm({
   className,

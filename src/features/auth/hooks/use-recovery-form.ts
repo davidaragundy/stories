@@ -2,12 +2,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
-import { authClient } from "@/shared/lib/auth/client";
-
-import { recoverySchema } from "@/features/auth/schemas";
-import { RecoveryValues } from "@/features/auth/types";
 import { toast } from "sonner";
+
+import { authClient } from "@/shared/lib/better-auth/client";
+
+import { recoverySchema } from "@/features/auth/schemas/recovery-schema";
+import type { RecoveryValues } from "@/features/auth/types";
 
 export const useRecoveryForm = () => {
   const form = useForm<RecoveryValues>({

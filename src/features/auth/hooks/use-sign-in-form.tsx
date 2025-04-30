@@ -2,13 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-import { authClient } from "@/shared/lib/auth/client";
-
-import { MagicLinkForm, CredentialsForm } from "@/features/auth/components";
-
 import { IdCardIcon, WandSparklesIcon } from "lucide-react";
 import { toast } from "sonner";
+
+import { authClient } from "@/shared/lib/better-auth/client";
+
+import { CredentialsForm } from "@/features/auth/components/credentials-form";
+import { MagicLinkForm } from "@/features/auth/components/magic-link-form";
 
 export const useSignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);

@@ -1,6 +1,7 @@
-import { Large, ThemeSwitch } from "@/shared/components";
+import { Large } from "@/shared/components/ui/large";
+import { ThemeSwitch } from "@/shared/components/theme-switch";
 
-import { SignOutButton } from "@/features/auth/components";
+import { SignOutButton } from "@/features/auth/components/sign-out-button";
 
 export default function StoriesLayout({
   children,

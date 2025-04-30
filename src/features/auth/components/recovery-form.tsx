@@ -1,26 +1,27 @@
 "use client";
 
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+} from "@/shared/components/ui/card";
+import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-  Input,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import { cn } from "@/shared/utils/cn";
 
-import { useRecoveryForm } from "@/features/auth/hooks";
-
-import { Loader2 } from "lucide-react";
+import { useRecoveryForm } from "@/features/auth/hooks/use-recovery-form";
 
 export function RecoveryForm({
   className,

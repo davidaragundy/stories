@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
-import { H1, P } from "@/shared/components";
+import { H1 } from "@/shared/components/ui/h1";
+import { P } from "@/shared/components/ui/p";
 
 export const metadata: Metadata = {
   title: "Stories | Home",

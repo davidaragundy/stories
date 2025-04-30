@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
-import { TwoFactorForm } from "@/features/auth/components";
+
+import { TwoFactorForm } from "@/features/auth/components/two-factor-form";
 
 export const metadata: Metadata = {
   title: "Stories | 2FA",

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
-import { SignUpForm } from "@/features/auth/components";
+
+import { SignUpForm } from "@/features/auth/components/sign-up-form";
 
 export const metadata: Metadata = {
   title: "Stories | Sign Up",

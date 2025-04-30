@@ -2,13 +2,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { authClient } from "@/shared/lib/auth/client";
-
-import { resetPasswordSchema } from "@/features/auth/schemas";
-import { ResetPasswordValues } from "@/features/auth/types";
-
 import { toast } from "sonner";
+
+import { authClient } from "@/shared/lib/better-auth/client";
+
+import { resetPasswordSchema } from "@/features/auth/schemas/reset-password-schema";
+import type { ResetPasswordValues } from "@/features/auth/types";
 
 export const useResetPasswordForm = () => {
   const form = useForm<ResetPasswordValues>({

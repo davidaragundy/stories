@@ -1,12 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-
-import { Button } from "@/shared/components";
-import { authClient } from "@/shared/lib/auth/client";
-
 import { LogOutIcon } from "lucide-react";
 import { toast } from "sonner";
+
+import { Button } from "@/shared/components/ui/button";
+import { authClient } from "@/shared/lib/better-auth/client";
 
 export const SignOutButton = () => {
   const router = useRouter();

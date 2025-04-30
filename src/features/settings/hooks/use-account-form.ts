@@ -1,13 +1,12 @@
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { Session, authClient } from "@/shared/lib/auth/client";
-
-import { accountFormSchema } from "@/features/settings/schemas";
-import { AccountFormValues } from "@/features/settings/types";
-
 import { toast } from "sonner";
+
+import { Session, authClient } from "@/shared/lib/better-auth/client";
+
+import { accountFormSchema } from "@/features/settings/schemas/account-form-schema";
+import type { AccountFormValues } from "@/features/settings/types";
 
 export const useAccountForm = (session: Session) => {
   const form = useForm<AccountFormValues>({

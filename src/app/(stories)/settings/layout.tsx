@@ -1,6 +1,10 @@
 import { Metadata } from "next";
-import { H2, P, Separator } from "@/shared/components";
-import { SidebarNav } from "@/features/settings/components";
+
+import { H2 } from "@/shared/components/ui/h2";
+import { P } from "@/shared/components/ui/p";
+import { Separator } from "@/shared/components/ui/separator";
+
+import { SidebarNav } from "@/features/settings/components/sidebar-nav";
 
 export const metadata: Metadata = {
   title: "Stories | Settings",

@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { authClient } from "@/shared/lib/auth/client";
-
-import { ForgotPasswordValues } from "@/features/auth/types";
-import { forgotPasswordSchema } from "@/features/auth/schemas";
-
 import { toast } from "sonner";
+
+import { authClient } from "@/shared/lib/better-auth/client";
+
+import { forgotPasswordSchema } from "@/features/auth/schemas/forgot-password-schema";
+import type { ForgotPasswordValues } from "@/features/auth/types";
 
 export const useForgotPasswordForm = () => {
   const form = useForm<ForgotPasswordValues>({

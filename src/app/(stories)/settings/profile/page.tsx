@@ -1,5 +1,8 @@
-import { H3, P, Separator } from "@/shared/components";
-import { ProfileForm } from "@/features/settings/components";
+import { H3 } from "@/shared/components/ui/h3";
+import { P } from "@/shared/components/ui/p";
+import { Separator } from "@/shared/components/ui/separator";
+
+import { ProfileForm } from "@/features/settings/components/profile-form";
 
 export default function SettingsProfilePage() {
   return (

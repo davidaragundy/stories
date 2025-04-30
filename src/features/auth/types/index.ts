@@ -2,12 +2,12 @@ import { z } from "zod";
 
 import {
   signInWithCredentialsSchema,
-  forgotPasswordSchema,
-  recoverySchema,
   signInWithMagicLinkSchema,
-  resetPasswordSchema,
-  signUpSchema,
-} from "@/features/auth/schemas";
+} from "@/features/auth/schemas/sign-in-schema";
+import { forgotPasswordSchema } from "@/features/auth/schemas/forgot-password-schema";
+import { recoverySchema } from "@/features/auth/schemas/recovery-schema";
+import { resetPasswordSchema } from "@/features/auth/schemas/reset-password-schema";
+import { signUpSchema } from "@/features/auth/schemas/sign-up-schema";
 
 export type CredentialsValues = z.infer<typeof signInWithCredentialsSchema>;
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;

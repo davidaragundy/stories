@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 
+import { Button } from "@/shared/components/ui/button";
+import { Checkbox } from "@/shared/components/ui/checkbox";
 import {
-  Button,
-  Checkbox,
   Form,
   FormControl,
   FormDescription,
@@ -12,12 +12,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  RadioGroup,
-  RadioGroupItem,
-  Switch,
-} from "@/shared/components";
+} from "@/shared/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
+import { Switch } from "@/shared/components/ui/switch";
 
-import { useNotificationsForm } from "@/features/settings/hooks";
+import { useNotificationsForm } from "@/features/settings/hooks/use-notifications-form";
 
 export function NotificationsForm() {
   const { form, onSubmit } = useNotificationsForm();

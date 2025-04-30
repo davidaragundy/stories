@@ -1,4 +1,4 @@
-import { Separator } from "@/shared/components";
+import { Separator } from "@/shared/components/ui/separator";
 
 //TODO
 export default function Loading() {

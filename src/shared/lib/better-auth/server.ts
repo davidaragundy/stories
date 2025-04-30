@@ -5,9 +5,12 @@ import { nextCookies } from "better-auth/next-js";
 import { username, magicLink, twoFactor } from "better-auth/plugins";
 
 import { BASE_URL } from "@/shared/constants";
-import { db, redis } from "@/shared/lib/db/server";
-import { ResetPassword, VerifyEmail, MagicLink } from "@/shared/lib/emails";
-import { resend } from "@/shared/lib/resend";
+import { db } from "@/shared/lib/drizzle/server";
+import ResetPassword from "@/shared/lib/react-email/reset-password";
+import VerifyEmail from "@/shared/lib/react-email/verify-email";
+import MagicLink from "@/shared/lib/react-email/magic-link";
+import { resend } from "@/shared/lib/resend/server";
+import { redis } from "@/shared/lib/upstash/redis";
 
 export const auth = betterAuth({
   appName: "Stories",

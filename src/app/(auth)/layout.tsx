@@ -1,4 +1,4 @@
-import { ThemeSwitch } from "@/shared/components";
+import { ThemeSwitch } from "@/shared/components/theme-switch";
 
 export default function AuthLayout({
   children,

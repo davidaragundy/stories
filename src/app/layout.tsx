@@ -1,7 +1,8 @@
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GeistSans } from "geist/font/sans";
 
-import { ThemeProvider, Toaster } from "@/shared/components";
+import { ThemeProvider } from "@/shared/components/theme-provider";
+import { Toaster } from "@/shared/components/ui/sonner";
 
 import "@/shared/styles/globals.css";
 
