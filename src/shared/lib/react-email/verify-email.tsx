@@ -21,7 +21,7 @@ export const VerifyEmail = ({ url, name }: Props) => {
   return (
     <Html>
       <Head />
-      <Preview>Verify you email address!</Preview>
+      <Preview>bitch, we gotta be sure its really you 🧐</Preview>
       <Tailwind>
         <Body className="bg-white my-auto mx-auto font-sans px-2">
           <Container className="border border-solid border-[#eaeaea] rounded-2xl my-[40px] mx-auto p-[20px] max-w-[465px]">

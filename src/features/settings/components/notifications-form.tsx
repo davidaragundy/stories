@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/shared/components/ui/button";
@@ -15,11 +16,22 @@ import {
 } from "@/shared/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
 import { Switch } from "@/shared/components/ui/switch";
+import { TypographyMuted } from "@/shared/components/ui/typography";
 
 import { useNotificationsForm } from "@/features/settings/hooks/use-notifications-form";
 
 export function NotificationsForm() {
   const { form, onSubmit } = useNotificationsForm();
+
+  return (
+    <>
+      <div className="relative mx-auto w-full max-w-sm aspect-square">
+        <Image src="/coming-soon.svg" alt="Coming soon" fill />
+      </div>
+
+      <TypographyMuted className="text-center">Coming soon...</TypographyMuted>
+    </>
+  );
 
   return (
     <Form {...form}>

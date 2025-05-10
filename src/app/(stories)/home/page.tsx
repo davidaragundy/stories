@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
-import { H1 } from "@/shared/components/ui/h1";
-import { P } from "@/shared/components/ui/p";
+import { TypographyH1, TypographyP } from "@/shared/components/ui/typography";
 
 export const metadata: Metadata = {
   title: "Stories | Home",
@@ -10,13 +9,19 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <main className="flex flex-col gap-6">
-      <H1>Home</H1>
-      <P>
+      <TypographyH1>Home</TypographyH1>
+      <TypographyP>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque,
         corrupti numquam beatae optio eum necessitatibus iusto hic tempore
         dolores obcaecati magni fugit nisi nostrum est pariatur. Repudiandae
-        suscipit sunt nesciunt?
-      </P>
+        suscipit sunt nesciunt? Lorem ipsum dolor sit amet consectetur,
+        adipisicing elit. Architecto, repellendus non aspernatur tempora sed
+        sint aliquam excepturi facilis. Placeat eum omnis dolores dignissimos
+        recusandae praesentium eius vero, esse laborum labore! Ad, inventore
+        optio tempore dolorem dolorum dolore praesentium modi rerum blanditiis,
+        cumque voluptatem cum ipsa mollitia ratione pariatur culpa, ducimus
+        possimus quasi veritatis velit aspernatur reprehenderit.
+      </TypographyP>
     </main>
   );
 }

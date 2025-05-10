@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Loader2, LockIcon, User2Icon } from "lucide-react";
+import { LoaderIcon, LockIcon, User2Icon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -18,7 +18,7 @@ import { cn } from "@/shared/utils/cn";
 import { useCredentialsForm } from "@/features/auth/hooks/use-credentials-form";
 
 export function CredentialsForm() {
-  const { form, isLoading, onSubmit } = useCredentialsForm();
+  const { form, onSubmit, isPending } = useCredentialsForm();
 
   return (
     <Form {...form}>
@@ -37,7 +37,7 @@ export function CredentialsForm() {
                 <FormControl>
                   <Input
                     className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
-                    disabled={isLoading}
+                    disabled={isPending}
                     placeholder={
                       fieldState.invalid ? undefined : "davidaragundy"
                     }
@@ -83,7 +83,7 @@ export function CredentialsForm() {
                 <FormControl>
                   <Input
                     className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
-                    disabled={isLoading}
+                    disabled={isPending}
                     type="password"
                     placeholder={fieldState.invalid ? undefined : "••••••••"}
                     {...field}
@@ -108,8 +108,8 @@ export function CredentialsForm() {
           )}
         />
 
-        <Button disabled={isLoading} type="submit">
-          {isLoading && <Loader2 className="animate-spin" />}
+        <Button disabled={isPending} type="submit">
+          {isPending && <LoaderIcon className="animate-spin" />}
           Sign in
         </Button>
       </form>

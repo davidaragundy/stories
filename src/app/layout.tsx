@@ -1,8 +1,8 @@
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GeistSans } from "geist/font/sans";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
-import { ThemeProvider } from "@/shared/components/theme-provider";
-import { Toaster } from "@/shared/components/ui/sonner";
+import { Providers } from "@/shared/components/providers";
 
 import "@/shared/styles/globals.css";
 
@@ -14,16 +14,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={GeistSans.className}>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <SpeedInsights />
-          <Toaster />
-        </ThemeProvider>
+        <Providers>{children}</Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

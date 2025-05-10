@@ -1,64 +1,21 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 
-import { authClient } from "@/shared/lib/better-auth/client";
-
-import { signInWithMagicLinkSchema } from "@/features/auth/schemas/sign-in-schema";
-import type { MagicLinkValues } from "@/features/auth/types";
+import { magicLinkFormSchema } from "@/features/auth/schemas/magic-link-form-schema";
+import { useMagicLinkMutation } from "@/features/auth/hooks/use-magic-link-mutation";
+import type { MagicLinkFormValues } from "@/features/auth/types";
 
 export const useMagicLinkForm = () => {
-  const form = useForm<MagicLinkValues>({
-    resolver: zodResolver(signInWithMagicLinkSchema),
+  const form = useForm<MagicLinkFormValues>({
+    resolver: zodResolver(magicLinkFormSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutate, isPending } = useMagicLinkMutation({ form });
 
-  const onSubmit = async (values: MagicLinkValues) => {
-    setIsLoading(true);
+  const onSubmit = async (values: MagicLinkFormValues) => mutate(values);
 
-    const { data, error } = await authClient.signIn.magicLink({
-      email: values.email,
-      callbackURL: "/home",
-    });
-
-    setIsLoading(false);
-
-    if (error) {
-      if (error.status === 429) return;
-
-      switch (error.code) {
-        case "USER_NOT_FOUND":
-          form.setError("email", {
-            message:
-              "Please check your email address or sign up if you don't have an account.",
-          });
-          return;
-
-        case "FAILED_TO_SEND_MAGIC_LINK":
-          toast.error("Failed to send magic link 😢", {
-            duration: 10000,
-            description: "Try again later or use another method to sign in.",
-          });
-          return;
-
-        default:
-          toast.error("Something went wrong, please try again later 😢");
-          return;
-      }
-    }
-
-    if (data.status) {
-      toast.success("Magic link sent successfully 🎉", {
-        description: "Check your inbox (or spam folder) for the link.",
-        duration: 10000,
-      });
-    }
-  };
-
-  return { form, isLoading, onSubmit };
+  return { form, onSubmit, isPending };
 };

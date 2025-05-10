@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Reset your password",
 };
 
-//TODO: Implement ResetPasswordFormFallback
+//TODO: Implement ResetPasswordFormFallback, this shi is for search params
 function ResetPasswordFormFallback() {
   return <></>;
 }

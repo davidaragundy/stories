@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { LoaderIcon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -18,6 +18,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/shared/components/ui/form";
+import { TypographyH1, TypographyP } from "@/shared/components/ui/typography";
 import { Input } from "@/shared/components/ui/input";
 import { cn } from "@/shared/utils/cn";
 
@@ -27,18 +28,24 @@ export function RecoveryForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { form, isLoading, onSubmit } = useRecoveryForm();
+  const { form, onSubmit, isPending } = useRecoveryForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Recovery code 🔐</CardTitle>
+          <CardTitle>
+            <TypographyH1>Recovery code 🔐</TypographyH1>
+          </CardTitle>
+
           <CardDescription>
-            Enter the code from your recovery code list. Remember that each code
-            can only be used once.
+            <TypographyP className="leading-normal">
+              Enter the code from your recovery code list. Remember that each
+              code can only be used once.
+            </TypographyP>
           </CardDescription>
         </CardHeader>
+
         <CardContent className="grid gap-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -49,7 +56,7 @@ export function RecoveryForm({
                   <FormItem className="w-full">
                     <FormControl>
                       <Input
-                        disabled={isLoading}
+                        disabled={isPending}
                         placeholder="abcde-fghij"
                         {...field}
                       />
@@ -59,8 +66,8 @@ export function RecoveryForm({
                 )}
               />
 
-              <Button disabled={isLoading} type="submit" className="w-full">
-                {isLoading && <Loader2 className="animate-spin" />}
+              <Button disabled={isPending} type="submit" className="w-full">
+                {isPending && <LoaderIcon className="animate-spin" />}
                 Verify
               </Button>
             </form>

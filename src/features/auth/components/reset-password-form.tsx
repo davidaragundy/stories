@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Loader2, LockIcon } from "lucide-react";
+import { LoaderIcon, LockIcon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -19,31 +19,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/shared/components/ui/form";
-import { H1 } from "@/shared/components/ui/h1";
+import { TypographyH1, TypographyP } from "@/shared/components/ui/typography";
 import { Input } from "@/shared/components/ui/input";
-import { P } from "@/shared/components/ui/p";
 import { cn } from "@/shared/utils/cn";
 
 import { useResetPasswordForm } from "@/features/auth/hooks/use-reset-password-form";
+import { PasswordStrengthIndicator } from "@/shared/components/password-strength-indicator";
 
 export function ResetPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { form, isLoading, onSubmit } = useResetPasswordForm();
+  const { form, onSubmit, isPending } = useResetPasswordForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="text-center">
           <CardTitle>
-            <H1>Reset password</H1>
+            <TypographyH1>Reset password</TypographyH1>
           </CardTitle>
 
           <CardDescription>
-            <P>You better remember it this time! 🫵</P>
+            <TypographyP className="leading-normal">
+              You better remember it this time! 🫵
+            </TypographyP>
           </CardDescription>
         </CardHeader>
+
         <CardContent className="grid gap-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -58,7 +61,7 @@ export function ResetPasswordForm({
                       <FormControl>
                         <Input
                           className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
-                          disabled={isLoading}
+                          disabled={isPending}
                           type="password"
                           placeholder={
                             fieldState.invalid ? undefined : "••••••••"
@@ -81,6 +84,10 @@ export function ResetPasswordForm({
                     </div>
 
                     <FormMessage />
+
+                    {fieldState.isDirty && (
+                      <PasswordStrengthIndicator password={field.value} />
+                    )}
                   </FormItem>
                 )}
               />
@@ -96,7 +103,7 @@ export function ResetPasswordForm({
                       <FormControl>
                         <Input
                           className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
-                          disabled={isLoading}
+                          disabled={isPending}
                           type="password"
                           placeholder={
                             fieldState.invalid ? undefined : "••••••••"
@@ -123,8 +130,8 @@ export function ResetPasswordForm({
                 )}
               />
 
-              <Button disabled={isLoading} type="submit" className="w-full">
-                {isLoading && <Loader2 className="animate-spin" />}
+              <Button disabled={isPending} type="submit" className="w-full">
+                {isPending && <LoaderIcon className="animate-spin" />}
                 Reset password
               </Button>
             </form>

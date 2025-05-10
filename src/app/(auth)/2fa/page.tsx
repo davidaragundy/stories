@@ -21,6 +21,7 @@ export default function TwoFactorPage() {
         </div>
         Stories
       </Link>
+
       <TwoFactorForm />
     </div>
   );

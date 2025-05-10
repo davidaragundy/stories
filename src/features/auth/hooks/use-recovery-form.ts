@@ -1,65 +1,21 @@
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
-import { authClient } from "@/shared/lib/better-auth/client";
-
-import { recoverySchema } from "@/features/auth/schemas/recovery-schema";
-import type { RecoveryValues } from "@/features/auth/types";
+import { useRecoveryMutation } from "@/features/auth/hooks/use-recovery-mutation";
+import { recoveryFormSchema } from "@/features/auth/schemas/recovery-form-schema";
+import type { RecoveryFormValues } from "@/features/auth/types";
 
 export const useRecoveryForm = () => {
-  const form = useForm<RecoveryValues>({
-    resolver: zodResolver(recoverySchema),
+  const form = useForm<RecoveryFormValues>({
+    resolver: zodResolver(recoveryFormSchema),
     defaultValues: {
       code: "",
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const { mutate, isPending } = useRecoveryMutation({ form });
 
-  const onSubmit = async (values: RecoveryValues) => {
-    setIsLoading(true);
+  const onSubmit = async (values: RecoveryFormValues) => mutate(values);
 
-    const { error } = await authClient.twoFactor.verifyBackupCode({
-      code: values.code,
-    });
-
-    setIsLoading(false);
-
-    if (error) {
-      if (error.status === 429) return;
-
-      switch (error.code) {
-        case "INVALID_BACKUP_CODE":
-          form.setError("code", {
-            message: "Invalid code",
-          });
-          return;
-
-        default:
-          toast.error("Something went wrong, please try again later 😢");
-          return;
-      }
-    }
-
-    toast.info(
-      "Please note that each recovery code can only be used once. If you have used all your recovery codes, you can generate new ones in your account settings. If you don't remember your password, this is a good time to reset it.",
-      {
-        dismissible: false,
-        closeButton: true,
-        duration: 20_000,
-        action: {
-          label: "Go to settings",
-          onClick: () => router.push("/settings"),
-        },
-      }
-    );
-
-    router.push("/home");
-  };
-
-  return { form, isLoading, onSubmit };
+  return { form, onSubmit, isPending };
 };

@@ -2,10 +2,16 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
-import { username, magicLink, twoFactor } from "better-auth/plugins";
+import {
+  username,
+  magicLink,
+  twoFactor,
+  haveIBeenPwned,
+} from "better-auth/plugins";
 
 import { BASE_URL } from "@/shared/constants";
 import { db } from "@/shared/lib/drizzle/server";
+import ChangeEmailVerification from "@/shared/lib/react-email/change-email-verification";
 import ResetPassword from "@/shared/lib/react-email/reset-password";
 import VerifyEmail from "@/shared/lib/react-email/verify-email";
 import MagicLink from "@/shared/lib/react-email/magic-link";
@@ -16,7 +22,7 @@ export const auth = betterAuth({
   appName: "Stories",
   baseURL: BASE_URL,
   //TODO
-  trustedOrigins: ["http://192.168.0.109:3000"],
+  trustedOrigins: ["http://192.168.0.113:3000"],
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
@@ -68,7 +74,29 @@ export const auth = betterAuth({
       },
     }),
     twoFactor(),
+    haveIBeenPwned(),
   ],
+  user: {
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailVerification: async ({ user, newEmail, url }) => {
+        const { error } = await resend.emails.send({
+          from: "Stories <mail@stories.aragundy.com>",
+          to: [user.email],
+          subject: "Approve your new email address",
+          react: ChangeEmailVerification({ name: user.name, newEmail, url }),
+        });
+
+        if (error) {
+          console.error(error);
+
+          throw new APIError("FAILED_DEPENDENCY", {
+            message: "Failed to send change email verification",
+          });
+        }
+      },
+    },
+  },
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,

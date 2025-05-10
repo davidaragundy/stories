@@ -1,74 +1,28 @@
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 
-import { authClient } from "@/shared/lib/better-auth/client";
+import { credentialsFormSchema } from "@/features/auth/schemas/credentials-form-schema";
+import type { CredentialsFormValues } from "@/features/auth/types";
 
-import { signInWithCredentialsSchema } from "@/features/auth/schemas/sign-in-schema";
-import type { CredentialsValues } from "@/features/auth/types";
+import { useCredentialsMutation } from "@/features/auth/hooks/use-credentials-mutation";
+import { tryCatch } from "@/shared/utils/try-catch";
 
 export const useCredentialsForm = () => {
-  const form = useForm<CredentialsValues>({
-    resolver: zodResolver(signInWithCredentialsSchema),
+  const form = useForm<CredentialsFormValues>({
+    resolver: zodResolver(credentialsFormSchema),
     defaultValues: {
       username: "",
       password: "",
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const { mutateAsync: signIn, isPending } = useCredentialsMutation({
+    form,
+  });
 
-  const onSubmit = async (values: CredentialsValues) => {
-    setIsLoading(true);
-
-    const { error } = await authClient.signIn.username(
-      {
-        username: values.username,
-        password: values.password,
-      },
-      {
-        async onSuccess(context) {
-          if (context.data.twoFactorRedirect) {
-            return router.push("/2fa");
-          }
-
-          router.push("/home");
-        },
-      }
-    );
-
-    setIsLoading(false);
-
-    if (error) {
-      if (error.status === 429) return;
-
-      switch (error.code) {
-        case "INVALID_USERNAME_OR_PASSWORD":
-          form.setError("username", {
-            message: "Invalid username or password.",
-          });
-          form.setError("password", {
-            message: "Invalid username or password.",
-          });
-          return;
-
-        case "EMAIL_NOT_VERIFIED":
-          toast.error("Verify your email to sign in 📧", {
-            description:
-              "Check your inbox (or spam folder) for the verification email.",
-            duration: 10000,
-          });
-          return;
-
-        default:
-          toast.error("Something went wrong, please try again later 😢");
-          return;
-      }
-    }
+  const onSubmit = async (values: CredentialsFormValues) => {
+    await tryCatch(signIn(values));
   };
 
-  return { form, isLoading, onSubmit };
+  return { form, onSubmit, isPending };
 };

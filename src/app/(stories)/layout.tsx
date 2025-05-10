@@ -1,25 +1,39 @@
-import { Large } from "@/shared/components/ui/large";
-import { ThemeSwitch } from "@/shared/components/theme-switch";
+import { headers } from "next/headers";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 
-import { SignOutButton } from "@/features/auth/components/sign-out-button";
+import { AppSidebar } from "@/shared/components/app-sidebar";
+import { auth } from "@/shared/lib/better-auth/server";
+import { SESSION_QUERY_KEY } from "@/shared/lib/react-query/query-key-factory";
 
-export default function StoriesLayout({
+export default async function StoriesLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: [SESSION_QUERY_KEY],
+    queryFn: async () => {
+      const session = await auth.api.getSession({
+        headers: await headers(),
+      });
+
+      return session;
+    },
+  });
+
   return (
-    <div className="flex flex-col min-h-svh gap-6 p-6 md:p-10">
-      <header className="flex items-center justify-between">
-        <Large className="font-extrabold text-2xl">Stories</Large>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className="flex h-svh gap-6 px-2 py-4 sm:px-6 sm:py-8 md:p-10 overflow-hidden">
+        <AppSidebar />
 
-        <div className="flex items-center justify-between gap-2">
-          <SignOutButton />
-          <ThemeSwitch />
-        </div>
-      </header>
-
-      {children}
-    </div>
+        <main className="flex-1 h-full">{children}</main>
+      </div>
+    </HydrationBoundary>
   );
 }

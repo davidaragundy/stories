@@ -1,49 +1,44 @@
 import { Metadata } from "next";
 
-import { H2 } from "@/shared/components/ui/h2";
-import { P } from "@/shared/components/ui/p";
-import { Separator } from "@/shared/components/ui/separator";
+import { ScrollArea } from "@/shared/components/ui/scroll-area";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/shared/components/ui/typography";
 
-import { SidebarNav } from "@/features/settings/components/sidebar-nav";
+import { SettingsSidebar } from "@/features/settings/components/settings-sidebar";
+import { PageWrapper } from "@/features/settings/components/page-wrapper";
+import { MobileWrapper } from "@/features/settings/components/mobile-wrapper";
 
 export const metadata: Metadata = {
   title: "Stories | Settings",
 };
 
-const sidebarNavItems = [
-  {
-    title: "Profile",
-    href: "/settings",
-  },
-  {
-    title: "Account",
-    href: "/settings/account",
-  },
-  {
-    title: "Notifications",
-    href: "/settings/notifications",
-  },
-];
-
-interface SettingsLayoutProps {
+export default function SettingsLayout({
+  children,
+}: Readonly<{
   children: React.ReactNode;
-}
-
-export default function SettingsLayout({ children }: SettingsLayoutProps) {
+}>) {
   return (
-    <div className="space-y-6 p-10 pb-16 md:block">
-      <div className="space-y-0.5">
-        <H2 className="text-2xl font-bold tracking-tight">Settings</H2>
-        <P className="text-muted-foreground">
-          Manage your account settings and set e-mail preferences.
-        </P>
-      </div>
-      <Separator className="my-6" />
-      <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
-        <aside className="lg:w-1/5">
-          <SidebarNav items={sidebarNavItems} />
-        </aside>
-        <div className="flex-1 lg:max-w-2xl">{children}</div>
+    <div className="h-full flex flex-col space-y-8">
+      <MobileWrapper>
+        <div className="space-y-2">
+          <TypographyH1>Settings</TypographyH1>
+
+          <TypographyMuted>
+            Manage your account settings and set e-mail preferences.
+          </TypographyMuted>
+        </div>
+      </MobileWrapper>
+
+      <div className="flex-1 flex gap-6 min-h-0">
+        <SettingsSidebar />
+
+        <PageWrapper>
+          <ScrollArea className="flex-1 h-full">
+            <div className="space-y-8 pb-16 px-4">{children}</div>
+          </ScrollArea>
+        </PageWrapper>
       </div>
     </div>
   );
