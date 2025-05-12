@@ -1,9 +1,9 @@
-import { useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 
 import { authClient } from "@/shared/lib/better-auth/client";
+import { SESSION_QUERY_KEY } from "@/shared/lib/react-query/query-key-factory";
 
 import { getTxtArrayBuffer } from "@/features/settings/utils/get-txt-array-buffer";
 import type { GenerateBackupCodesFormValues } from "@/features/settings/types";
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const useGenerateBackupCodesMutation = ({ form }: Props) => {
-  const toastId = useRef<string | number>("");
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ password }: { password: string }) => {
@@ -21,14 +21,9 @@ export const useGenerateBackupCodesMutation = ({ form }: Props) => {
         password,
       });
 
-      if (error) {
-        throw new Error(error.message, { cause: error });
-      }
+      if (error) return Promise.reject(error);
 
       return data;
-    },
-    onMutate: () => {
-      toastId.current = toast.loading("Generating backup codes...");
     },
     onSuccess: (data) => {
       const buffer = getTxtArrayBuffer(data.backupCodes);
@@ -44,20 +39,19 @@ export const useGenerateBackupCodesMutation = ({ form }: Props) => {
       URL.revokeObjectURL(url);
 
       toast.success("Backup codes generated successfully 🎉", {
-        id: toastId.current,
-        duration: 5000,
+        duration: 10_000,
       });
 
       form.reset();
     },
     onError: () => {
-      toast.error(
-        "Failed to generate backup codes, please try again later 😢",
-        {
-          id: toastId.current,
-          duration: 10000,
-        }
-      );
+      toast.error("Failed to generate backup codes 😢", {
+        description: "Please try again later",
+        duration: 10_000,
+      });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [SESSION_QUERY_KEY] });
     },
   });
 };

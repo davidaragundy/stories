@@ -15,6 +15,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={GeistSans.className}>
       <body>
         <Providers>{children}</Providers>
+
         <Analytics />
         <SpeedInsights />
       </body>

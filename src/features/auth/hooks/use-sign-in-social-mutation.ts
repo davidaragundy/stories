@@ -16,17 +16,15 @@ export const useSignInSocialMutation = () => {
         callbackURL: "/home",
       });
 
-      if (error) throw new Error(error.message, { cause: error });
+      if (error) return Promise.reject(error);
 
       return data;
     },
     onSuccess: (data) => {
       if (data?.redirect) router.push(data.url as string);
     },
-    onError: (error, { provider }) => {
-      const authClientError = error.cause as AuthClientError;
-
-      if (authClientError.status === RATE_LIMIT_ERROR_CODE) return;
+    onError: (error: AuthClientError, { provider }) => {
+      if (error.status === RATE_LIMIT_ERROR_CODE) return;
 
       toast.error(`Failed to sign in with ${provider} 😢`);
     },

@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useSession } from "@/shared/hooks/use-session";
-import { tryCatch } from "@/shared/utils/try-catch";
 
 import { useEnable2FAMutation } from "@/features/settings/hooks/use-enable-2fa-mutation";
 import { useDisable2FAMutation } from "@/features/settings/hooks/use-disable-2fa-mutation";
@@ -22,10 +21,6 @@ export const useToggle2FAForm = () => {
 
   const form = useForm<Toggle2FAFormValues>({
     resolver: zodResolver(toggle2FAFormSchema),
-    defaultValues: {
-      enable2FA: !!session?.user.twoFactorEnabled,
-      currentPassword: "",
-    },
     values: {
       enable2FA: !!session?.user.twoFactorEnabled,
       currentPassword: "",
@@ -36,43 +31,42 @@ export const useToggle2FAForm = () => {
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const dialogTriggerRef = useRef<HTMLButtonElement>(null);
 
-  const { mutateAsync: enable2FA, isPending: isEnable2FAPending } =
-    useEnable2FAMutation({
-      form,
-      setTotpURI,
-      setBackupCodes,
-      dialogTriggerRef,
-    });
+  const {
+    mutate: enable2FA,
+    isPending: isEnable2FAPending,
+    isError: isEnable2FAError,
+  } = useEnable2FAMutation({
+    form,
+    setTotpURI,
+    setBackupCodes,
+    dialogTriggerRef,
+  });
 
-  const { mutateAsync: disable2FA, isPending: isDisable2FAPending } =
-    useDisable2FAMutation({
-      form,
-    });
+  const {
+    mutate: disable2FA,
+    isPending: isDisable2FAPending,
+    isError: isDisable2FAError,
+  } = useDisable2FAMutation({
+    form,
+  });
 
-  async function onSubmit(values: Toggle2FAFormValues) {
-    if (values.enable2FA) {
-      await tryCatch(
-        enable2FA({
-          password: values.currentPassword,
-        })
-      );
+  function onSubmit(values: Toggle2FAFormValues) {
+    if (values.enable2FA)
+      return enable2FA({
+        password: values.currentPassword,
+      });
 
-      return;
-    }
-
-    if (!values.enable2FA) {
-      await tryCatch(
-        disable2FA({
-          password: values.currentPassword,
-        })
-      );
-    }
+    if (!values.enable2FA)
+      return disable2FA({
+        password: values.currentPassword,
+      });
   }
 
   return {
     form,
     onSubmit,
     isPending: isEnable2FAPending || isDisable2FAPending,
+    isError: isEnable2FAError || isDisable2FAError,
     isSessionSuccess,
     isSessionLoading,
     isSessionError,

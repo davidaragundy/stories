@@ -22,9 +22,7 @@ export const useRecoveryMutation = ({ form }: Props) => {
         code: values.code,
       });
 
-      if (error) {
-        throw new Error(error.message, { cause: error });
-      }
+      if (error) return Promise.reject(error);
     },
     onSuccess: () => {
       toast.info(
@@ -42,12 +40,10 @@ export const useRecoveryMutation = ({ form }: Props) => {
 
       router.push("/home");
     },
-    onError: (error) => {
-      const authClientError = error.cause as AuthClientError;
+    onError: (error: AuthClientError) => {
+      if (error.status === RATE_LIMIT_ERROR_CODE) return;
 
-      if (authClientError.status === RATE_LIMIT_ERROR_CODE) return;
-
-      switch (authClientError.code) {
+      switch (error.code) {
         case "INVALID_BACKUP_CODE":
           form.setError("code", {
             message: "Invalid code",

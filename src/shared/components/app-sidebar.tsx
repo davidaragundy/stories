@@ -55,7 +55,7 @@ export const AppSidebar = () => {
           </Button>
         )}
 
-        {isSessionSuccess && <NavUser user={session!.user} />}
+        {isSessionSuccess && session && <NavUser user={session.user} />}
       </div>
     </div>
   );

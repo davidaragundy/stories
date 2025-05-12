@@ -10,9 +10,7 @@ export const useSessions = () =>
     queryFn: async () => {
       const { data, error } = await authClient.listSessions();
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      if (error) return Promise.reject(error);
 
       return data;
     },

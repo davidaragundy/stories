@@ -3,11 +3,19 @@ import {
   usernameClient,
   magicLinkClient,
   twoFactorClient,
+  inferAdditionalFields,
 } from "better-auth/client/plugins";
 import { toast } from "sonner";
 
+import { auth } from "@/shared/lib/better-auth/server";
+
 export const authClient = createAuthClient({
-  plugins: [usernameClient(), magicLinkClient(), twoFactorClient()],
+  plugins: [
+    usernameClient(),
+    magicLinkClient(),
+    twoFactorClient(),
+    inferAdditionalFields<typeof auth>(),
+  ],
   fetchOptions: {
     onError: async (context) => {
       const { response } = context;

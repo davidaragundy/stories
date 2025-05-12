@@ -29,22 +29,23 @@ export const useSignUpEmailMutation = ({ form }: Props) => {
         callbackURL: "/home",
       });
 
-      if (error) throw new Error(error.message, { cause: error });
+      if (error) return Promise.reject(error);
 
       return data;
     },
     onSuccess: () => {
       toast.success("Account created successfully 🎉", {
-        description: "Please check your email to verify your account.",
+        description:
+          "Check your inbox (or spam folder) for the verification email.",
         duration: 10_000,
       });
+
+      form.reset();
     },
-    onError: (error, values) => {
-      const authClientError = error.cause as AuthClientError;
+    onError: (error: AuthClientError, values) => {
+      if (error.status === RATE_LIMIT_ERROR_CODE) return;
 
-      if (authClientError.status === RATE_LIMIT_ERROR_CODE) return;
-
-      switch (authClientError.code) {
+      switch (error.code) {
         case "USERNAME_IS_ALREADY_TAKEN_PLEASE_TRY_ANOTHER":
           form.setError("username", {
             message: "Username is already taken. Please try another.",
@@ -66,7 +67,7 @@ export const useSignUpEmailMutation = ({ form }: Props) => {
 
         case "FAILED_TO_SEND_VERIFICATION_EMAIL":
           const toastId = toast.error("Failed to send verification email 😢", {
-            duration: 10000,
+            duration: 10_000,
             action: {
               label: "Resend email",
               onClick: async () => {
@@ -83,14 +84,16 @@ export const useSignUpEmailMutation = ({ form }: Props) => {
                   toast.dismiss(id);
                   toast.error("Failed to resend email 😢", {
                     id: toastId,
-                    duration: 10000,
+                    duration: 10_000,
                   });
                   return;
                 }
 
                 toast.success("Email sent successfully 🎉", {
-                  description: "Don't forget to check your spam folder.",
                   id,
+                  description:
+                    "Check your inbox (or spam folder) for the verification email.",
+                  duration: 10_000,
                 });
               },
             },
@@ -98,7 +101,10 @@ export const useSignUpEmailMutation = ({ form }: Props) => {
           return;
 
         default:
-          toast.error("Something went wrong, please try again later 😢");
+          toast.error("Something went wrong 😢", {
+            description: "Please try again later",
+            duration: 10_000,
+          });
           return;
       }
     },

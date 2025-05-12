@@ -77,6 +77,16 @@ export const auth = betterAuth({
     haveIBeenPwned(),
   ],
   user: {
+    additionalFields: {
+      followerCount: {
+        type: "number",
+        defaultValue: 0,
+      },
+      followingCount: {
+        type: "number",
+        defaultValue: 0,
+      },
+    },
     changeEmail: {
       enabled: true,
       sendChangeEmailVerification: async ({ user, newEmail, url }) => {

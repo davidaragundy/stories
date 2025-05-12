@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
@@ -11,9 +12,15 @@ import { SESSIONS_QUERY_KEY } from "@/features/settings/lib/react-query/query-ke
 
 interface Props {
   form: UseFormReturn<TwoFactorFormValues>;
+  setTotpURI: Dispatch<SetStateAction<string>>;
+  setShowBackupCodes: Dispatch<SetStateAction<boolean>>;
 }
 
-export const useVerifyTotpMutation = ({ form }: Props) => {
+export const useVerifyTotpMutation = ({
+  form,
+  setTotpURI,
+  setShowBackupCodes,
+}: Props) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -22,21 +29,21 @@ export const useVerifyTotpMutation = ({ form }: Props) => {
         code,
       });
 
-      if (error) {
-        throw new Error(error.message, { cause: error });
-      }
+      if (error) return Promise.reject(error);
     },
     onSuccess: () => {
-      toast.success("Two-factor authentication enabled successfully 🎉");
+      toast.success("Two-factor authentication enabled successfully 🎉", {
+        duration: 10_000,
+      });
 
       form.reset();
+      setTotpURI("");
+      setShowBackupCodes(true);
     },
-    onError: (error) => {
-      const authClientError = error.cause as AuthClientError;
+    onError: (error: AuthClientError) => {
+      if (error.status === RATE_LIMIT_ERROR_CODE) return;
 
-      if (authClientError.status === RATE_LIMIT_ERROR_CODE) return;
-
-      switch (authClientError.code) {
+      switch (error.code) {
         case "INVALID_TWO_FACTOR_AUTHENTICATION":
           form.setError("code", {
             message: "Invalid one-time password",
@@ -44,14 +51,18 @@ export const useVerifyTotpMutation = ({ form }: Props) => {
           return;
 
         default:
-          toast.error("An error occurred, please try again later 😢");
+          toast.error("An error occurred 😢", {
+            description: "Please try again later",
+            duration: 10_000,
+          });
           return;
       }
     },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: [SESSION_QUERY_KEY] });
-
-      queryClient.invalidateQueries({ queryKey: [SESSIONS_QUERY_KEY] });
+    onSettled: () => {
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: [SESSION_QUERY_KEY] }),
+        queryClient.invalidateQueries({ queryKey: [SESSIONS_QUERY_KEY] }),
+      ]);
     },
   });
 };

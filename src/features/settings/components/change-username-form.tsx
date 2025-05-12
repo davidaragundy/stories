@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderIcon, RotateCcwIcon } from "lucide-react";
+import { CheckIcon, LoaderIcon, RotateCcwIcon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -20,8 +20,10 @@ import { useChangeUsernameForm } from "@/features/settings/hooks/use-change-user
 export function ChangeUsernameForm() {
   const {
     form,
+    canSubmit,
     onSubmit,
     isPending,
+    isError,
     isSessionSuccess,
     isSessionLoading,
     isSessionError,
@@ -29,11 +31,15 @@ export function ChangeUsernameForm() {
     isSessionRefetching,
   } = useChangeUsernameForm();
 
-  const { isDirty, isValid } = form.formState;
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onKeyDown={(event) => {
+          if (event.key === "Enter" && !canSubmit) event.preventDefault();
+        }}
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6"
+      >
         <FormField
           disabled={isPending}
           control={form.control}
@@ -61,9 +67,23 @@ export function ChangeUsernameForm() {
                 )}
 
                 {isSessionSuccess && (
-                  <FormControl className="w-full sm:w-fit">
+                  <FormControl className="flex-1 sm:flex-none sm:w-fit">
                     <Input placeholder="davidaragundy" {...field} />
                   </FormControl>
+                )}
+
+                {canSubmit && (
+                  <Button
+                    variant={isError ? "destructive" : "ghost"}
+                    className="rounded-full"
+                    size="icon"
+                    disabled={isPending}
+                    type="submit"
+                  >
+                    {isPending && <LoaderIcon className="animate-spin" />}
+                    {isError && <RotateCcwIcon />}
+                    {!isPending && !isError && <CheckIcon />}
+                  </Button>
                 )}
               </div>
 
@@ -76,13 +96,6 @@ export function ChangeUsernameForm() {
             </FormItem>
           )}
         />
-
-        {isDirty && isValid && (
-          <Button size="sm" disabled={isPending} type="submit">
-            {isPending && <LoaderIcon className="animate-spin" />} Change
-            username
-          </Button>
-        )}
       </form>
     </Form>
   );

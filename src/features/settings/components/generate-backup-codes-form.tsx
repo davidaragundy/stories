@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderIcon } from "lucide-react";
+import { LoaderIcon, RotateCcwIcon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -18,7 +18,7 @@ import { TypographyH4 } from "@/shared/components/ui/typography";
 import { useGenerateBackupCodesForm } from "@/features/settings/hooks/use-generate-backup-codes-form";
 
 export const GenerateBackupCodesForm = () => {
-  const { form, onSubmit, isPending, isTwoFactorEnabled } =
+  const { form, onSubmit, isPending, isError, isTwoFactorEnabled } =
     useGenerateBackupCodesForm();
 
   return (
@@ -67,13 +67,11 @@ export const GenerateBackupCodesForm = () => {
               render={({ field }) => (
                 <FormItem className="bg-destructive/40 flex flex-col items-start rounded-lg p-4 gap-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Current password
-                    </FormLabel>
+                    <FormLabel className="text-base">Password</FormLabel>
 
                     <FormDescription>
-                      In order to change your password, please enter your
-                      current password.
+                      In order to generate backup codes, please enter your
+                      password.
                     </FormDescription>
                   </div>
 
@@ -82,9 +80,14 @@ export const GenerateBackupCodesForm = () => {
                   </FormControl>
                   <FormMessage />
 
-                  <Button disabled={isPending} type="submit">
-                    {isPending && <LoaderIcon className="animate-spin" />}{" "}
-                    Change password
+                  <Button
+                    disabled={isPending}
+                    type="submit"
+                    variant={isError ? "destructive" : "default"}
+                  >
+                    {isPending && <LoaderIcon className="animate-spin" />}
+                    {isError && <RotateCcwIcon />}
+                    Generate backup codes
                   </Button>
                 </FormItem>
               )}

@@ -34,16 +34,12 @@ export const useCredentialsMutation = ({ form }: Props) => {
         }
       );
 
-      if (error) {
-        throw new Error(error.message, { cause: error });
-      }
+      if (error) return Promise.reject(error);
     },
-    onError: (error) => {
-      const authClientError = error.cause as AuthClientError;
+    onError: (error: AuthClientError) => {
+      if (error.status === RATE_LIMIT_ERROR_CODE) return;
 
-      if (authClientError.status === RATE_LIMIT_ERROR_CODE) return;
-
-      switch (authClientError.code) {
+      switch (error.code) {
         case "INVALID_USERNAME_OR_PASSWORD":
           form.setError("username", {
             message: "Invalid username or password.",

@@ -123,7 +123,7 @@ export const NavUser = ({ user }: Props) => {
       <div className="hidden sm:flex flex-col overflow-hidden">
         <span className="text-sm font-semibold text-ellipsis">{user.name}</span>
         <span className="text-xs text-muted-foreground text-ellipsis">
-          @{user.username}
+          @{user.displayUsername}
         </span>
       </div>
 

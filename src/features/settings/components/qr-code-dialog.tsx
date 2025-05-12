@@ -2,7 +2,7 @@
 
 import { Dispatch, SetStateAction } from "react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { LoaderIcon } from "lucide-react";
+import { LoaderIcon, RotateCcwIcon } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
 import { Button } from "@/shared/components/ui/button";
@@ -53,6 +53,7 @@ export const QRCodeDialog = ({
     form,
     onSubmit,
     isPending,
+    isError,
     key,
     showBackupCodes,
     handleDownloadBackupCodes,
@@ -140,8 +141,13 @@ export const QRCodeDialog = ({
                           </InputOTPGroup>
                         </InputOTP>
 
-                        <Button disabled={isPending} type="submit">
+                        <Button
+                          variant={isError ? "destructive" : "default"}
+                          disabled={isPending}
+                          type="submit"
+                        >
                           {isPending && <LoaderIcon className="animate-spin" />}
+                          {isError && <RotateCcwIcon />}
                           Verify
                         </Button>
                       </div>

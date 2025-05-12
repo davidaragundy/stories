@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
@@ -16,7 +15,6 @@ interface Props {
 
 export const useChangeUsernameMutation = ({ form }: Props) => {
   const queryClient = useQueryClient();
-  const toastId = useRef<string | number>("");
 
   return useMutation({
     mutationFn: async ({ username }: { username: string }) => {
@@ -25,41 +23,35 @@ export const useChangeUsernameMutation = ({ form }: Props) => {
         displayUsername: username,
       });
 
-      if (error) {
-        throw new Error(error.message, { cause: error });
-      }
+      if (error) return Promise.reject(error);
     },
-    onMutate: () => {
-      toastId.current = toast.loading("Updating username...");
-    },
-    onSuccess: () => {
+    onSuccess: (_data, values) => {
       toast.success("Username updated successfully 🎉", {
-        id: toastId.current,
-        duration: 5_000,
+        duration: 10_000,
       });
+
+      form.reset({ username: values.username });
     },
-    onError: (error) => {
-      const authClientError = error.cause as AuthClientError;
+    onError: (error: AuthClientError) => {
+      if (error.status === RATE_LIMIT_ERROR_CODE) return;
 
-      if (authClientError.status === RATE_LIMIT_ERROR_CODE) return;
-
-      switch (authClientError.code) {
+      switch (error.code) {
         case "USERNAME_IS_ALREADY_TAKEN_PLEASE_TRY_ANOTHER":
           form.setError("username", {
             message: "Username is already taken. Please try another.",
           });
-          toast.dismiss(toastId.current);
           return;
 
         default:
-          toast.error("Failed to change username, please try again later 😢", {
-            id: toastId.current,
+          toast.error("Failed to change username 😢", {
+            description: "Please try again later",
             duration: 10_000,
           });
           return;
       }
     },
-    onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: [SESSION_QUERY_KEY] }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [SESSION_QUERY_KEY] });
+    },
   });
 };

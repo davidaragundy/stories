@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { twoFactorSchema } from "@/shared/schemas/two-factor-schema";
 import type { TwoFactorFormValues } from "@/shared/types";
-import { tryCatch } from "@/shared/utils/try-catch";
 
 import { useVerifyTotpMutation } from "@/features/settings/hooks/use-verify-totp-mutation";
 import { getTxtArrayBuffer } from "@/features/settings/utils/get-txt-array-buffer";
@@ -34,20 +33,16 @@ export const useQrCodeDialog = ({
 
   const key = URI ? new URL(URI).searchParams.get("secret")! : "";
 
-  const { mutateAsync: verifyTotp, isPending } = useVerifyTotpMutation({
+  const { mutate, isPending, isError } = useVerifyTotpMutation({
     form,
+    setTotpURI,
+    setShowBackupCodes,
   });
 
-  async function onSubmit(values: TwoFactorFormValues) {
-    await tryCatch(
-      verifyTotp({
-        code: values.code,
-      })
-    );
-
-    setTotpURI("");
-    setShowBackupCodes(true);
-  }
+  const onSubmit = (values: TwoFactorFormValues) =>
+    mutate({
+      code: values.code,
+    });
 
   const handleDownloadBackupCodes = () => {
     const buffer = getTxtArrayBuffer(backupCodes);
@@ -70,6 +65,7 @@ export const useQrCodeDialog = ({
     form,
     onSubmit,
     isPending,
+    isError,
     key,
     showBackupCodes,
     setShowBackupCodes,

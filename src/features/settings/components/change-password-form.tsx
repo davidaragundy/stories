@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderIcon } from "lucide-react";
+import { LoaderIcon, RotateCcwIcon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -19,10 +19,12 @@ import { PasswordStrengthIndicator } from "@/shared/components/password-strength
 import { useChangePasswordForm } from "@/features/settings/hooks/use-change-password-form";
 
 export const ChangePasswordForm = () => {
-  const { form, onSubmit, isPending, isSessionSuccess } =
+  const { form, onSubmit, isPending, isError, isSessionSuccess } =
     useChangePasswordForm();
 
-  const { isDirty } = form.formState;
+  const { errors, isDirty } = form.formState;
+
+  const canSubmit = !errors.newPassword && isDirty;
 
   return (
     <Form {...form}>
@@ -48,16 +50,16 @@ export const ChangePasswordForm = () => {
                 logged out.
               </FormDescription>
 
-              <FormMessage />
+              {/* <FormMessage /> */}
 
-              {fieldState.isDirty && (
+              {(fieldState.isDirty || fieldState.isTouched) && (
                 <PasswordStrengthIndicator password={field.value} />
               )}
             </FormItem>
           )}
         />
 
-        {isDirty && (
+        {canSubmit && (
           <FormField
             disabled={isPending}
             control={form.control}
@@ -76,11 +78,17 @@ export const ChangePasswordForm = () => {
                 <FormControl>
                   <Input type="password" placeholder="••••••••" {...field} />
                 </FormControl>
+
                 <FormMessage />
 
-                <Button disabled={isPending || !isSessionSuccess} type="submit">
-                  {isPending && <LoaderIcon className="animate-spin" />} Change
-                  password
+                <Button
+                  variant={isError ? "destructive" : "default"}
+                  disabled={isPending}
+                  type="submit"
+                >
+                  {isPending && <LoaderIcon className="animate-spin" />}
+                  {isError && <RotateCcwIcon />}
+                  Change password
                 </Button>
               </FormItem>
             )}

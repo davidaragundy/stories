@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
@@ -17,7 +16,6 @@ interface Props {
 
 export const useChangePasswordMutation = ({ form }: Props) => {
   const queryClient = useQueryClient();
-  const toastId = useRef<string | number>("");
 
   return useMutation({
     mutationFn: async ({
@@ -30,31 +28,23 @@ export const useChangePasswordMutation = ({ form }: Props) => {
         revokeOtherSessions: true,
       });
 
-      if (error) {
-        throw new Error(error.message, { cause: error });
-      }
-    },
-    onMutate: () => {
-      toastId.current = toast.loading("Changing password...");
+      if (error) return Promise.reject(error);
     },
     onSuccess: () => {
       toast.success("Password changed successfully 🎉", {
-        id: toastId.current,
+        duration: 10_000,
       });
 
       form.reset();
     },
-    onError: (error) => {
-      const authClientError = error.cause as AuthClientError;
+    onError: (error: AuthClientError) => {
+      if (error.status === RATE_LIMIT_ERROR_CODE) return;
 
-      if (authClientError.status === RATE_LIMIT_ERROR_CODE) return;
-
-      switch (authClientError.code) {
+      switch (error.code) {
         case "INVALID_PASSWORD":
           form.setError("currentPassword", {
             message: "Invalid password",
           });
-          toast.dismiss(toastId.current);
           return;
 
         case "PASSWORD_COMPROMISED":
@@ -62,21 +52,21 @@ export const useChangePasswordMutation = ({ form }: Props) => {
             message:
               "The password you entered has been compromised. Please choose a different password.",
           });
-          toast.dismiss(toastId.current);
           return;
 
         default:
-          toast.error("Failed to change password, please try again later 😢", {
-            id: toastId.current,
-            duration: 10000,
+          toast.error("Failed to change password 😢", {
+            description: "Please try again later",
+            duration: 10_000,
           });
           return;
       }
     },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: [SESSION_QUERY_KEY] });
-
-      queryClient.invalidateQueries({ queryKey: [SESSIONS_QUERY_KEY] });
+    onSettled: () => {
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: [SESSION_QUERY_KEY] }),
+        queryClient.invalidateQueries({ queryKey: [SESSIONS_QUERY_KEY] }),
+      ]);
     },
   });
 };

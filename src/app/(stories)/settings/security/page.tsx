@@ -5,8 +5,6 @@ import { GenerateBackupCodesForm } from "@/features/settings/components/generate
 import { ActiveSessions } from "@/features/settings/components/active-sessions";
 
 export default function SettingsSecurityPage() {
-  //TODO: check how we can improve the all the active sessions fetching time
-
   return (
     <>
       <SettingsPageHeader

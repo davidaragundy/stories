@@ -1,4 +1,4 @@
-import { Dispatch, RefObject, SetStateAction, useRef } from "react";
+import { Dispatch, RefObject, SetStateAction } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
@@ -24,7 +24,6 @@ export const useEnable2FAMutation = ({
   setTotpURI,
 }: Props) => {
   const queryClient = useQueryClient();
-  const toastId = useRef<string | number>("");
 
   return useMutation({
     mutationFn: async ({ password }: { password: string }) => {
@@ -32,68 +31,37 @@ export const useEnable2FAMutation = ({
         password,
       });
 
-      if (error) {
-        throw new Error(error.message, { cause: error });
-      }
+      if (error) return Promise.reject(error);
 
       return data;
     },
-    onMutate: async () => {
-      toastId.current = toast.loading("Enabling two-factor authentication...");
-
-      // Cancel any outgoing refetch
-      // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: [SESSION_QUERY_KEY] });
-
-      // Snapshot the previous value
-      const previousSession = queryClient.getQueryData<Session>([
-        SESSION_QUERY_KEY,
-      ]);
-
-      // Optimistically update to the new value
-      queryClient.setQueryData([SESSION_QUERY_KEY], (old: Session): Session => {
-        return {
-          session: old.session,
-          user: {
-            ...old.user,
-            twoFactorEnabled: true,
-          },
-        };
-      });
-
-      // Return a context object with the snapshotted value
-      return { previousSession };
-    },
     onSuccess: (data) => {
-      toast.dismiss(toastId.current);
-
       setTotpURI(data.totpURI);
       setBackupCodes(data.backupCodes);
       dialogTriggerRef.current?.click();
 
-      form.reset();
+      queryClient.setQueryData([SESSION_QUERY_KEY], (old: Session): Session => {
+        return {
+          session: old.session,
+          user: { ...old.user, twoFactorEnabled: true },
+        };
+      });
+
+      form.reset({ enable2FA: true });
     },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (error, _data, context) => {
-      queryClient.setQueryData([SESSION_QUERY_KEY], context?.previousSession);
+    onError: (error: AuthClientError) => {
+      if (error.status === RATE_LIMIT_ERROR_CODE) return;
 
-      const authClientError = error.cause as AuthClientError;
-
-      if (authClientError.status === RATE_LIMIT_ERROR_CODE) return;
-
-      switch (authClientError.code) {
+      switch (error.code) {
         case "INVALID_PASSWORD":
           form.setError("currentPassword", {
             message: "Invalid password",
           });
-          toast.dismiss(toastId.current);
           return;
 
         default:
           toast.error("Failed to enable 2FA, please try again later 😢", {
-            id: toastId.current,
-            duration: 10000,
+            duration: 10_000,
           });
           return;
       }

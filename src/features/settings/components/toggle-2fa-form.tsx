@@ -25,6 +25,7 @@ export const Toggle2FAForm = () => {
     form,
     onSubmit,
     isPending,
+    isError,
     isSessionSuccess,
     isSessionLoading,
     isSessionError,
@@ -106,13 +107,12 @@ export const Toggle2FAForm = () => {
               render={({ field }) => (
                 <FormItem className="bg-destructive/40 flex flex-col items-start rounded-lg p-4 gap-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Current password
-                    </FormLabel>
+                    <FormLabel className="text-base">Password</FormLabel>
 
                     <FormDescription>
-                      In order to change your password, please enter your
-                      current password.
+                      In order to{" "}
+                      {form.getValues("enable2FA") ? "enable" : "disable"} 2FA,
+                      please enter your password.
                     </FormDescription>
                   </div>
 
@@ -121,9 +121,14 @@ export const Toggle2FAForm = () => {
                   </FormControl>
                   <FormMessage />
 
-                  <Button disabled={isPending} type="submit">
-                    {isPending && <LoaderIcon className="animate-spin" />}{" "}
-                    Change password
+                  <Button
+                    variant={isError ? "destructive" : "default"}
+                    disabled={isPending}
+                    type="submit"
+                  >
+                    {isPending && <LoaderIcon className="animate-spin" />}
+                    {isError && <RotateCcwIcon />}
+                    {form.getValues("enable2FA") ? "Enable" : "Disable"} 2FA
                   </Button>
                 </FormItem>
               )}

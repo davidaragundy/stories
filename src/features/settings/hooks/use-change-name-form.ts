@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useSession } from "@/shared/hooks/use-session";
-import { tryCatch } from "@/shared/utils/try-catch";
 
 import { useChangeNameMutation } from "@/features/settings/hooks/use-change-name-mutation";
 import { changeNameFormSchema } from "@/features/settings/schemas/change-name-form-schema";
@@ -20,24 +19,26 @@ export const useChangeNameForm = () => {
 
   const form = useForm<ChangeNameFormValues>({
     resolver: zodResolver(changeNameFormSchema),
-    defaultValues: {
-      name: session?.user.name ?? "",
-    },
     values: {
       name: session?.user.name ?? "",
     },
   });
 
-  const { mutateAsync: changeName, isPending } = useChangeNameMutation();
+  const { mutate, isPending, isError } = useChangeNameMutation({ form });
 
-  const onSubmit = async (values: ChangeNameFormValues) => {
-    await tryCatch(changeName(values));
-  };
+  const { isDirty, isValid } = form.formState;
+
+  const canSubmit =
+    isDirty && isValid && form.watch("name").trim() !== session?.user.name;
+
+  const onSubmit = (values: ChangeNameFormValues) => mutate(values);
 
   return {
     form,
+    canSubmit,
     onSubmit,
     isPending,
+    isError,
     isSessionSuccess,
     isSessionLoading,
     isSessionError,

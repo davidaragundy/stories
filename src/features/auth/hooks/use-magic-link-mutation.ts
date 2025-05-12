@@ -20,9 +20,7 @@ export const useMagicLinkMutation = ({ form }: Props) => {
         callbackURL: "/home",
       });
 
-      if (error) {
-        throw new Error(error.message, { cause: error });
-      }
+      if (error) return Promise.reject(error);
     },
     onSuccess: () => {
       toast.success("Magic link sent successfully 🎉", {
@@ -30,12 +28,10 @@ export const useMagicLinkMutation = ({ form }: Props) => {
         duration: 10_000,
       });
     },
-    onError: (error) => {
-      const authClientError = error.cause as AuthClientError;
+    onError: (error: AuthClientError) => {
+      if (error.status === RATE_LIMIT_ERROR_CODE) return;
 
-      if (authClientError.status === RATE_LIMIT_ERROR_CODE) return;
-
-      switch (authClientError.code) {
+      switch (error.code) {
         case "USER_NOT_FOUND":
           form.setError("email", {
             message:
@@ -51,7 +47,10 @@ export const useMagicLinkMutation = ({ form }: Props) => {
           return;
 
         default:
-          toast.error("Something went wrong, please try again later 😢");
+          toast.error("Something went wrong 😢", {
+            description: "Please try again later",
+            duration: 10_000,
+          });
           return;
       }
     },

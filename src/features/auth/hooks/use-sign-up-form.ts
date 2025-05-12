@@ -25,14 +25,14 @@ export const useSignUpForm = () => {
   const { mutate: signUpWithSocial, isPending: isSigningUpWithSocial } =
     useSignUpSocialMutation();
 
+  const onSubmit = (values: SignUpFormValues) => signUpWithEmail(values);
+
   const handleSignUpWithSocial = (provider: "google" | "github") =>
     signUpWithSocial({ provider });
 
   const handleSignUpWithGithub = () => handleSignUpWithSocial("github");
 
   const handleSignUpWithGoogle = () => handleSignUpWithSocial("google");
-
-  const onSubmit = (values: SignUpFormValues) => signUpWithEmail(values);
 
   return {
     form,

@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderIcon, RotateCcwIcon } from "lucide-react";
+import { CheckIcon, LoaderIcon, RotateCcwIcon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -20,8 +20,10 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 export function ChangeEmailForm() {
   const {
     form,
+    canSubmit,
     onSubmit,
     isPending,
+    isError,
     isSessionSuccess,
     isSessionLoading,
     isSessionError,
@@ -29,12 +31,17 @@ export function ChangeEmailForm() {
     isSessionRefetching,
   } = useChangeEmailForm();
 
-  const { isDirty, isValid } = form.formState;
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onKeyDown={(event) => {
+          if (event.key === "Enter" && !canSubmit) event.preventDefault();
+        }}
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6"
+      >
         <FormField
+          disabled={isPending}
           control={form.control}
           name="email"
           render={({ field }) => (
@@ -60,13 +67,23 @@ export function ChangeEmailForm() {
                 )}
 
                 {isSessionSuccess && (
-                  <FormControl className="w-full sm:w-fit">
-                    <Input
-                      disabled={isPending}
-                      placeholder="david@aragundy.com"
-                      {...field}
-                    />
+                  <FormControl className="flex-1 sm:flex-none sm:w-fit">
+                    <Input placeholder="david@aragundy.com" {...field} />
                   </FormControl>
+                )}
+
+                {canSubmit && (
+                  <Button
+                    variant={isError ? "destructive" : "ghost"}
+                    className="rounded-full"
+                    size="icon"
+                    disabled={isPending}
+                    type="submit"
+                  >
+                    {isPending && <LoaderIcon className="animate-spin" />}
+                    {isError && <RotateCcwIcon />}
+                    {!isPending && !isError && <CheckIcon />}
+                  </Button>
                 )}
               </div>
 
@@ -79,12 +96,6 @@ export function ChangeEmailForm() {
             </FormItem>
           )}
         />
-
-        {isDirty && isValid && (
-          <Button size="sm" disabled={isPending} type="submit">
-            {isPending && <LoaderIcon className="animate-spin" />} Change email
-          </Button>
-        )}
       </form>
     </Form>
   );

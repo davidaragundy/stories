@@ -22,28 +22,24 @@ export const useResetPasswordMutation = ({ token }: Props) => {
         token,
       });
 
-      if (error) {
-        throw new Error(error.message, { cause: error });
-      }
+      if (error) return Promise.reject(error);
     },
     onSuccess: () => {
       toast.success("Password reset successfully 🎉", {
-        duration: 10000,
         description: "You can now sign in with your new password.",
+        duration: 10_000,
       });
 
       router.push("/sign-in");
     },
-    onError: (error) => {
-      const authClientError = error.cause as AuthClientError;
+    onError: (error: AuthClientError) => {
+      if (error.status === RATE_LIMIT_ERROR_CODE) return;
 
-      if (authClientError.status === RATE_LIMIT_ERROR_CODE) return;
-
-      switch (authClientError.code) {
+      switch (error.code) {
         case "INVALID_TOKEN":
           toast.error("Invalid token 😢", {
             description: "Please request a new password reset link.",
-            duration: 10000,
+            duration: 10_000,
             action: {
               label: "Request new link",
               onClick: () => router.push("/forgot-password"),
@@ -52,7 +48,10 @@ export const useResetPasswordMutation = ({ token }: Props) => {
           return;
 
         default:
-          toast.error("Something went wrong, please try again later 😢");
+          toast.error("Something went wrong 😢", {
+            description: "Please try again later",
+            duration: 10_000,
+          });
           return;
       }
     },

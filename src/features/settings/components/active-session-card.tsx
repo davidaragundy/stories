@@ -68,10 +68,9 @@ export const ActiveSessionCard = ({
         </div>
       </CardContent>
 
-      {!isCurrentSession && (
+      {!isCurrentSession && !isSessionsFetching && (
         <CardFooter>
           <Button
-            disabled={isSessionsFetching}
             variant="destructive"
             size="sm"
             type="button"

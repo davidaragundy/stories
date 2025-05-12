@@ -38,8 +38,9 @@ export const usePasswordStrengthIndicator = ({ password }: Props) => {
   const getStrengthText = (score: number) => {
     if (score === 0) return "Enter a password";
     if (score <= 2) return "Weak password";
-    if (score === 3) return "Medium password";
-    return "Strong password";
+    if (score <= 3) return "Medium password";
+    if (score <= 4) return "Strong password";
+    return "Very strong password";
   };
 
   return {
