@@ -2,11 +2,10 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { notificationsFormSchema } from "@/features/settings/schemas";
-import { NotificationsFormValues } from "@/features/settings/types";
-
 import { toast } from "sonner";
+
+import { notificationsFormSchema } from "@/features/settings/schemas/notifications-form-schema";
+import type { NotificationsFormValues } from "@/features/settings/types";
 
 // This can come from your database or API.
 const defaultValues: Partial<NotificationsFormValues> = {

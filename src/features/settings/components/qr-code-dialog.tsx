@@ -1,16 +1,22 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { LoaderIcon, RotateCcwIcon } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
+import { Button } from "@/shared/components/ui/button";
+import { CopyToClipboard } from "@/shared/components/ui/copy-to-clipboard";
 import {
-  Button,
-  Code,
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+} from "@/shared/components/ui/dialog";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -18,16 +24,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+} from "@/shared/components/ui/form";
+import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@/shared/components";
+} from "@/shared/components/ui/input-otp";
 
-import { useQrCodeDialog } from "@/features/settings/hooks";
-
-import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { Loader2 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+import { useQrCodeDialog } from "@/features/settings/hooks/use-qr-code-dialog";
 
 interface Props {
   URI: string;
@@ -47,11 +51,13 @@ export const QRCodeDialog = ({
 }: Props) => {
   const {
     form,
-    isLoading,
-    key,
     onSubmit,
+    isPending,
+    isError,
+    key,
     showBackupCodes,
     handleDownloadBackupCodes,
+    dialogCloseRef,
   } = useQrCodeDialog({
     URI,
     setTotpURI,
@@ -62,11 +68,12 @@ export const QRCodeDialog = ({
   return (
     <Dialog modal>
       <DialogTrigger hidden ref={dialogTriggerRef} />
+      <DialogClose hidden ref={dialogCloseRef} />
       <DialogContent
         showCloseBtn={showBackupCodes}
         onEscapeKeyDown={(event) => event.preventDefault()}
         onInteractOutside={(event) => event.preventDefault()}
-        className="flex flex-col items-center gap-8"
+        className="flex flex-col gap-8"
       >
         <DialogHeader>
           <DialogTitle>
@@ -74,19 +81,24 @@ export const QRCodeDialog = ({
               ? "Download backup codes"
               : "Scan the QR in your authenticator app"}
           </DialogTitle>
-          <DialogDescription className="flex flex-col gap-2">
-            {showBackupCodes ? (
-              "Please download your backup codes and keep them in a safe place."
-            ) : (
-              <>
-                Or enter your secret key manually: <Code>{key}</Code>
-              </>
-            )}
+          <DialogDescription>
+            {showBackupCodes
+              ? "Please download your backup codes and keep them in a safe place."
+              : "Or enter your secret key manually:"}
           </DialogDescription>
+
+          {!showBackupCodes && (
+            <CopyToClipboard
+              value={key}
+              showLabel={false}
+              className="text-muted-foreground"
+            />
+          )}
         </DialogHeader>
 
         {URI && !showBackupCodes && (
           <QRCodeSVG
+            className="mx-auto"
             size={256}
             bgColor="#0b0809"
             fgColor="#ffffff"
@@ -95,7 +107,7 @@ export const QRCodeDialog = ({
         )}
 
         {showBackupCodes ? (
-          <Button onClick={handleDownloadBackupCodes}>
+          <Button onClick={handleDownloadBackupCodes} className="mx-auto">
             Download backup codes
           </Button>
         ) : (
@@ -116,20 +128,26 @@ export const QRCodeDialog = ({
                         <InputOTP
                           pattern={REGEXP_ONLY_DIGITS}
                           maxLength={6}
+                          onComplete={form.handleSubmit(onSubmit)}
                           {...field}
                         >
-                          <InputOTPGroup>
-                            <InputOTPSlot index={0} />
-                            <InputOTPSlot index={1} />
-                            <InputOTPSlot index={2} />
-                            <InputOTPSlot index={3} />
-                            <InputOTPSlot index={4} />
-                            <InputOTPSlot index={5} />
+                          <InputOTPGroup className="gap-1.5">
+                            <InputOTPSlot index={0} className="rounded-md" />
+                            <InputOTPSlot index={1} className="rounded-md" />
+                            <InputOTPSlot index={2} className="rounded-md" />
+                            <InputOTPSlot index={3} className="rounded-md" />
+                            <InputOTPSlot index={4} className="rounded-md" />
+                            <InputOTPSlot index={5} className="rounded-md" />
                           </InputOTPGroup>
                         </InputOTP>
 
-                        <Button disabled={isLoading} type="submit">
-                          {isLoading && <Loader2 className="animate-spin" />}
+                        <Button
+                          variant={isError ? "destructive" : "default"}
+                          disabled={isPending}
+                          type="submit"
+                        >
+                          {isPending && <LoaderIcon className="animate-spin" />}
+                          {isError && <RotateCcwIcon />}
                           Verify
                         </Button>
                       </div>

@@ -1,48 +1,48 @@
 "use client";
 
 import Link from "next/link";
+import { LoaderIcon, MailIcon } from "lucide-react";
 
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+} from "@/shared/components/ui/card";
+import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  H1,
-  Input,
-  P,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/form";
+import { TypographyH1, TypographyP } from "@/shared/components/ui/typography";
+import { Input } from "@/shared/components/ui/input";
+import { cn } from "@/shared/utils/cn";
 
-import { useForgotPasswordForm } from "@/features/auth/hooks";
-
-import { Loader2, MailIcon } from "lucide-react";
+import { useForgotPasswordForm } from "@/features/auth/hooks/use-forgot-password-form";
 
 export function ForgotPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { form, onSubmit, isLoading } = useForgotPasswordForm();
+  const { form, onSubmit, isPending } = useForgotPasswordForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="text-center">
           <CardTitle>
-            <H1>Forgot password</H1>
+            <TypographyH1>Forgot password</TypographyH1>
           </CardTitle>
 
           <CardDescription>
-            <P className="leading-normal">
+            <TypographyP className="leading-normal">
               Have you ever thought about using a password manager? 😒
-            </P>
+            </TypographyP>
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
@@ -60,7 +60,7 @@ export function ForgotPasswordForm({
                         <Input
                           className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
                           type="email"
-                          disabled={isLoading}
+                          disabled={isPending}
                           placeholder={
                             fieldState.invalid
                               ? undefined
@@ -88,8 +88,8 @@ export function ForgotPasswordForm({
                 )}
               />
 
-              <Button disabled={isLoading} type="submit" className="w-full">
-                {isLoading && <Loader2 className="animate-spin" />}
+              <Button disabled={isPending} type="submit" className="w-full">
+                {isPending && <LoaderIcon className="animate-spin" />}
                 Send reset link
               </Button>
             </form>

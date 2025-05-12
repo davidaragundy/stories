@@ -2,19 +2,18 @@
 
 import Link from "next/link";
 
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  H1,
-  P,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/card";
+import { TypographyH1, TypographyP } from "@/shared/components/ui/typography";
+import { cn } from "@/shared/utils/cn";
 
-import { useSignInForm } from "@/features/auth/hooks";
+import { useSignInForm } from "@/features/auth/hooks/use-sign-in-form";
 
 export function SignInForm({
   className,
@@ -24,7 +23,7 @@ export function SignInForm({
     form,
     handleSignInWithGitHub,
     handleSignInWithGoogle,
-    isLoading,
+    isPending,
     toggleSignInMethod,
     toggleSignInMethodButtonContent,
   } = useSignInForm();
@@ -34,18 +33,22 @@ export function SignInForm({
       <Card className="bg-background border-none shadow-none">
         <CardHeader className="text-center">
           <CardTitle>
-            <H1>Sign in</H1>
+            <TypographyH1>Sign in</TypographyH1>
           </CardTitle>
+
           <CardDescription>
-            <P>This is us reading the stuff you post 🤮</P>
+            <TypographyP className="leading-normal">
+              This is us reading the stuff you post 🤮
+            </TypographyP>
           </CardDescription>
         </CardHeader>
+
         <CardContent className="grid gap-6">
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Button
               type="button"
               variant="secondary"
-              disabled={isLoading}
+              disabled={isPending}
               onClick={handleSignInWithGitHub}
             >
               <svg
@@ -63,7 +66,7 @@ export function SignInForm({
             <Button
               type="button"
               variant="secondary"
-              disabled={isLoading}
+              disabled={isPending}
               onClick={handleSignInWithGoogle}
             >
               <svg
@@ -81,7 +84,7 @@ export function SignInForm({
             <Button
               type="button"
               variant="secondary"
-              disabled={isLoading}
+              disabled={isPending}
               onClick={toggleSignInMethod}
             >
               {toggleSignInMethodButtonContent}

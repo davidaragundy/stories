@@ -1,5 +1,11 @@
-import { H1, H2, Muted, P } from "@/shared/components";
 import type { Metadata } from "next";
+
+import {
+  TypographyH1,
+  TypographyH2,
+  TypographyMuted,
+  TypographyP,
+} from "@/shared/components/ui/typography";
 
 export const metadata: Metadata = {
   title: "Stories | Terms and Conditions",
@@ -9,26 +15,26 @@ export const metadata: Metadata = {
 export default function Terms() {
   return (
     <main className="p-10">
-      <H1>Terms and Conditions</H1>
+      <TypographyH1>Terms and Conditions</TypographyH1>
 
-      <Muted>Effective Date: March 21, 2025</Muted>
+      <TypographyMuted>Effective Date: March 21, 2025</TypographyMuted>
 
-      <P className="mb-6">
+      <TypographyP className="mb-6">
         Welcome to Stories, an open-source social media platform designed for
         sharing short-lived content. By accessing or using our application, you
         agree to comply with and be bound by the following Terms and Conditions.
         Please read them carefully.
-      </P>
+      </TypographyP>
 
-      <H2>1. Acceptance of Terms</H2>
+      <TypographyH2>1. Acceptance of Terms</TypographyH2>
 
-      <P className="mb-6">
+      <TypographyP className="mb-6">
         By creating an account or using Stories, you agree to these Terms and
         Conditions and our Privacy Policy. If you do not agree with any part of
         these terms, you must not use our services.
-      </P>
+      </TypographyP>
 
-      <H2>2. User Account Responsibilities</H2>
+      <TypographyH2>2. User Account Responsibilities</TypographyH2>
 
       <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
         <li>
@@ -43,7 +49,7 @@ export default function Terms() {
         </li>
       </ul>
 
-      <H2>3. User-Generated Content</H2>
+      <TypographyH2>3. User-Generated Content</TypographyH2>
 
       <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
         <li>
@@ -66,7 +72,7 @@ export default function Terms() {
         </li>
       </ul>
 
-      <H2>4. Acceptable Use</H2>
+      <TypographyH2>4. Acceptable Use</TypographyH2>
 
       <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
         <li>Violate any applicable laws or regulations.</li>
@@ -81,15 +87,15 @@ export default function Terms() {
         </li>
       </ul>
 
-      <H2>5. Termination of Account</H2>
+      <TypographyH2>5. Termination of Account</TypographyH2>
 
-      <P className="mb-6">
+      <TypographyP className="mb-6">
         Stories reserves the right to suspend or terminate your account if you
         violate these Terms and Conditions. Upon termination, your access to the
         app will be revoked, and your data may be deleted.
-      </P>
+      </TypographyP>
 
-      <H2>6. Disclaimers and Limitations of Liability</H2>
+      <TypographyH2>6. Disclaimers and Limitations of Liability</TypographyH2>
 
       <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
         <li>
@@ -111,27 +117,27 @@ export default function Terms() {
         </li>
       </ul>
 
-      <H2>7. Modifications to Terms</H2>
+      <TypographyH2>7. Modifications to Terms</TypographyH2>
 
-      <P className="mb-6">
+      <TypographyP className="mb-6">
         Stories may update these Terms and Conditions periodically. Users will
         be notified of significant changes through in-app notifications or other
         communication channels.
-      </P>
+      </TypographyP>
 
-      <H2>8. Governing Law</H2>
+      <TypographyH2>8. Governing Law</TypographyH2>
 
-      <P className="mb-6">
+      <TypographyP className="mb-6">
         These Terms and Conditions are governed by the laws of Ecuador. Any
         disputes will be resolved in the competent courts of Ecuador.
-      </P>
+      </TypographyP>
 
-      <H2>9. Contact Information</H2>
+      <TypographyH2>9. Contact Information</TypographyH2>
 
-      <P className="mb-6">
+      <TypographyP className="mb-6">
         For questions or concerns regarding these Terms and Conditions, please
         contact us at:
-      </P>
+      </TypographyP>
 
       <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
         <li>
@@ -139,10 +145,10 @@ export default function Terms() {
         </li>
       </ul>
 
-      <P className="mb-6">
+      <TypographyP className="mb-6">
         Thank you for being part of the Stories community. We aim to provide a
         unique and secure platform for sharing ephemeral content.
-      </P>
+      </TypographyP>
     </main>
   );
 }

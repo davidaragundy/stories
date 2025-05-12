@@ -1,23 +1,23 @@
 "use client";
 
+import { LoaderIcon, MailIcon } from "lucide-react";
+
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import { cn } from "@/shared/utils/cn";
 
-import { useMagicLinkForm } from "@/features/auth/hooks";
-
-import { Loader2, MailIcon } from "lucide-react";
+import { useMagicLinkForm } from "@/features/auth/hooks/use-magic-link-form";
 
 export function MagicLinkForm() {
-  const { form, onSubmit, isLoading } = useMagicLinkForm();
+  const { form, onSubmit, isPending } = useMagicLinkForm();
 
   return (
     <Form {...form}>
@@ -37,7 +37,7 @@ export function MagicLinkForm() {
                   <Input
                     className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
                     type="email"
-                    disabled={isLoading}
+                    disabled={isPending}
                     placeholder={
                       fieldState.invalid ? undefined : "david@aragundy.com"
                     }
@@ -63,8 +63,8 @@ export function MagicLinkForm() {
           )}
         />
 
-        <Button disabled={isLoading} type="submit">
-          {isLoading && <Loader2 className="animate-spin" />}
+        <Button disabled={isPending} type="submit">
+          {isPending && <LoaderIcon className="animate-spin" />}
           Send Magic Link
         </Button>
       </form>

@@ -1,35 +1,36 @@
 "use client";
 
 import Link from "next/link";
-
 import {
-  Button,
+  AtSignIcon,
+  LoaderIcon,
+  LockIcon,
+  MailIcon,
+  User2Icon,
+} from "lucide-react";
+
+import { Button } from "@/shared/components/ui/button";
+import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+} from "@/shared/components/ui/card";
+import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  H1,
-  Input,
-  P,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import { TypographyH1, TypographyP } from "@/shared/components/ui/typography";
+import { cn } from "@/shared/utils/cn";
 
-import { useSignUpForm } from "@/features/auth/hooks";
-
-import {
-  AtSignIcon,
-  Loader2,
-  LockIcon,
-  MailIcon,
-  User2Icon,
-} from "lucide-react";
+import { useSignUpForm } from "@/features/auth/hooks/use-sign-up-form";
+import { PasswordStrengthIndicator } from "@/shared/components/password-strength-indicator";
 
 export function SignUpForm({
   className,
@@ -37,8 +38,8 @@ export function SignUpForm({
 }: React.ComponentProps<"div">) {
   const {
     form,
-    isLoading,
     onSubmit,
+    isPending,
     handleSignUpWithGithub,
     handleSignUpWithGoogle,
   } = useSignUpForm();
@@ -48,21 +49,22 @@ export function SignUpForm({
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="text-center">
           <CardTitle>
-            <H1>Sign up</H1>
+            <TypographyH1>Sign up</TypographyH1>
           </CardTitle>
 
           <CardDescription>
-            <P className="leading-normal">
+            <TypographyP className="leading-normal">
               Here you can say whatever you want, nobody will give a f*ck. 🌴
-            </P>
+            </TypographyP>
           </CardDescription>
         </CardHeader>
+
         <CardContent className="grid gap-6">
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Button
               type="button"
               variant="secondary"
-              disabled={isLoading}
+              disabled={isPending}
               onClick={handleSignUpWithGithub}
             >
               <svg
@@ -80,7 +82,7 @@ export function SignUpForm({
             <Button
               type="button"
               variant="secondary"
-              disabled={isLoading}
+              disabled={isPending}
               onClick={handleSignUpWithGoogle}
             >
               <svg
@@ -116,7 +118,7 @@ export function SignUpForm({
                         <FormControl>
                           <Input
                             className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
-                            disabled={isLoading}
+                            disabled={isPending}
                             placeholder={
                               fieldState.invalid ? undefined : "David Aragundy"
                             }
@@ -152,7 +154,7 @@ export function SignUpForm({
                         <FormControl>
                           <Input
                             className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
-                            disabled={isLoading}
+                            disabled={isPending}
                             placeholder={
                               fieldState.invalid ? undefined : "davidaragundy"
                             }
@@ -190,7 +192,7 @@ export function SignUpForm({
                         <Input
                           className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
                           type="email"
-                          disabled={isLoading}
+                          disabled={isPending}
                           placeholder={
                             fieldState.invalid
                               ? undefined
@@ -228,7 +230,7 @@ export function SignUpForm({
                       <FormControl>
                         <Input
                           className="peer ps-9 not-aria-invalid:border-none shadow-none aria-invalid:text-destructive-foreground"
-                          disabled={isLoading}
+                          disabled={isPending}
                           type="password"
                           placeholder={
                             fieldState.invalid ? undefined : "••••••••"
@@ -249,13 +251,18 @@ export function SignUpForm({
                         <LockIcon size={16} aria-hidden="true" />
                       </div>
                     </div>
+
                     <FormMessage />
+
+                    {fieldState.isDirty && (
+                      <PasswordStrengthIndicator password={field.value} />
+                    )}
                   </FormItem>
                 )}
               />
 
-              <Button disabled={isLoading} type="submit" className="w-full">
-                {isLoading && <Loader2 className="animate-spin" />}
+              <Button disabled={isPending} type="submit" className="w-full">
+                {isPending && <LoaderIcon className="animate-spin" />}
                 Sign up
               </Button>
             </form>

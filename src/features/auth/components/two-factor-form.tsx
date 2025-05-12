@@ -1,45 +1,55 @@
 "use client";
 
 import Link from "next/link";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { LoaderIcon } from "lucide-react";
 
+import { Button } from "@/shared/components/ui/button";
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+} from "@/shared/components/ui/card";
+import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
+} from "@/shared/components/ui/form";
+import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@/shared/components";
-import { cn } from "@/shared/utils";
+} from "@/shared/components/ui/input-otp";
+import { TypographyH1, TypographyP } from "@/shared/components/ui/typography";
+import { cn } from "@/shared/utils/cn";
 
-import { useTwoFactorForm } from "@/features/auth/hooks";
-
-import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { Loader2 } from "lucide-react";
+import { useTwoFactorForm } from "@/features/auth/hooks/use-two-factor-form";
 
 export function TwoFactorForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { form, isLoading, onSubmit } = useTwoFactorForm();
+  const { form, onSubmit, isPending } = useTwoFactorForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">2FA 💂</CardTitle>
+          <CardTitle>
+            <TypographyH1>2FA 💂</TypographyH1>
+          </CardTitle>
+
           <CardDescription>
-            Enter your one-time password to continue.
+            <TypographyP className="leading-normal">
+              Enter your one-time password to continue.
+            </TypographyP>
           </CardDescription>
         </CardHeader>
+
         <CardContent className="grid gap-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -52,31 +62,32 @@ export function TwoFactorForm({
                       <InputOTP
                         pattern={REGEXP_ONLY_DIGITS}
                         maxLength={6}
+                        onComplete={form.handleSubmit(onSubmit)}
                         {...field}
                       >
-                        <InputOTPGroup>
+                        <InputOTPGroup className="gap-2">
                           <InputOTPSlot
-                            className="size-[3em] text-lg"
+                            className="size-[3em] text-lg !rounded-lg"
                             index={0}
                           />
                           <InputOTPSlot
-                            className="size-[3em] text-lg"
+                            className="size-[3em] text-lg !rounded-lg"
                             index={1}
                           />
                           <InputOTPSlot
-                            className="size-[3em] text-lg"
+                            className="size-[3em] text-lg !rounded-lg"
                             index={2}
                           />
                           <InputOTPSlot
-                            className="size-[3em] text-lg"
+                            className="size-[3em] text-lg !rounded-lg"
                             index={3}
                           />
                           <InputOTPSlot
-                            className="size-[3em] text-lg"
+                            className="size-[3em] text-lg !rounded-lg"
                             index={4}
                           />
                           <InputOTPSlot
-                            className="size-[3em] text-lg"
+                            className="size-[3em] text-lg !rounded-lg"
                             index={5}
                           />
                         </InputOTPGroup>
@@ -87,8 +98,8 @@ export function TwoFactorForm({
                 )}
               />
 
-              <Button disabled={isLoading} type="submit" className="w-full">
-                {isLoading && <Loader2 className="animate-spin" />}
+              <Button disabled={isPending} type="submit" className="w-full">
+                {isPending && <LoaderIcon className="animate-spin" />}
                 Verify
               </Button>
             </form>

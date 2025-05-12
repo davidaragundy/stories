@@ -1,17 +1,15 @@
-import { Separator } from "@/shared/components";
-import { NotificationsForm } from "@/features/settings/components";
+import { NotificationsForm } from "@/features/settings/components/notifications-form";
+import { SettingsPageHeader } from "@/features/settings/components/settings-page-header";
 
 export default function SettingsNotificationsPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium">Notifications</h3>
-        <p className="text-sm text-muted-foreground">
-          Configure how you receive notifications.
-        </p>
-      </div>
-      <Separator />
+    <>
+      <SettingsPageHeader
+        title="Notifications"
+        description="Configure how you receive notifications."
+      />
+
       <NotificationsForm />
-    </div>
+    </>
   );
 }

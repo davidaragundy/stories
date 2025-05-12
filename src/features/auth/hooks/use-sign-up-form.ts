@@ -1,19 +1,14 @@
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { authClient } from "@/shared/lib/auth/client";
-
-import { signUpSchema } from "@/features/auth/schemas";
-import { SignUpValues } from "@/features/auth/types";
-import { getHash } from "@/features/auth/utils";
-
-import { toast } from "sonner";
+import { useSignUpEmailMutation } from "@/features/auth/hooks/use-sign-up-email-mutation";
+import { useSignUpSocialMutation } from "@/features/auth/hooks/use-sign-up-social-mutation";
+import { signUpFormSchema } from "@/features/auth/schemas/sign-up-form-schema";
+import type { SignUpFormValues } from "@/features/auth/types";
 
 export const useSignUpForm = () => {
-  const form = useForm<SignUpValues>({
-    resolver: zodResolver(signUpSchema),
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       name: "",
       username: "",
@@ -21,115 +16,28 @@ export const useSignUpForm = () => {
       password: "",
     },
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
-  const handleSignUpWithSocial = async (provider: "google" | "github") => {
-    setIsLoading(true);
-
-    const { data, error } = await authClient.signIn.social({
-      provider,
-      callbackURL: "/home",
+  const { mutate: signUpWithEmail, isPending: isSigningUpWithEmail } =
+    useSignUpEmailMutation({
+      form,
     });
 
-    if (error) {
-      if (error.status !== 429)
-        toast.error(`Failed to sign up with ${provider} 😢`);
-    }
+  const { mutate: signUpWithSocial, isPending: isSigningUpWithSocial } =
+    useSignUpSocialMutation();
 
-    if (data?.redirect) router.push(data.url as string);
+  const onSubmit = (values: SignUpFormValues) => signUpWithEmail(values);
 
-    setIsLoading(false);
-  };
+  const handleSignUpWithSocial = (provider: "google" | "github") =>
+    signUpWithSocial({ provider });
 
   const handleSignUpWithGithub = () => handleSignUpWithSocial("github");
 
   const handleSignUpWithGoogle = () => handleSignUpWithSocial("google");
 
-  const onSubmit = async (values: SignUpValues) => {
-    const hash = await getHash(values.email);
-    const image = `https://gravatar.com/avatar/${hash}?size=500&d=robohash&r=x`;
-
-    setIsLoading(true);
-
-    const { data, error } = await authClient.signUp.email({
-      email: values.email,
-      password: values.password,
-      name: values.name,
-      username: values.username,
-      displayUsername: values.username,
-      image,
-      callbackURL: "/home",
-    });
-
-    setIsLoading(false);
-
-    if (error) {
-      if (error.status === 429) return;
-
-      switch (error.code) {
-        case "USERNAME_IS_ALREADY_TAKEN_PLEASE_TRY_ANOTHER":
-          form.setError("username", {
-            message: "Username is already taken. Please try another.",
-          });
-          return;
-
-        case "USER_ALREADY_EXISTS":
-          form.setError("email", {
-            message: "A user with that email already exists",
-          });
-          return;
-
-        case "FAILED_TO_SEND_VERIFICATION_EMAIL":
-          const toastId = toast.error("Failed to send verification email 😢", {
-            duration: 10000,
-            action: {
-              label: "Resend email",
-              onClick: async () => {
-                const id = toast.loading("Resending email...");
-
-                const { error } = await authClient.sendVerificationEmail({
-                  email: values.email,
-                  callbackURL: "/home",
-                });
-
-                if (error) {
-                  if (error.status === 429) return;
-
-                  toast.dismiss(id);
-                  toast.error("Failed to resend email 😢", {
-                    id: toastId,
-                    duration: 10000,
-                  });
-                  return;
-                }
-
-                toast.success("Email sent successfully 🎉", {
-                  description: "Don't forget to check your spam folder.",
-                  id,
-                });
-              },
-            },
-          });
-          return;
-
-        default:
-          toast.error("Something went wrong, please try again later 😢");
-          return;
-      }
-    }
-
-    if (data)
-      toast.success("Account created successfully 🎉", {
-        description: "Please check your email to verify your account.",
-        duration: 10000,
-      });
-  };
-
   return {
     form,
-    isLoading,
     onSubmit,
+    isPending: isSigningUpWithEmail || isSigningUpWithSocial,
     handleSignUpWithGithub,
     handleSignUpWithGoogle,
   };

@@ -3,14 +3,15 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Suspense, use } from "react";
 import { GalleryVerticalEnd } from "lucide-react";
-import { ResetPasswordForm } from "@/features/auth/components";
+
+import { ResetPasswordForm } from "@/features/auth/components/reset-password-form";
 
 export const metadata: Metadata = {
   title: "Stories | Reset Password",
   description: "Reset your password",
 };
 
-//TODO: Implement ResetPasswordFormFallback
+//TODO: Implement ResetPasswordFormFallback, this shi is for search params
 function ResetPasswordFormFallback() {
   return <></>;
 }

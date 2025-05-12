@@ -1,52 +1,21 @@
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { authClient } from "@/shared/lib/auth/client";
-import { twoFactorSchema } from "@/shared/schemas";
-import { TwoFactorValues } from "@/shared/types";
-
-import { toast } from "sonner";
+import { useTwoFactorMutation } from "@/features/auth/hooks/use-two-factor-mutation";
+import { twoFactorSchema } from "@/shared/schemas/two-factor-schema";
+import type { TwoFactorFormValues } from "@/shared/types";
 
 export const useTwoFactorForm = () => {
-  const form = useForm<TwoFactorValues>({
+  const form = useForm<TwoFactorFormValues>({
     resolver: zodResolver(twoFactorSchema),
     defaultValues: {
       code: "",
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const { mutate: verifyTwoFactor, isPending } = useTwoFactorMutation({ form });
 
-  const onSubmit = async (values: TwoFactorValues) => {
-    setIsLoading(true);
+  const onSubmit = (values: TwoFactorFormValues) => verifyTwoFactor(values);
 
-    const { error } = await authClient.twoFactor.verifyTotp({
-      code: values.code,
-    });
-
-    setIsLoading(false);
-
-    if (error) {
-      if (error.status === 429) return;
-
-      switch (error.code) {
-        case "INVALID_TWO_FACTOR_AUTHENTICATION":
-          form.setError("code", {
-            message: "Invalid one-time password",
-          });
-          return;
-
-        default:
-          toast.error("An error occurred, please try again later 😢");
-          return;
-      }
-    }
-
-    router.push("/home");
-  };
-
-  return { form, isLoading, onSubmit };
+  return { form, onSubmit, isPending };
 };

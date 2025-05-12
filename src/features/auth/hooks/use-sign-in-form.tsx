@@ -1,38 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-import { authClient } from "@/shared/lib/auth/client";
-
-import { MagicLinkForm, CredentialsForm } from "@/features/auth/components";
-
 import { IdCardIcon, WandSparklesIcon } from "lucide-react";
-import { toast } from "sonner";
+
+import { CredentialsForm } from "@/features/auth/components/credentials-form";
+import { MagicLinkForm } from "@/features/auth/components/magic-link-form";
+import { useSignInSocialMutation } from "@/features/auth/hooks/use-sign-in-social-mutation";
 
 export const useSignInForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [signInMethod, setSignInMethod] = useState<"credentials" | "magicLink">(
     "credentials"
   );
 
-  const router = useRouter();
+  const { mutate, isPending } = useSignInSocialMutation();
 
-  const handleSignInWithSocial = async (provider: "google" | "github") => {
-    setIsLoading(true);
-
-    const { data, error } = await authClient.signIn.social({
-      provider,
-      callbackURL: "/home",
-    });
-
-    if (error && error.status !== 429)
-      toast.error(`Failed to sign in with ${provider} 😢`);
-
-    if (data?.redirect) router.push(data.url as string);
-
-    setIsLoading(false);
-  };
+  const handleSignInWithSocial = (provider: "google" | "github") =>
+    mutate({ provider });
 
   const handleSignInWithGitHub = () => handleSignInWithSocial("github");
 
@@ -59,8 +42,7 @@ export const useSignInForm = () => {
 
   return {
     form,
-    isLoading,
-    setIsLoading,
+    isPending,
     signInMethod,
     setSignInMethod,
     toggleSignInMethod,

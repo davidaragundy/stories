@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-
-import { RecoveryForm } from "@/features/auth/components";
-
 import { GalleryVerticalEnd } from "lucide-react";
+
+import { RecoveryForm } from "@/features/auth/components/recovery-form";
 
 export const metadata: Metadata = {
   title: "Stories | Recovery",

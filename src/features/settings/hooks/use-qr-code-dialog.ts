@@ -1,14 +1,12 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { authClient } from "@/shared/lib/auth/client";
-import { twoFactorSchema } from "@/shared/schemas";
-import { TwoFactorValues } from "@/shared/types";
+import { twoFactorSchema } from "@/shared/schemas/two-factor-schema";
+import type { TwoFactorFormValues } from "@/shared/types";
 
-import { getTxtArrayBuffer } from "@/features/settings/utils";
-
-import { toast } from "sonner";
+import { useVerifyTotpMutation } from "@/features/settings/hooks/use-verify-totp-mutation";
+import { getTxtArrayBuffer } from "@/features/settings/utils/get-txt-array-buffer";
 
 interface Props {
   URI: string;
@@ -23,47 +21,28 @@ export const useQrCodeDialog = ({
   backupCodes,
   setBackupCodes,
 }: Props) => {
-  const form = useForm<TwoFactorValues>({
+  const form = useForm<TwoFactorFormValues>({
     resolver: zodResolver(twoFactorSchema),
     defaultValues: {
       code: "",
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
   const [showBackupCodes, setShowBackupCodes] = useState(false);
+  const dialogCloseRef = useRef<HTMLButtonElement>(null);
 
-  const key = URI ? new URL(URI).searchParams.get("secret") : "";
+  const key = URI ? new URL(URI).searchParams.get("secret")! : "";
 
-  async function onSubmit(values: TwoFactorValues) {
-    setIsLoading(true);
+  const { mutate, isPending, isError } = useVerifyTotpMutation({
+    form,
+    setTotpURI,
+    setShowBackupCodes,
+  });
 
-    const { error } = await authClient.twoFactor.verifyTotp({
+  const onSubmit = (values: TwoFactorFormValues) =>
+    mutate({
       code: values.code,
     });
-
-    setIsLoading(false);
-
-    if (error) {
-      if (error.status === 429) return;
-
-      switch (error.code) {
-        case "INVALID_TWO_FACTOR_AUTHENTICATION":
-          form.setError("code", {
-            message: "Invalid one-time password",
-          });
-          return;
-
-        default:
-          toast.error("An error occurred, please try again later 😢");
-          return;
-      }
-    }
-
-    toast.success("Two-factor authentication enabled successfully 🎉");
-    setTotpURI("");
-    setShowBackupCodes(true);
-  }
 
   const handleDownloadBackupCodes = () => {
     const buffer = getTxtArrayBuffer(backupCodes);
@@ -78,15 +57,19 @@ export const useQrCodeDialog = ({
 
     URL.revokeObjectURL(url);
     setBackupCodes([]);
+    setShowBackupCodes(false);
+    dialogCloseRef.current?.click();
   };
 
   return {
     form,
-    isLoading,
+    onSubmit,
+    isPending,
+    isError,
+    key,
     showBackupCodes,
     setShowBackupCodes,
-    key,
-    onSubmit,
     handleDownloadBackupCodes,
+    dialogCloseRef,
   };
 };

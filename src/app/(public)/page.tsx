@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { ThemeSwitch } from "@/shared/components";
+
+import { ThemeSwitch } from "@/shared/components/theme-switch";
 
 export const metadata: Metadata = {
   title: "Stories",
@@ -13,4 +14,3 @@ export default function Home() {
     </main>
   );
 }
-
