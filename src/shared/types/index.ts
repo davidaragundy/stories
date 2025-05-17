@@ -14,9 +14,10 @@ export interface AuthClientError {
   statusText: string;
 }
 
-export type ActionResponse<T> = {
+export type ActionResponse<T, E extends string> = {
   data?: T;
   error?: {
+    code: E;
     message: string;
   };
 };

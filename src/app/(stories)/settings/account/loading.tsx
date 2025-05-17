@@ -3,6 +3,8 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 import { SettingsPageHeader } from "@/features/settings/components/settings-page-header";
 
 export default function Loading() {
+  return null;
+
   return (
     <div className="space-y-10">
       <SettingsPageHeader

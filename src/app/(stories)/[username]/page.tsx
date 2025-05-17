@@ -9,6 +9,7 @@ import {
   TypographyMuted,
   TypographyP,
 } from "@/shared/components/ui/typography";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
@@ -30,10 +31,11 @@ export default async function ProfilePage({
 
   const { data, error } = await getUser({ username });
 
-  if (error)
-    throw new Error(
-      "Something went wrong while fetching the user data or the user does not exist"
-    );
+  if (error) {
+    if (error.message === "User not found") return notFound();
+
+    throw new Error("Something went wrong while fetching the profile data");
+  }
 
   return (
     <main className="flex flex-col items-center gap-6">
