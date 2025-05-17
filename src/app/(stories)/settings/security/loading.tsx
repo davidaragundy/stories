@@ -7,6 +7,8 @@ import { SettingsPageHeader } from "@/features/settings/components/settings-page
 import { ActiveSessionCardSkeleton } from "@/features/settings/components/active-session-card-skeleton";
 
 export default function Loading() {
+  return null;
+
   return (
     <div className="space-y-8">
       <SettingsPageHeader
